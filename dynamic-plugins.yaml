@@ -1,0 +1,24 @@
+# Dynamic Plugins Configuration
+# This file defines the plugins to be installed from NPM registry during build time
+#
+# Each plugin entry should specify:
+# - package: the NPM package name
+# - version: the version to install (optional, defaults to latest)
+# - disabled: whether the plugin should be disabled (optional, defaults to false)
+
+plugins:
+  # Example plugin entries (uncomment and modify as needed):
+  
+  # - package: '@backstage/plugin-catalog-backend-module-github'
+  #   version: '^0.5.0'
+  
+  # - package: '@backstage/plugin-kubernetes-backend'
+  #   version: '^0.18.0'
+  
+  # - package: '@roadiehq/backstage-plugin-argo-cd-backend'
+  #   version: '^2.14.0'
+  
+  # - package: '@janus-idp/backstage-plugin-topology'
+  #   version: '^1.0.0'
+  
+  # Add your plugins here
