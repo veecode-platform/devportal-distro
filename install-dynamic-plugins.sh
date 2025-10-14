@@ -6,6 +6,11 @@ DYNAMIC_PLUGINS_ROOT="${DYNAMIC_PLUGINS_ROOT:-/opt/app-root/src/dynamic-plugins-
 
 echo "Installing dynamic plugins from: ${CONFIG_FILE}"
 
+# Convert CONFIG_FILE to absolute path if it's relative
+if [[ ! "${CONFIG_FILE}" = /* ]]; then
+    CONFIG_FILE="$(pwd)/${CONFIG_FILE}"
+fi
+
 # Create the dynamic plugins directory if it doesn't exist
 mkdir -p "${DYNAMIC_PLUGINS_ROOT}"
 
