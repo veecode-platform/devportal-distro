@@ -1,4 +1,4 @@
-ARG TAG=latest
+ARG TAG=1.1.4
 FROM veecode/devportal-base:${TAG}
 
 USER root
