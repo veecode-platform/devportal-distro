@@ -9,6 +9,9 @@ on:
 
 env:
   IMAGE_NAME: devportal-distro
+
+permissions:
+  contents: read
   
 jobs:
   build:
