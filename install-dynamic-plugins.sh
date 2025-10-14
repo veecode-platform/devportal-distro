@@ -8,7 +8,14 @@ echo "Installing dynamic plugins from: ${CONFIG_FILE}"
 
 # Convert CONFIG_FILE to absolute path if it's relative
 if [[ "${CONFIG_FILE}" != /* ]]; then
-    CONFIG_FILE="$(cd "$(dirname "${CONFIG_FILE}")" && pwd)/$(basename "${CONFIG_FILE}")"
+    CONFIG_DIR="$(dirname "${CONFIG_FILE}")"
+    CONFIG_BASE="$(basename "${CONFIG_FILE}")"
+    if [ -d "${CONFIG_DIR}" ]; then
+        CONFIG_FILE="$(cd "${CONFIG_DIR}" && pwd)/${CONFIG_BASE}"
+    else
+        echo "Error: Directory ${CONFIG_DIR} does not exist"
+        exit 1
+    fi
 fi
 
 # Create the dynamic plugins directory if it doesn't exist
