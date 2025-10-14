@@ -13,7 +13,7 @@ if [[ "${CONFIG_FILE}" != /* ]]; then
     if [ -d "${CONFIG_DIR}" ]; then
         CONFIG_FILE="$(cd "${CONFIG_DIR}" && pwd)/${CONFIG_BASE}"
     else
-        echo "Error: Directory ${CONFIG_DIR} does not exist"
+        echo "Error: Directory '${CONFIG_DIR}' does not exist for config file"
         exit 1
     fi
 fi
