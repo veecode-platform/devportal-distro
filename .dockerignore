@@ -17,6 +17,7 @@ logs
 # Build artifacts
 dist
 build
+dynamic-plugins-root
 
 # IDE files
 .vscode
@@ -28,6 +29,12 @@ build
 # OS files
 .DS_Store
 Thumbs.db
+
+# no generated build files
+**/dist
+**/dist-types
+**/dist-dynamic
+**/dist-scalprum
 
 # Documentation (optional - include if needed)
 README.md

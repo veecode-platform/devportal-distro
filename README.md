@@ -1,38 +1,52 @@
 # devportal-distro
-VeeCode DevPortal - a Full Backstage Distro
+
+VeeCode DevPortal - a Full Backstage Distro ready for production use.
 
 ## Overview
 
-This project creates a derived Docker image from [veecode/devportal-base](https://github.com/veecode-platform/devportal-base) by allowing the addition of dynamic plugins into a new image. The plugins are pre-built and will be downloaded from the NPM registry during build time.
+This project creates a derived Docker image from [veecode/devportal-base](https://github.com/veecode-platform/devportal-base) by allowing the addition of dynamic plugins into a new image.
 
-The base image already provides the mechanics for loading plugins dynamically. This repository adds a layer that allows you to specify which plugins to include via a configuration file.
+The base image already provides the mechanics for loading plugins dynamically, automatically loading all plugins placed at `dynamic-plugins-root`.
+
+This derived image adds functionality that allows adding more plugins for optional loading via a configuration file, providing extra mechanics to deal with dynamic plugins:
+
+- pre-built plugins can be bundled in the image so they can be optionally loaded at runtime
+- plugins can be downloaded at runtime from external registries (OCI or NPM).
+
 
 ## Features
 
-- ✨ Declarative plugin configuration via YAML
-- 📦 Automatic plugin installation from NPM registry during build
-- 🔄 Version pinning support for reproducible builds
-- 🚀 Built on top of the official VeeCode DevPortal base image
+- Declarative plugin configuration via JSON (for new plugins to be bundled)
+- Automatic plugin download and extraction from external registries during build (runtime mechanics)
+- Built on top of the official VeeCode DevPortal base image
+- Make-based build system for easy customization
 
 ## Quick Start
 
-### 1. Configure Your Plugins
+### 1. Add Dynamic Plugins
 
-Edit the `dynamic-plugins.yaml` file to specify which plugins you want to include:
+Edit the `plugins.json` file to specify which plugins you want to add to your DevPortal image (build time). For example:
 
-```yaml
-plugins:
-  - package: '@backstage/plugin-catalog-backend-module-github'
-    version: '^0.5.0'
-  
-  - package: '@backstage/plugin-kubernetes-backend'
-    version: '^0.18.0'
-  
-  - package: '@roadiehq/backstage-plugin-argo-cd-backend'
-    version: '^2.14.0'
+```json
+{
+    "plugins": [
+        {
+            "name": "@veecode-platform/backstage-plugin-global-floating-action-button-dynamic",
+            "version": "1.4.0"
+        },
+    ]
+}
 ```
 
-### 2. Build the Docker Image
+Plugins added this way will be downloaded from the NPM registry during the image build process and placed in the appropriate folder for eventual dynamic loading at runtime. **Such plugins are expected to be bundled explicitly as dynamic plugins**.
+
+### 2. Add Wrapper Plugins
+
+Older plugins that were not designed to be loaded dynamically can still be added by wrapping them in a dynamic plugin shell. To do this, create a new dynamic plugin that imports and re-exports the original plugin's functionality, adding the dynamic loading mechanics and configuration accordingly.
+
+There are many "wrapped plugins" available on [RHDH "wrappers" repository](https://github.com/redhat-developer/rhdh/tree/main/dynamic-plugins/wrappers). Most of the dynamic plugins in our "wrappers" folder were copied from there.
+
+### 3. Build the Docker Image
 
 Build your customized DevPortal image:
 
@@ -54,99 +68,52 @@ docker run -p 7007:7007 my-devportal:latest
 
 ## Configuration
 
-### Dynamic Plugins Configuration
+Understand the build and runtime folders and behaviours for dynamic plugins:
 
-The `dynamic-plugins.yaml` file supports the following structure:
+BUILD TIME:
 
-```yaml
-plugins:
-  - package: '<npm-package-name>'
-    version: '<version-spec>'     # Optional, defaults to 'latest'
-    disabled: false                # Optional, defaults to false
-```
+- The "downloads" and "wrappers" plugins under `dynamic-plugins` workspace are processed and placed at `dynamic-plugins-store` during build.
+- The plugins at `dynamic-plugins-store` are copied into the image at `/app/dynamic-plugins` for optional dynamic loading at runtime (they are named **pre-installed plugins**).
+- The configuration files `dynamic-plugins.yaml` and `dynamic-plugins.default.yaml` are copied into the image to define its default behaviour and configuration (regarding dynamic plugins).
 
-#### Configuration Options
+RUNTIME:
 
-- **package** (required): The NPM package name of the plugin
-- **version** (optional): The version or version range to install. Supports NPM semver syntax (e.g., `^1.0.0`, `~2.1.0`, `latest`)
-- **disabled** (optional): Set to `true` to skip installing this plugin
+- The file `dynamic-plugins.yaml` is processed:
+  - Pre-installed plugins, referenced as local relative paths, are copied to `/app/dynamic-plugins-root` when enabled.
+  - Plugins referenced as external registries (OCI or NPM) are downloaded and extracted into `/app/dynamic-plugins-root` when enabled.
+  - Enabled plugins have their default configuration merged into `app-config.dynamic-plugins.local.yaml`.
+- The base image automatically discovers and loads plugins from `/app/dynamic-plugins-root` (forcibly loaded).
 
-#### Example Configuration
+DEPLOY TIME (KUBERNETES):
 
-```yaml
-plugins:
-  # Install specific version
-  - package: '@backstage/plugin-catalog-backend-module-github'
-    version: '0.5.0'
-  
-  # Install with version range
-  - package: '@backstage/plugin-kubernetes-backend'
-    version: '^0.18.0'
-  
-  # Install latest version
-  - package: '@roadiehq/backstage-plugin-argo-cd-backend'
-  
-  # Temporarily disable a plugin
-  - package: '@janus-idp/backstage-plugin-topology'
-    version: '1.0.0'
-    disabled: true
-```
+- Chart mounts `/app/dynamic-plugins-root` as an "emptyDir"
+- The `dynamic-plugins.yaml` file is defined by a ConfigMap mounted into the container
+- Processing `dynamic-plugins.yaml` is mandatory and done by an initContainer, populating `/app/dynamic-plugins-root`.
 
 ## Build Arguments
 
-- **TAG**: The tag of the base image to use (default: `latest`)
+- **TAG**: The tag of the base image to use (default: `1.1.12`)
 
 Example:
+
 ```bash
 docker build --build-arg TAG=v1.0.0 -t my-devportal:v1.0.0 .
 ```
 
-## Environment Variables
-
-The installation script respects the following environment variables:
-
-- **DYNAMIC_PLUGINS_ROOT**: Directory where plugins are installed (default: `/opt/app-root/src/dynamic-plugins-root`)
-
-## Plugin Discovery
-
-The base image (`veecode/devportal-base`) automatically discovers and loads plugins from the `DYNAMIC_PLUGINS_ROOT` directory. No additional configuration is needed beyond adding plugins to `dynamic-plugins.yaml`.
-
-## Development
-
-### Testing Your Configuration
-
-To test your plugin configuration without building the full image:
-
-```bash
-# Install yq for YAML parsing
-wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64"
-chmod +x /usr/local/bin/yq
-
-# Run the installation script locally
-./install-dynamic-plugins.sh
-```
-
-### Adding Custom Plugins
-
-If you have custom or private plugins:
-
-1. Ensure they are published to a registry accessible during build
-2. Configure NPM authentication if needed (in Dockerfile)
-3. Add the plugin to `dynamic-plugins.yaml`
-
 ## Troubleshooting
 
-### Build Fails During Plugin Installation
+### Build Fails During Plugin Download
 
 - Verify the plugin package name is correct
 - Check that the specified version exists on NPM
 - Ensure your network can access the NPM registry
+- Ensure `jq` is available in the build environment
 
 ### Plugin Not Loading at Runtime
 
-- Verify the plugin was installed (check build logs)
+- Verify the plugin was downloaded and copied (check build logs)
 - Ensure the base image version supports your plugins
-- Check that the plugin is not marked as `disabled: true`
+- Check the plugin is correctly listed in `plugins.json`
 
 ## Contributing
 

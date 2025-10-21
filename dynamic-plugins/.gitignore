@@ -1,0 +1,16 @@
+.yarn/*
+!.yarn/releases
+node_modules/
+/wrappers/**/ */dist**
+/wrappers/**/dist-scalprum**
+/wrappers/**/ */dist-dynamic**
+
+# Build output
+dist
+dist-types
+dist-scalprum
+dist-dynamic
+
+.vscode/*
+!.vscode/extensions.json
+.turbo

@@ -1,0 +1,20 @@
+{
+  "name": "dynamic-plugins-download",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "build": "./download-packages.sh build",
+    "tsc": "echo TSC - DUMMY",
+    "export-dynamic": "./download-packages.sh export-dynamic",
+    "export-dynamic:clean": "./download-packages.sh export-dynamic-clean",
+    "copy-dynamic-plugins": "./download-packages.sh copy-dynamic-plugins \"$@\"",
+    "clean": "./download-packages.sh clean",
+    "test": "echo TEST - DUMMY",
+    "lint:check": "echo LINT - DUMMY",
+    "lint:fix": "echo LINT - DUMMY"
+  },
+  "packageManager": "yarn@4.4.1"
+}
