@@ -15,6 +15,7 @@ services:
       - "7007:7007"
     environment:
       - DEVELOPMENT=true
+      - LOG_LEVEL=warn
     volumes:
       - ./app-config.local.yaml:/app/app-config.local.yaml:ro
       - ./dynamic-plugins.yaml:/app/dynamic-plugins.yaml:ro

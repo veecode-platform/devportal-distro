@@ -56,7 +56,19 @@ plugins:
       dynamicPlugins:
         frontend:
           roadiehq.backstage-plugin-security-insights:
+            # 1) Declare the tab (path + title) and bind it to a mountPoint
+            entityTabs:
+              - path: /security-insights
+                title: Security Insights
+                mountPoint: entity.page.security-insights
+                # (optional) move it left/right in the tab bar
+                # priority: -1
             mountPoints:
+              - mountPoint: entity.page.security-insights/cards
+                importName: EntitySecurityInsightsContent
+                config:
+                  layout:
+                    gridColumn: "1 / -1"   # full width page content
               - mountPoint: entity.page.overview/cards
                 importName: EntityDependabotAlertsCard
                 config:
