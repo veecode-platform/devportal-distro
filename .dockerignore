@@ -39,3 +39,6 @@ Thumbs.db
 # Documentation (optional - include if needed)
 README.md
 LICENSE
+
+# Local configuration files
+*.local.yaml

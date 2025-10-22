@@ -33,3 +33,7 @@ plugins:
     disabled: true
   - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-global-floating-action-button
     disabled: false
+  - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-security-insights
+    disabled: false
+  - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-github-insights
+    disabled: false

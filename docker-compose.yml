@@ -1,0 +1,22 @@
+#
+# Starts DevPortal with hot reloading and pretty logging:
+#
+# docker compose up --no-log-prefix | npx --yes pino-pretty --colorize --translateTime
+#
+# Changes to dynamic-plugins*.yaml will be processed into app-config running this:
+#
+# docker compose exec devportal /app/install-dynamic-plugins.sh /app/dynamic-plugins-root
+#
+
+services:
+  devportal:
+    image: veecode/devportal:latest
+    ports:
+      - "7007:7007"
+    environment:
+      - DEVELOPMENT=true
+    volumes:
+      - ./app-config.local.yaml:/app/app-config.local.yaml:ro
+      - ./dynamic-plugins.yaml:/app/dynamic-plugins.yaml:ro
+      - ./dynamic-plugins.default.yaml:/app/dynamic-plugins.default.yaml:ro
+

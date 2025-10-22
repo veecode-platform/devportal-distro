@@ -141,3 +141,6 @@ vite.config.ts.timestamp-*
 # Dynamic plugins build artifacts
 dynamic-plugins-store/*
 !dynamic-plugins-store/.gitkeep
+
+# Local configuration files
+*.local.yaml
