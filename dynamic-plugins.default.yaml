@@ -69,6 +69,9 @@ plugins:
                 config:
                   layout:
                     gridColumn: "1 / -1"   # full width page content
+                  if:
+                    allOf:
+                      - isSecurityInsightsAvailable
               - mountPoint: entity.page.overview/cards
                 importName: EntityDependabotAlertsCard
                 config:
@@ -103,6 +106,9 @@ plugins:
                       lg: "-1"          # Extend to end
                       md: "span 12"
                       xs: "span 12"                
+                  if:
+                    allOf:
+                      - isGithubInsightsAvailable
               - mountPoint: entity.page.overview/cards
                 importName: EntityGithubInsightsComplianceCard
                 config:
@@ -118,3 +124,19 @@ plugins:
                   if:
                     allOf:
                       - isGithubInsightsAvailable
+                      
+  - package: ./dynamic-plugins/dist/backstage-community-plugin-github-actions
+    disabled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          backstage-community.plugin-github-actions:
+            mountPoints:
+              - mountPoint: entity.page.ci/cards
+                importName: EntityGithubActionsContent
+                config:
+                  layout:
+                    gridColumn: "1 / -1"
+                  if:
+                    allOf:
+                      - isGithubActionsAvailable

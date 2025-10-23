@@ -37,3 +37,5 @@ plugins:
     disabled: false
   - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-github-insights
     disabled: false
+  - package: ./dynamic-plugins/dist/backstage-community-plugin-github-actions
+    disabled: false

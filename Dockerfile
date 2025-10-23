@@ -1,4 +1,4 @@
-ARG TAG=1.1.22
+ARG TAG=1.1.21
 FROM veecode/devportal-base:${TAG} AS base
 
 # dynamic plugin processing
