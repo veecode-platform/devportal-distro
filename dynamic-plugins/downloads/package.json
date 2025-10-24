@@ -16,5 +16,5 @@
     "lint:check": "echo LINT - DUMMY",
     "lint:fix": "echo LINT - DUMMY"
   },
-  "packageManager": "yarn@4.4.1"
+  "packageManager": "yarn@4.10.3"
 }

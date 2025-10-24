@@ -3,7 +3,7 @@
 .gitignore
 
 # Node modules (if any local development)
-node_modules
+**/node_modules
 
 # Logs
 *.log
@@ -15,9 +15,13 @@ logs
 !.env.example
 
 # Build artifacts
-dist
+**/dist
+**/dist-dynamic
+**/dist-types
+**/dist-scalprum
 build
 dynamic-plugins-root
+**/.turbo
 
 # IDE files
 .vscode

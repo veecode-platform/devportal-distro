@@ -29,13 +29,13 @@ includes:
 plugins:
   - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
     disabled: true
-  - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes
+  - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-dynamic
     disabled: true
-  - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-global-floating-action-button
+  - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-global-floating-action-button-dynamic
     disabled: false
-  - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-security-insights
+  - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-security-insights-dynamic
     disabled: false
-  - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-github-insights
+  - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-github-insights-dynamic
     disabled: false
-  - package: ./dynamic-plugins/dist/backstage-community-plugin-github-actions
+  - package: ./dynamic-plugins/dist/backstage-community-plugin-github-actions-dynamic
     disabled: false

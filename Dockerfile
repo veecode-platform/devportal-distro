@@ -1,12 +1,26 @@
 ARG TAG=1.1.21
 FROM veecode/devportal-base:${TAG} AS base
 
+# allows setting NPM registry from build arg
+ARG NPM_REGISTRY=https://registry.npmjs.org/
+# Set as environment variable (so npm install uses it)
+ENV NPM_REGISTRY=$NPM_REGISTRY NPM_CONFIG_REGISTRY=$NPM_REGISTRY YARN_REGISTRY=$NPM_REGISTRY
+# Strict, reproducible install (no node_modules from host)
+RUN echo "Using NPM Registry: $NPM_REGISTRY" && \
+    if [ "$NPM_REGISTRY" != "https://registry.npmjs.org/" ]; then \
+      HOST=$(printf '%s\n' "$NPM_REGISTRY" | awk -F[/:] '{print $4}') && \
+      yarn config set unsafeHttpWhitelist --json "[\"localhost\",\"$HOST\"]"; \
+    fi && \
+    yarn config set nodeLinker node-modules && \
+    yarn config set npmRegistryServer "$NPM_REGISTRY" && \
+    cp .yarnrc.yml $HOME/.yarnrc.yml
+
 # dynamic plugin processing
 COPY --chown=default:default dynamic-plugins /app/dynamic-plugins
 
 RUN mkdir -p /app/dynamic-plugins-store && \
-    cd dynamic-plugins && \
-    yarn install && \
+    cd /app/dynamic-plugins && \
+    yarn install --immutable && \
     yarn build && \
     yarn export-dynamic && \
     yarn copy-dynamic-plugins $(pwd)/../dynamic-plugins-store

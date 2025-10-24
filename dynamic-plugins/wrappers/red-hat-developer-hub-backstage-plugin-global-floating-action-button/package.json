@@ -11,7 +11,7 @@
   },
   "backstage": {
     "role": "frontend-plugin",
-    "supported-versions": "1.42.5",
+    "supported-versions": "1.43.3",
     "pluginId": "red-hat-developer-hub-backstage-plugin-global-floating-action-button",
     "pluginPackages": [
       "red-hat-developer-hub-backstage-plugin-global-floating-action-button"
@@ -24,7 +24,7 @@
     "lint:check": "backstage-cli package lint",
     "test": "backstage-cli package test --passWithNoTests --coverage",
     "clean": "backstage-cli package clean",
-    "export-dynamic": "janus-cli package export-dynamic-plugin --in-place",
+    "export-dynamic": "rhdh-cli plugin export",
     "export-dynamic:clean": "run export-dynamic --clean"
   },
   "dependencies": {
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@backstage/cli": "^0.34.1",
-    "@janus-idp/cli": "3.6.1",
+    "@red-hat-developer-hub/cli": "latest",
     "typescript": "5.9.3"
   },
   "scalprum": {
