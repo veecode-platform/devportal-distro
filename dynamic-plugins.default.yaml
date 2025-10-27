@@ -93,37 +93,48 @@ plugins:
       dynamicPlugins:
         frontend:
           roadiehq.backstage-plugin-github-insights:
+            entityTabs:
+              - path: /code-insights
+                title: Code Insights
+                mountPoint: entity.page.code-insights
+                if:
+                  allOf:
+                    - isGithubInsightsAvailable   # only show when it makes sense
             mountPoints:
-              - mountPoint: entity.page.overview/cards
-                importName: EntityGithubInsightsLanguagesCard
+              - mountPoint: entity.page.code-insights/cards
+                importName: EntityGithubInsightsContent
                 config:
                   layout:
-                    gridRowEnd:
-                      lg: "span 2"
-                    gridColumnStart:
-                      lg: "5"           # Right side
-                    gridColumnEnd:
-                      lg: "-1"          # Extend to end
-                      md: "span 12"
-                      xs: "span 12"                
-                  if:
-                    allOf:
-                      - isGithubInsightsAvailable
-              - mountPoint: entity.page.overview/cards
-                importName: EntityGithubInsightsComplianceCard
-                config:
-                  layout:
-                    #gridRowStart:
-                    #  lg: "3"           # Row 2, left side
-                    gridColumnStart:
-                      lg: "1"
-                    gridColumnEnd:
-                      lg: "span 4"      # Left half
-                      md: "span 4"
-                      xs: "span 6"
-                  if:
-                    allOf:
-                      - isGithubInsightsAvailable
+                    gridColumn: "1 / -1"   # full width page content
+            # mountPoints:
+            #   - mountPoint: entity.page.overview/cards
+            #     importName: EntityGithubInsightsLanguagesCard
+            #     config:
+            #       layout:
+            #         gridRowEnd:
+            #           lg: "span 2"
+            #         gridColumnStart:
+            #           lg: "5"           # Right side
+            #         gridColumnEnd:
+            #           lg: "-1"          # Extend to end
+            #           md: "span 12"
+            #           xs: "span 12"                
+            #       if:
+            #         allOf:
+            #           - isGithubInsightsAvailable
+            #   - mountPoint: entity.page.overview/cards
+            #     importName: EntityGithubInsightsComplianceCard
+            #     config:
+            #       layout:
+            #         gridColumnStart:
+            #           lg: "1"
+            #         gridColumnEnd:
+            #           lg: "span 4"      # Left half
+            #           md: "span 4"
+            #           xs: "span 6"
+            #       if:
+            #         allOf:
+            #           - isGithubInsightsAvailable
                       
   - package: ./dynamic-plugins/dist/backstage-community-plugin-github-actions-dynamic
     disabled: true
