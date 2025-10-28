@@ -10,9 +10,15 @@ The base image already provides the mechanics for loading plugins dynamically, a
 
 This derived image adds functionality that allows adding more plugins for optional loading via a configuration file, providing extra mechanics to deal with dynamic plugins:
 
-- pre-built plugins can be bundled in the image so they can be optionally loaded at runtime
-- plugins can be downloaded at runtime from external registries (OCI or NPM).
+- **Pre-built plugins can be bundled in the image**
+  - They can be optionally loaded at runtime
+  - They can have good defaults defined at `dynamic-plugins.default.yaml`
+  - They can be simply enabled or disabled in `dynamic-plugins.yaml`
+- **Plugins can be downloaded at runtime**
+  - You can add plugins from external registries (OCI or NPM) in `dynamic-plugins.yaml`
+  - They will be downloaded and extracted into `dynamic-plugins-root` when enabled
 
+The main purpose of this repo is to allow the addition of dynamic plugins to our production build without the need to build code.
 
 ## Features
 

@@ -1,4 +1,12 @@
 {
     "plugins": [
+        {
+            "name": "@veecode-platform/backstage-plugin-github-workflows-dynamic",
+            "version": "1.3.5"
+        },
+        {
+            "name": "@veecode-platform/backstage-plugin-github-workflows-backend-dynamic",
+            "version": "1.3.5"
+        }
     ]
 }

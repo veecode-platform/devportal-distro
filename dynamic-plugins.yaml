@@ -39,3 +39,7 @@ plugins:
     disabled: false
   - package: ./dynamic-plugins/dist/backstage-community-plugin-github-actions-dynamic
     disabled: false
+  - package: ./dynamic-plugins/dist/backstage-community-plugin-github-actions-dynamicveecode-platform-backstage-plugin-github-workflows-backend-dynamic
+    disabled: false
+  - package: ./dynamic-plugins/dist/backstage-community-plugin-github-actions-dynamicveecode-platform-backstage-plugin-github-workflows-dynamic
+    disabled: false
