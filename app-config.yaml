@@ -1,0 +1,106 @@
+# Backstage override configuration for your local development environment
+app:
+  # Should be the same as backend.baseUrl when using the `app-backend` plugin.
+  baseUrl: http://localhost:7007
+  listen: {}
+backend:
+  baseUrl: http://localhost:7007
+  listen:
+    port: 7007
+    host: 0.0.0.0
+  cors:
+    origin: http://localhost:7007
+  csp:
+    img-src:
+      [
+        "'self'",
+        'data:',
+        'https://www.google-analytics.com',
+        'https://platform.vee.codes',
+        'https://avatars.githubusercontent.com/',
+        'https://veecode-platform.github.io',
+        'https://img.shields.io'
+      ]
+  # auth:
+    # dangerouslyDisableDefaultAuthPolicy: false
+
+# bug da veecodesignin page
+platform:
+  guest:
+    enabled: true
+auth:
+  # repeat environment from main file
+  environment: development
+  # now the new provider (will add to main file)
+  providers:
+    # no guest provider in main file
+    # guest: {}
+    # --- GitHub provider (loaded dynamically from the module, if loaded) ---
+    github:
+      # or remove this level for a single env block
+      development:
+        clientId: ${GITHUB_CLIENT_ID}
+        clientSecret: ${GITHUB_CLIENT_SECRET}
+        signIn:
+          resolvers:
+            - resolver: usernameMatchingUserEntityName
+            - resolver: emailMatchingUserEntityProfileEmail
+            - resolver: emailLocalPartMatchingUserEntityName
+integrations:
+  github:
+    - host: github.com
+      # you can replace apps for token for simplicity
+      # but apps have better rate limit on github
+      # token: ${GITHUB_TOKEN}
+      apps:
+        - appId: ${GITHUB_APP_ID}
+          clientId: ${GITHUB_CLIENT_ID}
+          clientSecret: ${GITHUB_CLIENT_SECRET}
+          privateKey: |
+            ${GITHUB_PRIVATE_KEY}
+          # webhookSecret:
+catalog:
+  providers:
+    githubOrg:
+      id: development
+      githubUrl: https://github.com
+      orgs:
+        - "${GITHUB_ORG}"
+      schedule:
+        frequency:
+          minutes: 5
+        timeout:
+          minutes: 3
+    github:
+      veecodePlatform:
+        organization: "${GITHUB_ORG}"
+        schedule:
+          frequency:
+            minutes: 5
+          timeout:
+            minutes: 3
+  locations:
+    #- type: url
+    #  target: https://github.com/veecode-platform/devportal-base/blob/main/catalog-info.yaml
+    # Local example data, file locations are relative to the backend process, typically `packages/backend`
+    - type: file
+      target: /app/examples/entities.yaml
+    # Local example template
+    - type: file
+      target: /app/examples/template/template.yaml
+      rules:
+        - allow: [Template]
+    # Local example organizational data
+    - type: file
+      target: /app/examples/org.yaml
+      rules:
+        - allow: [User, Group]  
+    # Local example apis
+    - type: file
+      target: /app/examples/apis.yaml
+    # Local example resources
+    - type: file
+      target: /app/examples/resources.yaml
+    # Local example clusters
+    - type: file
+      target: /app/examples/clusters.yaml

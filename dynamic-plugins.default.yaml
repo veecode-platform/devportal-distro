@@ -152,7 +152,7 @@ plugins:
                     allOf:
                       - isGithubActionsAvailable
 
-  - package: ./dynamic-plugins/dist/backstage-community-plugin-github-actions-dynamicveecode-platform-backstage-plugin-github-workflows-backend-dynamic
+  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-github-workflows-backend-dynamic
     disabled: true
 
   - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-github-workflows-dynamic

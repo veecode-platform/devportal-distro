@@ -4,21 +4,56 @@ VeeCode DevPortal - a Full Backstage Distro ready for production use.
 
 ## Overview
 
+VeeCode DevPortal is a fully functional Backstage distro, built on top of the official VeeCode DevPortal base image, ready for production use with several pre-installed plugins.
+
+![VeeCode DevPortal Home](assets/home.png)
+
+## Getting Started
+
+You can simply run the following command to start a DevPortal instance locally:
+
+```bash
+# check for latest release
+docker run --rm --name devportal -d -p 7007:7007 veecode/devportal:1.2.1
+```
+
+This will start a DevPortal instance running on http://localhost:7007. The default behavior enables "guest" authentication as an admin user. Of course, the default catalog is useless and you may want to add your own repos, GitHub authentication, etc.
+
+You can use a combination of `docker compose`, configuration files and environment variables to customize the behavior of the DevPortal instance:
+
+```yaml
+services:
+  devportal:
+    image: veecode/devportal:1.2.1
+    ports:
+      - "7007:7007"
+    environment:
+      - DEVELOPMENT=true
+      - LOG_LEVEL=warn
+    volumes:
+      - ./app-config.local.yaml:/app/app-config.local.yaml:ro
+      - ./dynamic-plugins.yaml:/app/dynamic-plugins.yaml:ro
+      - ./dynamic-plugins.default.yaml:/app/dynamic-plugins.default.yaml:ro
+```
+
+## How it works
+
 This project creates a derived Docker image from [veecode/devportal-base](https://github.com/veecode-platform/devportal-base) by allowing the addition of dynamic plugins into a new image.
 
 The base image already provides the mechanics for loading plugins dynamically, automatically loading all plugins placed at `dynamic-plugins-root`.
 
-This derived image adds functionality that allows adding more plugins for optional loading via a configuration file, providing extra mechanics to deal with dynamic plugins:
+This derived image adds functionality that allows adding more plugins **during build time and during start time**. Added plugins are for optional loading to be determined via configuration files (`dynamic-plugins.yaml` and `dynamic-plugins.default.yaml`).
 
-- **Pre-built plugins can be bundled in the image**
+- **Pre-built plugins are bundled in the image**
+  - They are also called "pre-installed plugins"
   - They can be optionally loaded at runtime
   - They can have good defaults defined at `dynamic-plugins.default.yaml`
   - They can be simply enabled or disabled in `dynamic-plugins.yaml`
-- **Plugins can be downloaded at runtime**
+- **External plugins can be downloaded at start time**
   - You can add plugins from external registries (OCI or NPM) in `dynamic-plugins.yaml`
   - They will be downloaded and extracted into `dynamic-plugins-root` when enabled
 
-The main purpose of this repo is to allow the addition of dynamic plugins to our production build without the need to build code.
+The main purpose of this repo is to allow the addition of dynamic plugins to our production distro without the need to build code.
 
 ## Features
 
@@ -27,7 +62,7 @@ The main purpose of this repo is to allow the addition of dynamic plugins to our
 - Built on top of the official VeeCode DevPortal base image
 - Make-based build system for easy customization
 
-## Quick Start
+## Hot to Build
 
 ### 1. Add Dynamic Plugins
 
