@@ -63,6 +63,10 @@ plugins:
                 mountPoint: entity.page.security-insights
                 # (optional) move it left/right in the tab bar
                 # priority: -1
+                config:
+                  if:
+                    allOf:
+                      - isSecurityInsightsAvailable
             mountPoints:
               - mountPoint: entity.page.security-insights/cards
                 importName: EntitySecurityInsightsContent
@@ -97,15 +101,21 @@ plugins:
               - path: /code-insights
                 title: Code Insights
                 mountPoint: entity.page.code-insights
-                if:
-                  allOf:
-                    - isGithubInsightsAvailable   # only show when it makes sense
+                config:
+                  if:
+                    allOf:
+                      - isGithubInsightsAvailable   # only show when it makes sense
+                      - hasAnnotation: "github.com/project-slug"
             mountPoints:
               - mountPoint: entity.page.code-insights/cards
                 importName: EntityGithubInsightsContent
                 config:
                   layout:
                     gridColumn: "1 / -1"   # full width page content
+                  if:
+                    allOf:
+                      - isGithubInsightsAvailable   # only show when it makes sense
+                      - hasAnnotation: "github.com/project-slug"
             # mountPoints:
             #   - mountPoint: entity.page.overview/cards
             #     importName: EntityGithubInsightsLanguagesCard
@@ -172,3 +182,7 @@ plugins:
                       lg: "1"
                     gridColumnEnd:
                       lg: "span 6"
+                  if:
+                    anyOf:
+                      - hasAnnotation: "github.com/workflows"
+                      - hasAnnotation: "vee.codes/has-github-workflows"

@@ -1,0 +1,32 @@
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: admin
+  namespace: default
+spec:
+  memberOf: [admins]
+  profile:
+    displayName: Admin User
+    email: admin@example.com
+    picture: https://avatars.githubusercontent.com/u/9919?s=200&v=4
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: admins
+  namespace: default
+spec:
+  type: team
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: developers
+  namespace: default
+spec:
+  type: team
+  children: []
+  profile:
+    displayName: developers
+    description: Development team members

@@ -10,12 +10,13 @@
 
 services:
   devportal:
-    image: veecode/devportal:1.2.2
+    image: veecode/devportal:1.2.3
     ports:
       - "7007:7007"
     environment:
       - DEVELOPMENT=true
       # will use shell value
+      - VEECODE_PROFILE
       - GITHUB_ORG
       - GITHUB_APP_ID
       - GITHUB_CLIENT_ID
@@ -28,5 +29,7 @@ services:
       # dynamic plugins config (just enable/disable plugins)
       - ./dynamic-plugins.yaml:/app/dynamic-plugins.yaml:ro
       # default dynamic plugins config (with default values)
-      # - ./dynamic-plugins.default.yaml:/app/dynamic-plugins.default.yaml:ro
+      - ./dynamic-plugins.default.yaml:/app/dynamic-plugins.default.yaml:ro
+      # examples folder
+      - ./examples:/app/examples:ro
 
