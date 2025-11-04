@@ -10,7 +10,7 @@
 
 services:
   devportal:
-    image: veecode/devportal:1.2.1
+    image: veecode/devportal:1.2.2
     ports:
       - "7007:7007"
     environment:

@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@backstage/core-plugin-api": "1.10.9",
-    "@backstage/plugin-kubernetes": "0.12.10"
+    "@backstage/plugin-kubernetes": "0.12.12"
   },
   "devDependencies": {
     "@backstage/cli": "^0.34.1",

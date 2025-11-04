@@ -53,6 +53,25 @@ if [ -f "$DYNAMIC_PLUGINS_CONFIG" ]; then
     EXTRA_ARGS="$EXTRA_ARGS --config $DYNAMIC_PLUGINS_CONFIG"
 fi
 
+# Conditionally add app-config.PROFILE.yaml
+if [ "$VEECODE_PROFILE" = "github" ]; then
+  echo "Loading GitHub configuration..."
+  EXTRA_ARGS="$EXTRA_ARGS --config app-config.github.yaml"
+elif [ "$VEECODE_PROFILE" = "keycloak" ]; then
+  echo "Loading Keycloak configuration..."
+  EXTRA_ARGS="$EXTRA_ARGS --config app-config.keycloak.yaml"
+fi
+
+#
+# understand config files precedence (all merge, override in order)
+#
+# app-config.yaml
+# app-config.production.yaml
+# app-config.dynamic-plugins.yaml
+# app-config.local.yaml
+# dynamic-plugins-root/app-config.dynamic-plugins.yaml
+# 
+
 # EXECUTE THE COMMAND
 if [ "$DEVELOPMENT" = "true" ]; then
     echo "Running in DEVELOPMENT mode with auto-restart on config changes"
