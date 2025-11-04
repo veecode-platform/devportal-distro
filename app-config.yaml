@@ -16,3 +16,30 @@ catalog:
     # Local example clusters
     - type: file
       target: /app/examples/clusters.yaml
+
+permission:
+  enabled: false
+  rbac:
+    policies-csv-file: ../../rbac-policy.csv
+    pluginsWithPermission:
+      - catalog
+      - scaffolder
+      - permission
+    admin:
+      users:
+        - name: group:default/admins
+      superUsers:
+        - name: group:default/admins
+
+kubernetes:
+  serviceLocatorMethod:
+    type: 'singleTenant'
+  clusterLocatorMethods:
+    - type: 'localKubectlProxy'
+    # - type: 'config'
+    #   clusters:
+    #     - name: ${K8S_CLUSTER_NAME}
+    #       url: ${K8S_CLUSTER_URL}
+    #       authProvider: 'serviceAccount'
+    #       skipTLSVerify: true
+    #       serviceAccountToken: ${K8S_CLUSTER_TOKEN}

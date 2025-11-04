@@ -14,7 +14,7 @@ You can simply run the following command to start a DevPortal instance locally:
 
 ```bash
 # check for latest release
-docker run --rm --name devportal -d -p 7007:7007 veecode/devportal:1.2.1
+docker run --rm --name devportal -d -p 7007:7007 veecode/devportal:latest
 ```
 
 This will start a DevPortal instance running on http://localhost:7007. The default behavior enables "guest" authentication as an admin user. Of course, the default catalog is useless and you may want to add your own repos, GitHub authentication, etc.
@@ -24,7 +24,7 @@ You can use a combination of `docker compose`, configuration files and environme
 ```yaml
 services:
   devportal:
-    image: veecode/devportal:1.2.1
+    image: veecode/devportal:latest
     ports:
       - "7007:7007"
     environment:
@@ -60,9 +60,16 @@ The main purpose of this repo is to allow the addition of dynamic plugins to our
 - Declarative plugin configuration via JSON (for new plugins to be bundled)
 - Automatic plugin download and extraction from external registries during build (runtime mechanics)
 - Built on top of the official VeeCode DevPortal base image
-- Make-based build system for easy customization
 
-## Hot to Build
+## Check our docs
+
+Please check our [docs](https://docs.platform.vee.codes) for more information.
+
+This repo also has some examples of plugin use for quick reference:
+
+- [Kubernetes plugin testing](docs/KUBERNETES.md): run a local cluster with `vkdr` and see it from a cluster catalog object.
+
+## How to Build
 
 ### 1. Add Dynamic Plugins
 
@@ -89,23 +96,7 @@ There are many "wrapped plugins" available on [RHDH "wrappers" repository](https
 
 ### 3. Build the Docker Image
 
-Build your customized DevPortal image:
-
-```bash
-docker build -t my-devportal:latest .
-```
-
-You can specify a different base image tag:
-
-```bash
-docker build --build-arg TAG=v1.2.3 -t my-devportal:v1.2.3 .
-```
-
-### 3. Run the Container
-
-```bash
-docker run -p 7007:7007 my-devportal:latest
-```
+Push a tagged version into `main` branch and wait for the GitHub Actions workflow to run. Image tag is based on the tag of the pushed version (will also push it to "latest").
 
 ## Configuration
 
@@ -133,28 +124,11 @@ DEPLOY TIME (KUBERNETES):
 
 ## Build Arguments
 
-- **TAG**: The tag of the base image to use (default: `1.1.12`)
-
-Example:
-
-```bash
-docker build --build-arg TAG=v1.0.0 -t my-devportal:v1.0.0 .
-```
+- **TAG**: The tag of the base image to use. Always update it with the stable version from `veecode/devportal-base`.
 
 ## Troubleshooting
 
-### Build Fails During Plugin Download
-
-- Verify the plugin package name is correct
-- Check that the specified version exists on NPM
-- Ensure your network can access the NPM registry
-- Ensure `jq` is available in the build environment
-
-### Plugin Not Loading at Runtime
-
-- Verify the plugin was downloaded and copied (check build logs)
-- Ensure the base image version supports your plugins
-- Check the plugin is correctly listed in `plugins.json`
+TODO
 
 ## Contributing
 

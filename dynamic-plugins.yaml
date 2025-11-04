@@ -27,8 +27,8 @@ includes:
   - dynamic-plugins.default.yaml
 
 plugins:
-  - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
-    disabled: true
+  #- package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
+  #  disabled: true
   - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-dynamic
     disabled: false
   - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-global-floating-action-button-dynamic

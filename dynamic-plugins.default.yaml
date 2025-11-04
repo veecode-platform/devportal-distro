@@ -3,26 +3,38 @@
 #
 plugins:
 # Group: Kubernetes
-  - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
-    disabled: true
-    pluginConfig:
-      kubernetes:
-        serviceLocatorMethod:
-          type: 'multiTenant'
-        clusterLocatorMethods:
-          - type: 'config'
-            clusters:
-              - name: ${K8S_CLUSTER_NAME}
-                url: ${K8S_CLUSTER_URL}
-                authProvider: 'serviceAccount'
-                skipTLSVerify: true
-                serviceAccountToken: ${K8S_CLUSTER_TOKEN}
+  # currently the BE plugin is static, so this is commented out
+  # - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
+  #   disabled: true
+  #   pluginConfig:
+  #     kubernetes:
+  #       serviceLocatorMethod:
+  #         type: 'multiTenant'
+  #       clusterLocatorMethods:
+  #         - type: 'config'
+  #           clusters:
+  #             - name: ${K8S_CLUSTER_NAME}
+  #               url: ${K8S_CLUSTER_URL}
+  #               authProvider: 'serviceAccount'
+  #               skipTLSVerify: true
+  #               serviceAccountToken: ${K8S_CLUSTER_TOKEN}
   - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-dynamic
     disabled: true
     pluginConfig:
       dynamicPlugins:
         frontend:
           backstage.plugin-kubernetes:
+            # Declare the tab (path + title) and bind it to a mountPoint
+            entityTabs:
+              - path: /kubernetes
+                title: Kubernetes
+                mountPoint: entity.page.kubernetes
+                config:
+                  if:
+                    allOf:
+                      - hasAnnotation: backstage.io/kubernetes-label-selector
+                      # - hasAnnotation: backstage.io/kubernetes-id
+                      # - hasAnnotation: backstage.io/kubernetes-namespace
             mountPoints:
               - mountPoint: entity.page.kubernetes/cards
                 importName: EntityKubernetesContent
@@ -30,9 +42,12 @@ plugins:
                   layout:
                     gridColumn: "1 / -1"
                   if:
-                    anyOf:
-                      - hasAnnotation: backstage.io/kubernetes-id
-                      - hasAnnotation: backstage.io/kubernetes-namespace
+                    allOf:
+                      - hasAnnotation: backstage.io/kubernetes-label-selector
+                  # if:
+                  #   anyOf:
+                  #     - hasAnnotation: backstage.io/kubernetes-id
+                  #     - hasAnnotation: backstage.io/kubernetes-namespace
   - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-global-floating-action-button-dynamic
     disabled: true
     pluginConfig:

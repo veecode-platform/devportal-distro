@@ -10,11 +10,14 @@
 
 services:
   devportal:
-    image: veecode/devportal:1.2.3
+    # depends_on:
+    #   - kubectl-proxy
+    image: veecode/devportal:1.2.4
     ports:
       - "7007:7007"
     environment:
       - DEVELOPMENT=true
+      - NODE_ENV=development
       # will use shell value
       - VEECODE_PROFILE
       - GITHUB_ORG
@@ -33,3 +36,7 @@ services:
       # examples folder
       - ./examples:/app/examples:ro
 
+  kubectl-proxy:
+    image: alpine/socat:latest
+    command: ["tcp-listen:8001,fork,reuseaddr", "tcp-connect:host.docker.internal:8100"]
+    network_mode: service:devportal

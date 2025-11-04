@@ -108,3 +108,9 @@ jobs:
           docker buildx imagetools create -t ${{ env.IMAGE_NAME }}:${{ steps.extract-tag.outputs.tag }} \
             ${{ env.IMAGE_NAME }}:${{ steps.extract-tag.outputs.tag }}-amd64 \
             ${{ env.IMAGE_NAME }}:${{ steps.extract-tag.outputs.tag }}-arm64
+
+      - name: Create multi-arch manifest (latest)
+        run: |
+          docker buildx imagetools create -t ${{ env.IMAGE_NAME }}:latest \
+            ${{ env.IMAGE_NAME }}:${{ steps.extract-tag.outputs.tag }}-amd64 \
+            ${{ env.IMAGE_NAME }}:${{ steps.extract-tag.outputs.tag }}-arm64

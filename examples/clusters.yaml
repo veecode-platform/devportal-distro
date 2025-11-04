@@ -1,9 +1,11 @@
 apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
-  name: vkdr-local-cluster
+  name: local
   annotations:
-    backstage.io/kubernetes-id: vkdr-local-cluster
+    backstage.io/kubernetes-label-selector: "vee.codes/cluster=local"
 spec:
-  type: cluster
-  owner: admins
+  type: kubernetes-cluster
+  lifecycle: experimental
+  owner: group:default/admins
+  system: platform-core
