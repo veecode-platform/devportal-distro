@@ -60,6 +60,9 @@ if [ "$VEECODE_PROFILE" = "github" ]; then
 elif [ "$VEECODE_PROFILE" = "keycloak" ]; then
   echo "Loading Keycloak configuration..."
   EXTRA_ARGS="$EXTRA_ARGS --config app-config.keycloak.yaml"
+elif [ "$VEECODE_PROFILE" = "azure" ]; then
+  echo "Loading Azure configuration..."
+  EXTRA_ARGS="$EXTRA_ARGS --config app-config.azure.yaml"
 fi
 
 #

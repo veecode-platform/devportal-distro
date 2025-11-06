@@ -12,7 +12,7 @@ services:
   devportal:
     # depends_on:
     #   - kubectl-proxy
-    image: veecode/devportal:1.2.4
+    image: veecode/devportal:1.2.7
     ports:
       - "7007:7007"
     environment:
@@ -20,12 +20,19 @@ services:
       - NODE_ENV=development
       # will use shell value
       - VEECODE_PROFILE
-      - GITHUB_ORG
-      - GITHUB_APP_ID
-      - GITHUB_CLIENT_ID
-      - GITHUB_CLIENT_SECRET
-      - GITHUB_PRIVATE_KEY
-      - GITHUB_TOKEN
+      # GITHUB
+      # - GITHUB_ORG
+      # - GITHUB_APP_ID
+      # - GITHUB_CLIENT_ID
+      # - GITHUB_CLIENT_SECRET
+      # - GITHUB_PRIVATE_KEY
+      # - GITHUB_TOKEN
+      # AZURE/MS
+      - AZURE_TENANT_ID
+      - AZURE_CLIENT_ID
+      - AZURE_CLIENT_SECRET
+      - AZURE_ORGANIZATION
+      - AZURE_TOKEN
     volumes:
       # your config will add/override the default image config
       - ./app-config.yaml:/app/app-config.local.yaml:ro
