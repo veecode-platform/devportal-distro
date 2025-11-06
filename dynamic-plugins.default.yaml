@@ -201,3 +201,28 @@ plugins:
                     anyOf:
                       - hasAnnotation: "github.com/workflows"
                       - hasAnnotation: "vee.codes/has-github-workflows"
+
+  - package: ./dynamic-plugins/dist/backstage-community-plugin-azure-devops-dynamic
+    disabled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          backstage-community-plugin-azure-devops:
+            mountPoints:
+              - mountPoint: entity.page.ci/cards
+                importName: EntityAzurePipelinesContent
+                config:
+                  layout:
+                    gridColumn: "1 / -1"
+                  if:
+                    allOf:
+                      - isAzureDevOpsAvailable
+              - mountPoint: entity.page.pull-requests/cards
+                importName: EntityAzurePullRequestsContent
+                config:
+                  layout:
+                    gridColumn: "1 / -1"
+                  if:
+                    allOf:
+                      - isAzureDevOpsAvailable
+
