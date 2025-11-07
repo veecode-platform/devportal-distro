@@ -198,15 +198,15 @@ plugins:
                 config:
                   layout:
                     gridColumn: "1 / -1"
-                  # if:
-                  #   allOf:
-                  #     - isAzureDevOpsAvailable
+                  if:
+                    allOf:
+                      - isAzureDevOpsAvailable
               - mountPoint: entity.page.pull-requests/cards
                 importName: EntityAzurePullRequestsContent
                 config:
                   layout:
                     gridColumn: "1 / -1"
-                  # if:
-                  #   allOf:
-                  #     - isAzureDevOpsAvailable
+                  if:
+                    allOf:
+                      - isAzureDevOpsAvailable
 
