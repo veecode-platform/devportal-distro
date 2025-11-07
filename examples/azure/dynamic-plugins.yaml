@@ -1,0 +1,49 @@
+#
+# This is a dynamic plugins config file bundled with the devportal-base image.
+# It is used to define the behaviour of the dynamic plugins system pre-startup.
+#
+# Plugins at "dynamic-plugins-root" will be loaded at startup, and its default 
+# content is defined by the "dynamic-plugins" workspace (downloads and wrappers).
+# This file defines, on the other hand, defines the plugins that will be copied 
+# into the "dynamic-plugins-root" folder during startup.
+#
+# It is important to undertand: pre-installed plugins are bundled with the image.
+# They are forcibly loaded at startup if placed in the "dynamic-plugins-root" folder.
+# They are **not** forcibly loaded if kept somewhere else.
+#
+# This config file will enumerate plugins that:
+#
+# 1. Are bundled in the image file system, but outside the "dynamic-plugins-root" folder.
+# 2. Are not bundled in the image, but are available for download.
+#
+# A start script will process this file and make sure enabled plugins are copied
+# into the "dynamic-plugins-root" folder *and* that their configuration gets merged
+# into a proper dedicated "app-config" file.
+#
+includes:
+  # Always start by merging the defaults that ship inside the image
+  # That makes it easy to enable plugins with defaults that would otherwise
+  # be painful to configure.
+  - dynamic-plugins.default.yaml
+
+plugins:
+  #- package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
+  #  disabled: true
+  - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-dynamic
+    disabled: true
+  - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-global-floating-action-button-dynamic
+    disabled: true
+  - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-security-insights-dynamic
+    disabled: true
+  - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-github-insights-dynamic
+    disabled: true
+  - package: ./dynamic-plugins/dist/backstage-community-plugin-github-actions-dynamic
+    disabled: true
+  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-github-workflows-backend-dynamic
+    disabled: true
+  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-github-workflows-dynamic
+    disabled: true
+  - package: ./dynamic-plugins/dist/backstage-community-plugin-azure-devops-dynamic
+    disabled: false
+  - package: ./dynamic-plugins/dist/backstage-community-plugin-azure-devops-backend-dynamic
+    disabled: false
