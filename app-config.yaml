@@ -1,35 +1,35 @@
 #
 # will merge this to bundled files
 #
-catalog:
-  locations:
-    - type: url
-      target: https://github.com/veecode-platform/devportal-base/blob/main/catalog-info.yaml
-    # Local example data, file locations are relative to the backend process, typically `packages/backend`
-    - type: file
-      target: /app/examples/systems.yaml
-    # Local example organizational data
-    - type: file
-      target: /app/examples/org.yaml
-      rules:
-        - allow: [User, Group]  
-    # Local example clusters
-    - type: file
-      target: /app/examples/clusters.yaml
+# catalog:
+#   locations:
+#     #- type: url
+#     #  target: https://github.com/veecode-platform/devportal-base/blob/main/catalog-info.yaml
+#     # Local example data, file locations are relative to the backend process, typically `packages/backend`
+#     - type: file
+#       target: /app/examples/systems.yaml
+#     # Local example organizational data
+#     - type: file
+#       target: /app/examples/org.yaml
+#       rules:
+#         - allow: [User, Group]  
+#     # Local example clusters
+#     - type: file
+#       target: /app/examples/clusters.yaml
 
-permission:
-  enabled: false
-  rbac:
-    policies-csv-file: ../../rbac-policy.csv
-    pluginsWithPermission:
-      - catalog
-      - scaffolder
-      - permission
-    admin:
-      users:
-        - name: group:default/admins
-      superUsers:
-        - name: group:default/admins
+# permission:
+#   enabled: false
+#   rbac:
+#     policies-csv-file: ../../rbac-policy.csv
+#     pluginsWithPermission:
+#       - catalog
+#       - scaffolder
+#       - permission
+#     admin:
+#       users:
+#         - name: group:default/admins
+#       superUsers:
+#         - name: group:default/admins
 
 kubernetes:
   serviceLocatorMethod:

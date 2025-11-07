@@ -98,6 +98,8 @@ There are many "wrapped plugins" available on [RHDH "wrappers" repository](https
 
 Push a tagged version into `main` branch and wait for the GitHub Actions workflow to run. Image tag is based on the tag of the pushed version (will also push it to "latest").
 
+Note: you can optionally build the image locally by following the instructions in [docs/LOCAL.md](docs/LOCAL.md).
+
 ## Configuration
 
 Understand the build and runtime folders and behaviours for dynamic plugins:

@@ -12,7 +12,7 @@ services:
   devportal:
     # depends_on:
     #   - kubectl-proxy
-    image: veecode/devportal:1.2.7
+    image: veecode/devportal:latest
     ports:
       - "7007:7007"
     environment:
@@ -21,17 +21,18 @@ services:
       # will use shell value
       - VEECODE_PROFILE
       # GITHUB
-      # - GITHUB_ORG
-      # - GITHUB_APP_ID
-      # - GITHUB_CLIENT_ID
-      # - GITHUB_CLIENT_SECRET
-      # - GITHUB_PRIVATE_KEY
-      # - GITHUB_TOKEN
+      - GITHUB_ORG
+      - GITHUB_APP_ID
+      - GITHUB_CLIENT_ID
+      - GITHUB_CLIENT_SECRET
+      - GITHUB_PRIVATE_KEY
+      - GITHUB_TOKEN
       # AZURE/MS
       - AZURE_TENANT_ID
       - AZURE_CLIENT_ID
       - AZURE_CLIENT_SECRET
       - AZURE_ORGANIZATION
+      - AZURE_PROJECT
       - AZURE_TOKEN
     volumes:
       # your config will add/override the default image config
@@ -41,7 +42,7 @@ services:
       # default dynamic plugins config (with default values)
       - ./dynamic-plugins.default.yaml:/app/dynamic-plugins.default.yaml:ro
       # examples folder
-      - ./examples:/app/examples:ro
+      #- ./examples:/app/examples:ro
 
   kubectl-proxy:
     image: alpine/socat:latest

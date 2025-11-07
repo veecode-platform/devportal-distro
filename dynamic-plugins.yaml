@@ -44,4 +44,6 @@ plugins:
   - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-github-workflows-dynamic
     disabled: false
   - package: ./dynamic-plugins/dist/backstage-community-plugin-azure-devops-dynamic
-    disabled: false
+    disabled: true
+  - package: ./dynamic-plugins/dist/backstage-community-plugin-azure-devops-backend-dynamic
+    disabled: true

@@ -21,6 +21,9 @@ logs
 **/dist-scalprum
 build
 dynamic-plugins-root
+# Dynamic plugins build artifacts
+dynamic-plugins-store/*
+!dynamic-plugins-store/.gitkeep
 **/.turbo
 
 # IDE files
