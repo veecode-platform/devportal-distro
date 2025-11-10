@@ -1,0 +1,32 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: devportal-distro
+  description: An full open source Backstage distro.
+  # Example for optional annotations
+  annotations:
+    github.com/project-slug: veecode-platform/devportal-distro
+    github.com/workflows: |
+     [
+       {
+         "workflow": "echo.yml",
+         "label": "Echo",
+         "tooltip": "Click here and start an useless workflow"
+       }
+     ]
+  #   backstage.io/techdocs-ref: dir:.
+spec:
+  type: service
+  owner: group:developers
+  lifecycle: production
+  system: devportal
+
+---
+
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: devportal
+spec:
+  owner: group:developers
