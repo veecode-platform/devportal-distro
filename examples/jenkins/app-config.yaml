@@ -1,0 +1,29 @@
+#
+# will merge this to bundled files
+#
+catalog:
+  locations:
+    - type: url
+      target: https://github.com/veecode-platform/devportal-distro/blob/main/catalog-info.yaml
+    # # Local example organizational data
+    - type: file
+      target: /app/examples/org.yaml
+      rules:
+        - allow: [User, Group]  
+#
+# IMPORTANT: jenkins scaffolder plugin forces to set jenkins.baseUrl (etc),
+# so jenkins.instances syntax will break it
+# we may have to move jenkins scaffolder plugin to dynamic plugins
+#
+jenkins:
+  # baseUrl: null
+  # username: null
+  # apiKey: null
+  baseUrl: ${JENKINS_URL}
+  username: ${JENKINS_USERNAME}
+  apiKey: ${JENKINS_TOKEN}
+  # instances:
+  #   - name: default
+  #     baseUrl: ${JENKINS_URL}
+  #     username: ${JENKINS_USERNAME}
+  #     apiKey: ${JENKINS_TOKEN}

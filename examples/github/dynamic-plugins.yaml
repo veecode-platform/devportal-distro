@@ -27,12 +27,6 @@ includes:
   - dynamic-plugins.default.yaml
 
 plugins:
-  #- package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
-  #  disabled: true
-  - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-dynamic
-    disabled: false
-  - package: ./dynamic-plugins/dist/red-hat-developer-hub-backstage-plugin-global-floating-action-button-dynamic
-    disabled: true
   - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-security-insights-dynamic
     disabled: false
   - package: ./dynamic-plugins/dist/roadiehq-backstage-plugin-github-insights-dynamic
@@ -43,7 +37,3 @@ plugins:
     disabled: false
   - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-github-workflows-dynamic
     disabled: false
-  - package: ./dynamic-plugins/dist/backstage-community-plugin-azure-devops-dynamic
-    disabled: true
-  - package: ./dynamic-plugins/dist/backstage-community-plugin-azure-devops-backend-dynamic
-    disabled: true

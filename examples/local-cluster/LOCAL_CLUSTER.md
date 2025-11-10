@@ -34,8 +34,6 @@ As a quick way to test the kubernetes plugin, you can use the `vkdr` tool to sta
 
    ```sh
    export VEECODE_PROFILE=github
-   export GITHUB_ORG=xxx
-   # ...all the others
    ```
 
 5. Start the DevPortal:
@@ -45,3 +43,5 @@ As a quick way to test the kubernetes plugin, you can use the `vkdr` tool to sta
    ```
 
 Note: there is an auxiliary container `kubectl-proxy` that exposes the proxy to the cluster API into the DevPortal container. This (unsafe) hack is necessary because `localKubectlProxy` only works with localhost.
+
+This is somewhat cumbersome, but will avoid the need to deal with service account authentication.

@@ -17,16 +17,15 @@ services:
       - DEVELOPMENT=true
       - NODE_ENV=development
       # will use shell value
-      - VEECODE_PROFILE=azure
-      # AZURE/MS
-      - AZURE_TENANT_ID
-      - AZURE_CLIENT_ID
-      - AZURE_CLIENT_SECRET
-      - AZURE_ORGANIZATION
-      - AZURE_PROJECT
-      - AZURE_TOKEN
+      - VEECODE_PROFILE=local
+      - GITHUB_TOKEN
+      - JENKINS_URL
+      - JENKINS_USERNAME
+      - JENKINS_TOKEN
     volumes:
       # dynamic plugins config (just enable/disable plugins)
       - ./dynamic-plugins.yaml:/app/dynamic-plugins.yaml:ro
       # default dynamic plugins config (with default values)
       #- ./dynamic-plugins.default.yaml:/app/dynamic-plugins.default.yaml:ro
+      # your config will add/override the default image config
+      - ./app-config.yaml:/app/app-config.local.yaml:ro
