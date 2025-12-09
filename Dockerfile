@@ -1,4 +1,4 @@
-ARG TAG=1.1.42
+ARG TAG=1.1.56
 FROM veecode/devportal-base:${TAG} AS base
 
 # allows setting NPM registry from build arg

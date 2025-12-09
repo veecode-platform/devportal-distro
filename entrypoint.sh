@@ -75,18 +75,24 @@ fi
 # dynamic-plugins-root/app-config.dynamic-plugins.yaml
 # 
 
+if [ -z "$DEBUG_PORT" ]; then
+    DEBUG_ARGS=""
+else
+    DEBUG_ARGS="--inspect=0.0.0.0:$DEBUG_PORT"
+fi
+
 # EXECUTE THE COMMAND
 if [ "$DEVELOPMENT" = "true" ]; then
-    echo "Running in DEVELOPMENT mode with auto-restart on config changes"
+    echo "Running in DEVELOPMENT mode with auto-restart on config changes and debug port"
     exec npx nodemon \
         --watch app-config.yaml \
         --watch app-config.production.yaml \
         --watch app-config.dynamic-plugins.yaml \
         --watch "$LOCAL_CONFIG" \
         --watch "$DYNAMIC_PLUGINS_CONFIG" \
-        --exec "node packages/backend --config app-config.yaml --config app-config.production.yaml --config app-config.dynamic-plugins.yaml $EXTRA_ARGS"
+        --exec "node $NODE_OPTIONS $DEBUG_ARGS packages/backend --config app-config.yaml --config app-config.production.yaml --config app-config.dynamic-plugins.yaml $EXTRA_ARGS"
 else
-    exec node packages/backend \
+    exec node $NODE_OPTIONS $DEBUG_ARGS packages/backend \
         --config app-config.yaml \
         --config app-config.production.yaml \
         --config app-config.dynamic-plugins.yaml \
