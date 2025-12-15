@@ -1,0 +1,19 @@
+# Backstage override configuration for your local development environment
+
+# signInPage: github
+
+integrations:
+  github:
+    - host: github.com
+      token: ${GITHUB_TOKEN}
+
+catalog:
+  providers:
+    github:
+      development:
+        organization: "${GITHUB_ORG}"
+        schedule:
+          frequency:
+            minutes: 5
+          timeout:
+            minutes: 3

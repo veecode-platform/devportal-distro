@@ -37,3 +37,5 @@ COPY --chown=default:default dynamic-plugins.yaml /app/dynamic-plugins.yaml
 COPY --chown=default:default dynamic-plugins.default.yaml /app/dynamic-plugins.default.yaml
 COPY --chown=default:default docker/install-dynamic-plugins.py /app/install-dynamic-plugins.py
 COPY --chown=default:default --chmod=755 docker/install-dynamic-plugins.sh /app/install-dynamic-plugins.sh
+# override profile config files - these will take precedence over the base image ones
+COPY --chown=default:default profiles/*.yaml /app/

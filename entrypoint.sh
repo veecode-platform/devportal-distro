@@ -54,31 +54,40 @@ if [ -f "$DYNAMIC_PLUGINS_CONFIG" ]; then
 fi
 
 # Conditionally add app-config.PROFILE.yaml
-if [ "$VEECODE_PROFILE" = "github" ]; then
-  echo "Loading GitHub configuration..."
-  # if GITHUB_AUTH_CLIENT_ID is not set, set it to GITHUB_CLIENT_ID
-  # if GITHUB_AUTH_CLIENT_SECRET is not set, set it to GITHUB_CLIENT_SECRET
-  if [ -z "$GITHUB_AUTH_CLIENT_ID" ]; then
-    export GITHUB_AUTH_CLIENT_ID=$GITHUB_CLIENT_ID
-  fi
-  if [ -z "$GITHUB_AUTH_CLIENT_SECRET" ]; then
-    export GITHUB_AUTH_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
-  fi
-  # if GITHUB_PRIVATE_KEY_BASE64 is set, decode it and set GITHUB_PRIVATE_KEY
-  if [ -n "$GITHUB_PRIVATE_KEY_BASE64" ]; then
-      export GITHUB_PRIVATE_KEY=$(echo "$GITHUB_PRIVATE_KEY_BASE64" | base64 --decode)
-  fi
-  EXTRA_ARGS="$EXTRA_ARGS --config app-config.github.yaml"
-elif [ "$VEECODE_PROFILE" = "keycloak" ]; then
-  echo "Loading Keycloak configuration..."
-  EXTRA_ARGS="$EXTRA_ARGS --config app-config.keycloak.yaml"
-elif [ "$VEECODE_PROFILE" = "azure" ]; then
-  echo "Loading Azure configuration..."
-  EXTRA_ARGS="$EXTRA_ARGS --config app-config.azure.yaml"
-elif [ "$VEECODE_PROFILE" = "ldap" ]; then
-  echo "Loading LDAP configuration..."
-  EXTRA_ARGS="$EXTRA_ARGS --config app-config.ldap.yaml"
-fi
+case "$VEECODE_PROFILE" in
+  github-pat)
+    echo "VEECODE: Loading GitHub PAT configuration. Required env vars: GITHUB_TOKEN, GITHUB_ORG"
+    EXTRA_ARGS="$EXTRA_ARGS --config app-config.github-pat.yaml"
+    ;;
+  github)
+    echo "VEECODE: Loading GitHub configuration..."
+    # if GITHUB_AUTH_CLIENT_ID is not set, set it to GITHUB_CLIENT_ID
+    # if GITHUB_AUTH_CLIENT_SECRET is not set, set it to GITHUB_CLIENT_SECRET
+    if [ -z "$GITHUB_AUTH_CLIENT_ID" ]; then
+      export GITHUB_AUTH_CLIENT_ID=$GITHUB_CLIENT_ID
+    fi
+    if [ -z "$GITHUB_AUTH_CLIENT_SECRET" ]; then
+      export GITHUB_AUTH_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
+    fi
+    # if GITHUB_PRIVATE_KEY_BASE64 is set, decode it and set GITHUB_PRIVATE_KEY
+    if [ -n "$GITHUB_PRIVATE_KEY_BASE64" ]; then
+        export GITHUB_PRIVATE_KEY=$(echo "$GITHUB_PRIVATE_KEY_BASE64" | base64 --decode)
+    fi
+    EXTRA_ARGS="$EXTRA_ARGS --config app-config.github.yaml"
+    ;;
+  keycloak)
+    echo "VEECODE: Loading Keycloak configuration..."
+    EXTRA_ARGS="$EXTRA_ARGS --config app-config.keycloak.yaml"
+    ;;
+  azure)
+    echo "VEECODE: Loading Azure configuration..."
+    EXTRA_ARGS="$EXTRA_ARGS --config app-config.azure.yaml"
+    ;;
+  ldap)
+    echo "VEECODE: Loading LDAP configuration..."
+    EXTRA_ARGS="$EXTRA_ARGS --config app-config.ldap.yaml"
+    ;;
+esac
 
 #
 # understand config files precedence (all merge, override in order)
