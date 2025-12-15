@@ -56,6 +56,18 @@ fi
 # Conditionally add app-config.PROFILE.yaml
 if [ "$VEECODE_PROFILE" = "github" ]; then
   echo "Loading GitHub configuration..."
+  # if GITHUB_AUTH_CLIENT_ID is not set, set it to GITHUB_CLIENT_ID
+  # if GITHUB_AUTH_CLIENT_SECRET is not set, set it to GITHUB_CLIENT_SECRET
+  if [ -z "$GITHUB_AUTH_CLIENT_ID" ]; then
+    export GITHUB_AUTH_CLIENT_ID=$GITHUB_CLIENT_ID
+  fi
+  if [ -z "$GITHUB_AUTH_CLIENT_SECRET" ]; then
+    export GITHUB_AUTH_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
+  fi
+  # if GITHUB_PRIVATE_KEY_BASE64 is set, decode it and set GITHUB_PRIVATE_KEY
+  if [ -n "$GITHUB_PRIVATE_KEY_BASE64" ]; then
+      export GITHUB_PRIVATE_KEY=$(echo "$GITHUB_PRIVATE_KEY_BASE64" | base64 --decode)
+  fi
   EXTRA_ARGS="$EXTRA_ARGS --config app-config.github.yaml"
 elif [ "$VEECODE_PROFILE" = "keycloak" ]; then
   echo "Loading Keycloak configuration..."
@@ -63,6 +75,9 @@ elif [ "$VEECODE_PROFILE" = "keycloak" ]; then
 elif [ "$VEECODE_PROFILE" = "azure" ]; then
   echo "Loading Azure configuration..."
   EXTRA_ARGS="$EXTRA_ARGS --config app-config.azure.yaml"
+elif [ "$VEECODE_PROFILE" = "ldap" ]; then
+  echo "Loading LDAP configuration..."
+  EXTRA_ARGS="$EXTRA_ARGS --config app-config.ldap.yaml"
 fi
 
 #
