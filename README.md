@@ -17,7 +17,7 @@ You can simply run the following command to start a DevPortal instance locally:
 docker run --rm --name devportal -d -p 7007:7007 veecode/devportal:latest
 ```
 
-This will start a DevPortal instance running on http://localhost:7007. The default behavior enables "guest" authentication as an admin user. Of course, the default catalog is useless and you may want to add your own repos, GitHub authentication, etc.
+This will start a DevPortal instance running on <http://localhost:7007>. The default behavior enables "guest" authentication as an admin user. Of course, the default catalog is useless and you may want to add your own repos, GitHub authentication, etc.
 
 You can use a combination of `docker compose`, configuration files and environment variables to customize the behavior of the DevPortal instance:
 
