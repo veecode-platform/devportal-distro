@@ -259,7 +259,23 @@ plugins:
       dynamicPlugins:
         frontend:
           backstage-community.plugin-sonarqube:
+            entityTabs:
+              - path: /code-quality
+                title: Code Quality
+                mountPoint: entity.page.code-quality
+                config:
+                  if:
+                    allOf:
+                      - isSonarQubeAvailable
             mountPoints:
+            - mountPoint: entity.page.code-quality/cards
+              importName: SonarQubeRelatedEntitiesOverview
+              config:
+                layout:
+                  gridColumn: "1 / -1"
+                if:
+                  allOf:
+                  - isSonarQubeAvailable
             - mountPoint: entity.page.overview/cards
               importName: EntitySonarQubeCard
               config:
