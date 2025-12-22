@@ -108,6 +108,7 @@ fi
 # EXECUTE THE COMMAND
 if [ "$DEVELOPMENT" = "true" ]; then
     echo "Running in DEVELOPMENT mode with auto-restart on config changes and debug port"
+    echo "EXTRA_ARGS=$EXTRA_ARGS"
     exec npx nodemon \
         --watch app-config.yaml \
         --watch app-config.production.yaml \
@@ -116,9 +117,10 @@ if [ "$DEVELOPMENT" = "true" ]; then
         --watch "$DYNAMIC_PLUGINS_CONFIG" \
         --exec "node $NODE_OPTIONS $DEBUG_ARGS packages/backend --config app-config.yaml --config app-config.production.yaml --config app-config.dynamic-plugins.yaml $EXTRA_ARGS"
 else
+    echo "Running in PRODUCTION mode"
+    echo "EXTRA_ARGS=$EXTRA_ARGS"
     exec node $NODE_OPTIONS $DEBUG_ARGS packages/backend \
         --config app-config.yaml \
         --config app-config.production.yaml \
-        --config app-config.dynamic-plugins.yaml \
-        $EXTRA_ARGS
+        --config app-config.dynamic-plugins.yaml $EXTRA_ARGS
 fi
