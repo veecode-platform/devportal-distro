@@ -54,8 +54,8 @@ fi
 # Decode VEECODE_DYNAMIC_PLUGINS and convert to YAML
 if [ ! -z "$VEECODE_DYNAMIC_PLUGINS" ]; then
     echo "VEECODE_DYNAMIC_PLUGINS detected (this is expected in VeeCode SaaS deployments), decoding into /app/dynamic-plugins-decoded.yaml"
-    echo "$VEECODE_DYNAMIC_PLUGINS" | base64 -d | yq -p json -o yaml > /app/dynamic-plugins-decoded.yaml
-    echo "VEECODE_DYNAMIC_PLUGINS expanded into /app/dynamic-plugins-decoded.yaml successfully"
+    echo "$VEECODE_DYNAMIC_PLUGINS" | base64 -d | yq -p json -o yaml > /app/dynamic-plugins.yaml
+    echo "VEECODE_DYNAMIC_PLUGINS expanded into /app/dynamic-plugins.yaml successfully"
 else
     echo "VEECODE_DYNAMIC_PLUGINS variable not found (this is expected in non-SaaS deployments)"
 fi
