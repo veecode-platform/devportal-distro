@@ -59,6 +59,11 @@ if [ ! -z "$VEECODE_DYNAMIC_PLUGINS" ]; then
 else
     echo "VEECODE_DYNAMIC_PLUGINS variable not found (this is expected in non-SaaS deployments)"
 fi
+if [ ! -z "$VEECODE_DOMAIN" ]; then
+    echo "VEECODE_DOMAIN detected (this is expected in VeeCode SaaS deployments): $VEECODE_DOMAIN"
+else
+    echo "VEECODE_DOMAIN variable not found (this is expected in non-SaaS deployments)"
+fi
 
 DYNAMIC_PLUGINS_CONFIG="/app/dynamic-plugins-root/app-config.dynamic-plugins.yaml"
 LOCAL_CONFIG="/app/app-config.local.yaml"
