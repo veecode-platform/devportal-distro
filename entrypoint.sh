@@ -43,6 +43,23 @@ fi
 # ENTRYPOINT INSTALL PLUGINS
 /app/install-dynamic-plugins.sh /app/dynamic-plugins-root
 
+# SAAS: expands VEECODE_APP_CONFIG and VEECODE_DYNAMIC_PLUGINS into files
+if [ ! -z "$VEECODE_APP_CONFIG" ]; then
+    echo "VEECODE_APP_CONFIG detected (this is expected in VeeCode SaaS deployments), decoding into /app/app-config.local.yaml"
+    echo "$VEECODE_APP_CONFIG" | base64 -d | yq -p json -o yaml > /app/app-config.local.yaml
+    echo "VEECODE_APP_CONFIG expanded into /app/app-config.local.yaml successfully"
+else
+    echo "VEECODE_APP_CONFIG variable not found (this is expected in non-SaaS deployments)"
+fi
+# Decode VEECODE_DYNAMIC_PLUGINS and convert to YAML
+if [ ! -z "$VEECODE_DYNAMIC_PLUGINS" ]; then
+    echo "VEECODE_DYNAMIC_PLUGINS detected (this is expected in VeeCode SaaS deployments), decoding into /app/dynamic-plugins-decoded.yaml"
+    echo "$VEECODE_DYNAMIC_PLUGINS" | base64 -d | yq -p json -o yaml > /app/dynamic-plugins-decoded.yaml
+    echo "VEECODE_DYNAMIC_PLUGINS expanded into /app/dynamic-plugins-decoded.yaml successfully"
+else
+    echo "VEECODE_DYNAMIC_PLUGINS variable not found (this is expected in non-SaaS deployments)"
+fi
+
 DYNAMIC_PLUGINS_CONFIG="/app/dynamic-plugins-root/app-config.dynamic-plugins.yaml"
 LOCAL_CONFIG="/app/app-config.local.yaml"
 EXTRA_ARGS=""
