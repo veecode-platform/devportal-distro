@@ -1,0 +1,8 @@
+{
+  "skills": {
+    "update-base-tag": {
+      "description": "Update TAG ARG in Dockerfile to latest veecode/devportal-base release",
+      "path": ".claude/skills/update-base-tag.md"
+    }
+  }
+}
