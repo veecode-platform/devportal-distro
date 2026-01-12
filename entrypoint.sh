@@ -119,7 +119,8 @@ esac
 # app-config.dynamic-plugins.yaml
 # app-config.local.yaml
 # dynamic-plugins-root/app-config.dynamic-plugins.yaml
-# 
+# app-config.{profile}.yaml (if VEECODE_PROFILE is set)
+#
 
 if [ -z "$DEBUG_PORT" ]; then
     DEBUG_ARGS=""
