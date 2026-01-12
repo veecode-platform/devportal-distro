@@ -1,4 +1,9 @@
-# Skill: update-base-tag
+---
+name: update-base-tag
+description: Update TAG ARG in Dockerfile to latest veecode/devportal-base release
+---
+
+# Update Base Tag
 
 Update the `TAG` ARG in the Dockerfile to the latest semver release of `veecode/devportal-base`.
 
@@ -8,7 +13,7 @@ Update the `TAG` ARG in the Dockerfile to the latest semver release of `veecode/
 
    Use WebFetch to query the Docker Hub API for available tags (sorted by last updated):
 
-   ```
+   ```pre
    URL: https://hub.docker.com/v2/repositories/veecode/devportal-base/tags/?page_size=100&ordering=last_updated
    Prompt: List all semver tags (X.Y.Z format, no suffixes like -amd64 or -arm64) and identify the highest version number.
    ```
@@ -24,7 +29,7 @@ Update the `TAG` ARG in the Dockerfile to the latest semver release of `veecode/
 
 3. **Read the current Dockerfile**
 
-   Read `/Users/andre/projetos/veecode/devportal-distro/Dockerfile` and find the current `TAG` value in the `ARG TAG=X.Y.Z` line.
+   Read the Dockerfile in the project root and find the current `TAG` value in the `ARG TAG=X.Y.Z` line.
 
 4. **Compare versions**
 
@@ -35,20 +40,21 @@ Update the `TAG` ARG in the Dockerfile to the latest semver release of `veecode/
 
    Use the Edit tool to replace the `ARG TAG=` line with the new version:
 
-   ```
+   ```dockerfile
    ARG TAG=<latest_version>
    ```
 
 6. **Report the result**
 
    Output a summary:
+
    - Previous version
    - New version (or "already up to date")
    - The full tag that was found
 
 ## Example Output
 
-```
+```pre
 Updated TAG in Dockerfile:
   Previous: 1.1.70
   New:      1.2.0
@@ -56,6 +62,6 @@ Updated TAG in Dockerfile:
 
 Or if already current:
 
-```
+```pre
 Dockerfile is already up to date with TAG=1.1.70
 ```
