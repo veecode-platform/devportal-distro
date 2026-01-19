@@ -35,10 +35,11 @@ VeeCode DevPortal is a production-ready Backstage distribution built on the `vee
 Set `VEECODE_PROFILE` environment variable to load profile-specific configs:
 
 - `github-pat` - GitHub PAT authentication
-- `github` - GitHub App authentication
-- `azure` - Azure DevOps
-- `keycloak` - Keycloak SSO
-- `ldap` - LDAP authentication
+- `github` - GitHub authentication, integration and org sync
+- `gitlab` - GitLab authentication, integration and org sync
+- `azure` - Azure DevOps authentication, integration and org sync
+- `keycloak` - Keycloak SSO authentication and org sync
+- `ldap` - LDAP authentication and org sync
 
 ## Key Files
 
@@ -54,7 +55,7 @@ Set `VEECODE_PROFILE` environment variable to load profile-specific configs:
 
 ```bash
 # Start DevPortal with hot reloading
-docker compose up --no-log-prefix | npx --yes pino-pretty --colorize --translateTime
+docker compose up --no-log-prefix
 
 # Reprocess dynamic plugins config without restart
 docker compose exec devportal /app/install-dynamic-plugins.sh /app/dynamic-plugins-root
@@ -83,12 +84,12 @@ yarn new-wrapper
 
 ### Building Docker Image
 
-Push a tag to main branch (triggers GitHub Actions). Tags follow semver: `v1.2.3` or `1.2.3`.
+For pipeline builds push a tag to main branch (triggers GitHub Actions). Tags must follow semver: `v1.2.3` or `1.2.3`.
 
-For local builds:
+For **local builds** (see [LOCAL_BUILD.md](docs/LOCAL_BUILD.md)):
 
 ```bash
-docker build -t veecode/devportal:local .
+docker buildx build . -t veecode/devportal:local
 ```
 
 ## Adding Plugins
