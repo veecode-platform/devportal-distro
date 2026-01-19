@@ -146,3 +146,6 @@ dynamic-plugins-store/*
 
 # Local configuration files
 *.local.yaml
+
+# Trivy scan output
+.trivyscan/
