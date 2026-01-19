@@ -148,4 +148,5 @@ dynamic-plugins-store/*
 *.local.yaml
 
 # Trivy scan output
-.trivyscan/
+.trivyscan/*
+!.trivyscan/.gitkeep
