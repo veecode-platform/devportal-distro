@@ -3,7 +3,7 @@ Remediate known vulnerabilities identified by Trivy security scans:
 ## Prerequisites
 
 - Run `/security-scan` first to generate the split reports
-- This skill uses `.trivyscan/main-report.json` (DevPortal base vulnerabilities only)
+- This skill uses `.trivyscan/main-report.json` (DevPortal distro vulnerabilities only)
 - Dynamic plugin vulnerabilities (in `plugins-report.json`) are ignored - they are maintained by upstream projects
 
 ## Steps
@@ -13,7 +13,7 @@ Remediate known vulnerabilities identified by Trivy security scans:
    Read `.trivyscan/main-report.json` and identify actionable vulnerabilities:
 
    - npm packages with available fixes (fixable via Yarn resolutions in dynamic-plugins/package.json)
-   - Skip system packages (RHEL/UBI) - not actionable in this repo, requires upstream devportal-base update
+   - Skip system packages (RHEL/UBI) - not actionable in this repo, requires upstream devportal-base or ubi9 update
 
 2. **For npm vulnerabilities in wrapper plugins**:
 

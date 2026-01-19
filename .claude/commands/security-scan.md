@@ -31,19 +31,19 @@ Scan a Docker image for security vulnerabilities using Trivy:
 
    This creates:
 
-   - `.trivyscan/main-report.json` - DevPortal base vulnerabilities (actionable by this project)
+   - `.trivyscan/main-report.json` - DevPortal distro vulnerabilities (actionable by this project)
    - `.trivyscan/plugins-report.json` - Dynamic plugin vulnerabilities (maintained by upstream projects)
 
 4. **Generate markdown reports**:
 
    ```bash
-   .trivy/generate-report.sh .trivyscan/main-report.json "DevPortal Base" > .trivyscan/main-report.md
+   .trivy/generate-report.sh .trivyscan/main-report.json "DevPortal Distro" > .trivyscan/main-report.md
    .trivy/generate-report.sh .trivyscan/plugins-report.json "Dynamic Plugins" > .trivyscan/plugins-report.md
    ```
 
 5. **Report results** with separate summary tables for each:
 
-   ### DevPortal Base (Actionable)
+   ### DevPortal Distro (Actionable)
 
    | Severity | Count |
    | -------- | ----- |
@@ -71,7 +71,7 @@ Scan a Docker image for security vulnerabilities using Trivy:
 ## Output Files
 
 - `.trivyscan/report.json` - Full JSON report (all vulnerabilities)
-- `.trivyscan/main-report.json` - DevPortal base vulnerabilities only
+- `.trivyscan/main-report.json` - DevPortal distro vulnerabilities only
 - `.trivyscan/main-report.md` - Human-readable DevPortal report
 - `.trivyscan/plugins-report.json` - Dynamic plugin vulnerabilities only
 - `.trivyscan/plugins-report.md` - Human-readable plugins report
