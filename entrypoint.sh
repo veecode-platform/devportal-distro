@@ -97,6 +97,10 @@ case "$VEECODE_PROFILE" in
     fi
     EXTRA_ARGS="$EXTRA_ARGS --config app-config.github.yaml"
     ;;
+  gitlab)
+    echo "VEECODE: Loading GitLab configuration..."
+    EXTRA_ARGS="$EXTRA_ARGS --config app-config.gitlab.yaml"
+    ;;
   keycloak)
     echo "VEECODE: Loading Keycloak configuration..."
     EXTRA_ARGS="$EXTRA_ARGS --config app-config.keycloak.yaml"
