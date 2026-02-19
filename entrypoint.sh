@@ -103,6 +103,10 @@ case "$VEECODE_PROFILE" in
     ;;
   keycloak)
     echo "VEECODE: Loading Keycloak configuration..."
+    if [ -z "$KEYCLOAK_METADATA_URL" ]; then
+      export KEYCLOAK_METADATA_URL="$KEYCLOAK_BASE_URL/realms/$KEYCLOAK_REALM"
+    fi
+    echo "VEECODE: Keycloak metadata URL: $KEYCLOAK_METADATA_URL"
     EXTRA_ARGS="$EXTRA_ARGS --config app-config.keycloak.yaml"
     ;;
   azure)
