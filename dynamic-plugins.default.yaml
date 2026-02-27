@@ -289,3 +289,28 @@ plugins:
                   - isSonarQubeAvailable
   - package: ./dynamic-plugins/dist/backstage-community-plugin-sonarqube-backend-dynamic
     disabled: true
+
+  # ABOUT plugin
+  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-backend-dynamic
+    disabled: false
+  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-dynamic
+    disabled: false
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          veecode-platform.backstage-plugin-about:
+            appIcons:
+              - name: aboutIcon
+                importName: AboutIcon
+            dynamicRoutes:
+              - path: /about
+                importName: AboutPage
+                menuItem:
+                  icon: aboutIcon
+                  text: About
+                  enabled: true
+            menuItems:
+              about:
+                parent: admin
+                title: About
+                icon: aboutIcon

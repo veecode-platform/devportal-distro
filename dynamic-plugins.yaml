@@ -51,3 +51,7 @@ plugins:
     disabled: true
   - package: ./dynamic-plugins/dist/backstage-community-plugin-jenkins
     disabled: true
+  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-backend-dynamic
+    disabled: false
+  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-dynamic
+    disabled: false
