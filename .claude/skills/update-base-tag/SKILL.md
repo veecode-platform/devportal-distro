@@ -9,16 +9,18 @@ Update the `TAG` ARG in the Dockerfile to the latest semver release of `veecode/
 
 ## Instructions
 
-1. **Fetch tags from Docker Hub**
+1. **Fetch tags from Docker Hub** (paginated)
 
-   Use WebFetch to query the Docker Hub API for available tags (sorted by last updated):
+   Docker Hub returns at most 100 tags per page. Use WebFetch to query the
+   first page, then check the `next` field in the response for additional pages:
 
    ```pre
    URL: https://hub.docker.com/v2/repositories/veecode/devportal-base/tags/?page_size=100&ordering=last_updated
-   Prompt: List all semver tags (X.Y.Z format, no suffixes like -amd64 or -arm64) and identify the highest version number.
+   Prompt: List all semver tags (X.Y.Z format, no suffixes like -amd64 or -arm64). Also return the "next" URL if present.
    ```
 
-   Extract all tag names from the response.
+   If the response contains a `next` URL, fetch that page too and repeat until
+   there are no more pages. Collect all tag names across all pages.
 
 2. **Filter and sort by semver**
 
@@ -26,6 +28,7 @@ Update the `TAG` ARG in the Dockerfile to the latest semver release of `veecode/
    - Exclude tags like `latest`, `dev`, `main`, or any non-numeric tags
    - Sort tags by semver (major, minor, patch) in descending order
    - Select the highest version as the latest
+   - If no valid semver tags are found, abort with an error
 
 3. **Read the current Dockerfile**
 
