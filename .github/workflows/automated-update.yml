@@ -1,0 +1,45 @@
+name: Automated Update Check
+
+on:
+  schedule:
+    - cron: '0 20 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  check-updates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable Corepack (Yarn 4.10.3)
+        run: npm i -g corepack && corepack enable && corepack prepare yarn@4.10.3 --activate
+
+      - name: Read prompt file
+        id: read-prompt
+        run: |
+          {
+            echo 'PROMPT<<EOF'
+            cat .github/prompts/automated-update-ci.md
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Run maintenance agent
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: ${{ steps.read-prompt.outputs.PROMPT }}
+          claude_args: "--model claude-sonnet-4-6 --allowedTools Bash,Read,Edit,Write,Glob,Grep"
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
