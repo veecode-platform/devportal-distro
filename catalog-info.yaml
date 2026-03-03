@@ -2,7 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: devportal-distro
-  description: An full open source Backstage distro.
+  description: VeeCode DevPortal open source Backstage distro.
   # Example for optional annotations
   annotations:
     github.com/project-slug: veecode-platform/devportal-distro
@@ -16,8 +16,7 @@ metadata:
      ]
   #   backstage.io/techdocs-ref: dir:.
 spec:
-  type: service
+  type: website
   owner: group:developers
   lifecycle: production
   system: devportal
-
