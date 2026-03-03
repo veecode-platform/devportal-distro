@@ -21,12 +21,3 @@ spec:
   lifecycle: production
   system: devportal
 
----
-
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
-apiVersion: backstage.io/v1alpha1
-kind: System
-metadata:
-  name: devportal
-spec:
-  owner: group:developers
