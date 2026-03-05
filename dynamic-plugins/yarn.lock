@@ -2472,17 +2472,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage-community/plugin-azure-devops-backend@npm:0.26.0":
-  version: 0.26.0
-  resolution: "@backstage-community/plugin-azure-devops-backend@npm:0.26.0"
+"@backstage-community/plugin-azure-devops-backend@npm:0.26.1":
+  version: 0.26.1
+  resolution: "@backstage-community/plugin-azure-devops-backend@npm:0.26.1"
   dependencies:
-    "@backstage-community/plugin-azure-devops-common": "npm:^0.20.0"
+    "@backstage-community/plugin-azure-devops-common": "npm:^0.20.1"
     "@backstage/backend-defaults": "npm:^0.15.2"
     "@backstage/backend-plugin-api": "npm:^1.7.0"
     "@backstage/catalog-model": "npm:^1.7.6"
     "@backstage/config": "npm:^1.3.6"
     "@backstage/errors": "npm:^1.2.7"
-    "@backstage/integration": "npm:^1.20.0"
+    "@backstage/integration": "npm:^1.20.1"
     "@backstage/plugin-auth-node": "npm:^0.6.13"
     "@backstage/plugin-catalog-common": "npm:^1.1.8"
     "@backstage/plugin-catalog-node": "npm:^2.0.0"
@@ -2494,26 +2494,26 @@ __metadata:
     express-promise-router: "npm:^4.1.0"
     mime-types: "npm:^2.1.27"
     p-limit: "npm:^3.1.0"
-  checksum: 10c0/cc31cf76c9e54115e305773d3142b8bb5314c9c47bfc8af5ccf44e9f6cf9258bea3c9541c732683c0af5585f03d8709021a6cefa1bb9b1fda27610c869555180
+  checksum: 10c0/d09290dd2ddbaf9a7251869f3c6697c0d4ac1f31ded9d3fdf6b39174aa9e497492522e4065726e33499f133efc8f8eccd6fce9994a0177cd7ff6304af05125dd
   languageName: node
   linkType: hard
 
-"@backstage-community/plugin-azure-devops-common@npm:^0.20.0":
-  version: 0.20.0
-  resolution: "@backstage-community/plugin-azure-devops-common@npm:0.20.0"
+"@backstage-community/plugin-azure-devops-common@npm:^0.20.1":
+  version: 0.20.1
+  resolution: "@backstage-community/plugin-azure-devops-common@npm:0.20.1"
   dependencies:
     "@backstage/catalog-model": "npm:^1.7.6"
     "@backstage/plugin-catalog-common": "npm:^1.1.8"
     "@backstage/plugin-permission-common": "npm:^0.9.6"
-  checksum: 10c0/12cecfd3f26fbd511b3524a25ffd9256d818279dd928bdc03b9a0e94a6d3dbc694c6b796ccf856eb6f97a4908605b462301dfdc5387c51f45ca802215a4cf6e7
+  checksum: 10c0/bd85bde1c8c9884988e7dda4aca1c1777dc1a16f02d2ce889df207833a0672fb6bab62c336ff0fc9a893a25965d4dea663419dadf47d74632acce2ef47966566
   languageName: node
   linkType: hard
 
-"@backstage-community/plugin-azure-devops@npm:0.28.1":
-  version: 0.28.1
-  resolution: "@backstage-community/plugin-azure-devops@npm:0.28.1"
+"@backstage-community/plugin-azure-devops@npm:0.28.2":
+  version: 0.28.2
+  resolution: "@backstage-community/plugin-azure-devops@npm:0.28.2"
   dependencies:
-    "@backstage-community/plugin-azure-devops-common": "npm:^0.20.0"
+    "@backstage-community/plugin-azure-devops-common": "npm:^0.20.1"
     "@backstage/catalog-model": "npm:^1.7.6"
     "@backstage/core-compat-api": "npm:^0.5.8"
     "@backstage/core-components": "npm:^0.18.7"
@@ -2535,20 +2535,20 @@ __metadata:
     react: ^16.13.1 || ^17.0.0 || ^18.0.0
     react-dom: ^16.13.1 || ^17.0.0 || ^18.0.0
     react-router-dom: 6.0.0-beta.0 || ^6.3.0
-  checksum: 10c0/4537bbd214868da40fc0c205fbab0d6d3121e8a7d571773fd89cb5b94a2453e22f17e882b285633936f6a551ff04988b6e0cbafef7e57994b71c613ea3186c74
+  checksum: 10c0/e337ca93fcfd73361e2e3f2bc047422300ebc57de96cec3c3022f3ea5e358622e224d2943a0bcdbad0910f904ae33c604fc695ac52fae851337e9d8117c8594e
   languageName: node
   linkType: hard
 
-"@backstage-community/plugin-github-actions@npm:0.21.0":
-  version: 0.21.0
-  resolution: "@backstage-community/plugin-github-actions@npm:0.21.0"
+"@backstage-community/plugin-github-actions@npm:0.21.1":
+  version: 0.21.1
+  resolution: "@backstage-community/plugin-github-actions@npm:0.21.1"
   dependencies:
     "@backstage/catalog-model": "npm:^1.7.6"
     "@backstage/core-compat-api": "npm:^0.5.8"
     "@backstage/core-components": "npm:^0.18.7"
     "@backstage/core-plugin-api": "npm:^1.12.3"
     "@backstage/frontend-plugin-api": "npm:^0.14.1"
-    "@backstage/integration": "npm:^1.20.0"
+    "@backstage/integration": "npm:^1.20.1"
     "@backstage/integration-react": "npm:^1.2.15"
     "@backstage/plugin-catalog-react": "npm:^2.0.0"
     "@material-ui/core": "npm:^4.12.2"
@@ -2563,7 +2563,7 @@ __metadata:
     react: ^16.13.1 || ^17.0.0 || ^18.0.0
     react-dom: ^16.13.1 || ^17.0.0 || ^18.0.0
     react-router-dom: 6.0.0-beta.0 || ^6.3.0
-  checksum: 10c0/8e127107b3569f8b8ff64bd776eb89279b0ed93f9810130dafe01c45624fe2267410c8f0f0dfaf2ef59cb9998a2929d8c4045f7c01d64fbe1ebd91b1fea6d8f4
+  checksum: 10c0/6bfc3b2229d590fff56c510fcd8e3260825d0bc2d0d4fcf2fa8f86deb265fd830f4f164aa1b33c85345af564e40ad9be009e0c5c9320a2af2c3f048a0e22c250
   languageName: node
   linkType: hard
 
@@ -3506,7 +3506,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/core-components@npm:^0.18.3, @backstage/core-components@npm:^0.18.6, @backstage/core-components@npm:^0.18.7":
+"@backstage/core-components@npm:^0.18.6, @backstage/core-components@npm:^0.18.7":
   version: 0.18.7
   resolution: "@backstage/core-components@npm:0.18.7"
   dependencies:
@@ -3564,7 +3564,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/core-plugin-api@npm:1.12.3, @backstage/core-plugin-api@npm:^1.12.0, @backstage/core-plugin-api@npm:^1.12.1, @backstage/core-plugin-api@npm:^1.12.2, @backstage/core-plugin-api@npm:^1.12.3":
+"@backstage/core-plugin-api@npm:1.12.3, @backstage/core-plugin-api@npm:^1.12.1, @backstage/core-plugin-api@npm:^1.12.2, @backstage/core-plugin-api@npm:^1.12.3":
   version: 1.12.3
   resolution: "@backstage/core-plugin-api@npm:1.12.3"
   dependencies:
@@ -3964,6 +3964,24 @@ __metadata:
     lodash: "npm:^4.17.21"
     luxon: "npm:^3.0.0"
   checksum: 10c0/bc2a2e060155e720b9a4a24269fd7894caa67ecf3d9de8cb4931622c9bb4ac080fab9fef4f1c0b1815d78160ee494b8ac62bc624e8b1fa339bc7bdcd6b4b981a
+  languageName: node
+  linkType: hard
+
+"@backstage/integration@npm:^1.20.1":
+  version: 1.20.1
+  resolution: "@backstage/integration@npm:1.20.1"
+  dependencies:
+    "@azure/identity": "npm:^4.0.0"
+    "@azure/storage-blob": "npm:^12.5.0"
+    "@backstage/config": "npm:^1.3.6"
+    "@backstage/errors": "npm:^1.2.7"
+    "@octokit/auth-app": "npm:^4.0.0"
+    "@octokit/rest": "npm:^19.0.3"
+    cross-fetch: "npm:^4.0.0"
+    git-url-parse: "npm:^15.0.0"
+    lodash: "npm:^4.17.21"
+    luxon: "npm:^3.0.0"
+  checksum: 10c0/f117b378dd4865e3dd9d74992049d61df38c0534f95221afbaac6e9506d7ef543fa9cc5f7adc11633fc1bec298bf10064e7a62dc066b00b666f758056e51f187
   languageName: node
   linkType: hard
 
@@ -9893,13 +9911,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@red-hat-developer-hub/backstage-plugin-global-floating-action-button@npm:1.7.3":
-  version: 1.7.3
-  resolution: "@red-hat-developer-hub/backstage-plugin-global-floating-action-button@npm:1.7.3"
+"@red-hat-developer-hub/backstage-plugin-global-floating-action-button@npm:1.8.1":
+  version: 1.8.1
+  resolution: "@red-hat-developer-hub/backstage-plugin-global-floating-action-button@npm:1.8.1"
   dependencies:
-    "@backstage/core-components": "npm:^0.18.3"
-    "@backstage/core-plugin-api": "npm:^1.12.0"
-    "@backstage/theme": "npm:^0.7.0"
+    "@backstage/core-components": "npm:^0.18.7"
+    "@backstage/core-plugin-api": "npm:^1.12.3"
+    "@backstage/theme": "npm:^0.7.2"
     "@mui/icons-material": "npm:^5.15.17"
     "@mui/material": "npm:^5.15.17"
     "@mui/styles": "npm:5.18.0"
@@ -9910,7 +9928,7 @@ __metadata:
     react: 16.13.1 || ^17.0.0 || ^18.0.0
     react-dom: 16.13.1 || ^17.0.0 || ^18.0.0
     react-router-dom: ^6.0.0
-  checksum: 10c0/39139bb68f7aa666adb0e158c01d6886fbe43efea998fa9ff4c085e2a7fe04cac54beb8ef31ccfbb79d4c103ffab7891a0b192d39c70b92f4d766e1be0406b19
+  checksum: 10c0/752d36bbd029367b09e46c09d08b1ef2e2a7d921edc4fa21853a7ad272d69d575fdbe8efa178962644cb3da7c56c8de09f10eebc291623a04baa56d14aad277d
   languageName: node
   linkType: hard
 
@@ -13613,7 +13631,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "backstage-community-plugin-azure-devops-backend@workspace:wrappers/backstage-community-plugin-azure-devops-backend-dynamic"
   dependencies:
-    "@backstage-community/plugin-azure-devops-backend": "npm:0.26.0"
+    "@backstage-community/plugin-azure-devops-backend": "npm:0.26.1"
     "@backstage/cli": "npm:^0.34.1"
     "@janus-idp/cli": "npm:3.6.1"
     typescript: "npm:5.9.3"
@@ -13624,7 +13642,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "backstage-community-plugin-azure-devops@workspace:wrappers/backstage-community-plugin-azure-devops"
   dependencies:
-    "@backstage-community/plugin-azure-devops": "npm:0.28.1"
+    "@backstage-community/plugin-azure-devops": "npm:0.28.2"
     "@backstage/cli": "npm:^0.34.1"
     "@red-hat-developer-hub/cli": "npm:latest"
     typescript: "npm:5.9.3"
@@ -13635,7 +13653,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "backstage-community-plugin-github-actions@workspace:wrappers/backstage-community-plugin-github-actions"
   dependencies:
-    "@backstage-community/plugin-github-actions": "npm:0.21.0"
+    "@backstage-community/plugin-github-actions": "npm:0.21.1"
     "@backstage/cli": "npm:^0.34.1"
     "@red-hat-developer-hub/cli": "npm:latest"
     typescript: "npm:5.9.3"
@@ -25796,7 +25814,7 @@ __metadata:
   dependencies:
     "@backstage/cli": "npm:^0.34.1"
     "@mui/material": "npm:5.18.0"
-    "@red-hat-developer-hub/backstage-plugin-global-floating-action-button": "npm:1.7.3"
+    "@red-hat-developer-hub/backstage-plugin-global-floating-action-button": "npm:1.8.1"
     "@red-hat-developer-hub/cli": "npm:latest"
     typescript: "npm:5.9.3"
   languageName: unknown
