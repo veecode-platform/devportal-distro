@@ -28,6 +28,18 @@ Create a branch from main: chore/automated-update-YYYY-MM-DD
 If the branch already exists locally or remotely, append a sequential suffix:
 `chore/automated-update-YYYY-MM-DD-2`, `-3`, etc.
 
+## Output management
+
+Redirect verbose command output (yarn install, yarn build,
+yarn export-dynamic) to temporary log files. Check the exit code to
+determine success or failure. Inspect log file contents only when a
+command exits with non-zero status.
+
+    mkdir -p /tmp/logs
+    yarn install > /tmp/logs/install.log 2>&1
+
+This keeps the conversation context clean for reasoning about errors.
+
 ## Verification sequence
 
 Execute each step in order. Each step that produces changes must result
