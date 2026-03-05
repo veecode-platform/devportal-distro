@@ -2,7 +2,13 @@
 
 Update the `TAG` ARG in the Dockerfile to the latest semver release of `veecode/devportal-base`.
 
-This is the CI-compatible version that uses `curl` + `jq` instead of WebFetch.
+## Output management
+
+Redirect verbose command output to temporary log files. Check the exit
+code to determine success or failure. Inspect log file contents only when
+a command exits with non-zero status.
+
+    mkdir -p /tmp/logs
 
 ## Steps
 
@@ -15,29 +21,30 @@ This is the CI-compatible version that uses `curl` + `jq` instead of WebFetch.
    URL="https://hub.docker.com/v2/repositories/veecode/devportal-base/tags/?page_size=100&ordering=last_updated"
    while [ -n "$URL" ] && [ "$URL" != "null" ]; do
      RESPONSE=$(curl -sf "$URL")
+     if [ $? -ne 0 ]; then echo "ERROR: Docker Hub request failed"; exit 1; fi
      PAGE_TAGS=$(echo "$RESPONSE" | jq -r '.results[].name')
      TAGS=$(printf '%s\n' "$TAGS" "$PAGE_TAGS")
      URL=$(echo "$RESPONSE" | jq -r '.next // empty')
    done
    ```
 
-   If any `curl` call fails (non-zero exit), abort with an error. Do NOT
-   proceed with an empty or missing tag list.
+   If any `curl` call fails (non-zero exit), abort with an error.
 
 2. **Filter and select the highest semver tag**
 
-   From the tag list, filter only tags matching strict semver `X.Y.Z` (three numeric segments).
-   Exclude tags like `latest`, `dev`, `main`, or suffixed tags like `1.2.3-amd64`, `1.2.3-arm64`.
+   From the tag list, keep only tags matching strict semver `X.Y.Z` (three
+   numeric segments, excluding suffixed tags like `1.2.3-amd64`):
 
    ```bash
    LATEST=$(echo "$TAGS" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)
    ```
 
-   If `$LATEST` is empty, abort with an error — no valid semver tags were found.
+   If `$LATEST` is empty, abort — no valid semver tags were found.
 
 3. **Read the current Dockerfile**
 
-   Read the Dockerfile in the project root and find the current `TAG` value in the `ARG TAG=X.Y.Z` line.
+   Read the Dockerfile in the project root and find the current `TAG` value
+   in the `ARG TAG=X.Y.Z` line.
 
 4. **Compare versions**
 
