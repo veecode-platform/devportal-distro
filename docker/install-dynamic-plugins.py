@@ -641,8 +641,13 @@ def main():
                     
     # iterate through the list of plugins
     for plugin in allPlugins.values():
-        _, plugin_config = install_plugin(plugin, plugin_path_by_hash, dynamicPluginsRoot, skipIntegrityCheck)
-        
+        try:
+            _, plugin_config = install_plugin(plugin, plugin_path_by_hash, dynamicPluginsRoot, skipIntegrityCheck)
+        except InstallException as e:
+            print(f'\n======= ERROR: Failed to install plugin {plugin["package"]}: {e}', flush=True)
+            print(f'\t==> Skipping this plugin and continuing with the rest...', flush=True)
+            continue
+
         # Merge plugin configuration if provided
         if plugin_config:
             globalConfig = maybeMergeConfig(plugin_config, globalConfig)
