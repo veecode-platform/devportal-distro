@@ -75,6 +75,8 @@ jobs:
         context: .
         platforms: ${{ matrix.platform }}
         push: true
+        build-args: |
+          DEVPORTAL_VERSION=${{ steps.extract-tag.outputs.tag }}
         tags: |
           ${{ env.IMAGE_NAME }}:${{ steps.extract-tag.outputs.tag }}-${{ matrix.arch }}
 

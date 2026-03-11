@@ -33,6 +33,10 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["node", "packages/backend", "--config", "app-config.yaml", "--config", "app-config.production.yaml", "--config", "app-config.dynamic-plugins.yaml", "--config", "/app/dynamic-plugins-root/app-config.dynamic-plugins.yaml"]
 
 COPY --from=base --chown=default:default /app/dynamic-plugins-store /app/dynamic-plugins/dist
+
+# Generate devportal.json with version info (consumed by about plugin)
+ARG DEVPORTAL_VERSION=dev
+RUN echo "{\"version\":\"${DEVPORTAL_VERSION}\"}" > /app/devportal.json
 COPY --chown=default:default dynamic-plugins.yaml /app/dynamic-plugins.yaml
 COPY --chown=default:default dynamic-plugins.default.yaml /app/dynamic-plugins.default.yaml
 COPY --chown=default:default docker/install-dynamic-plugins.py /app/install-dynamic-plugins.py
