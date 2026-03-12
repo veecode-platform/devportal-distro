@@ -58,7 +58,15 @@ jobs:
         TAG="${GITHUB_REF#refs/tags/}"
         echo "tag=$TAG" >> $GITHUB_OUTPUT
         echo "Extracted TAG=$TAG"
-      
+
+    - name: Fetch marketplace catalog entities
+      run: |
+        git clone --depth 1 --filter=blob:none --sparse \
+          https://github.com/veecode-platform/devportal-plugin-export-overlays.git /tmp/export-overlays
+        cd /tmp/export-overlays
+        git sparse-checkout set catalog-entities
+        cp -r catalog-entities $GITHUB_WORKSPACE/catalog-entities
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
