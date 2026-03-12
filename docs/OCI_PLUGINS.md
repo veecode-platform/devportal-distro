@@ -134,6 +134,26 @@ kubectl create secret docker-registry oci-registry-auth \
 
 Mount it at `/opt/app-root/src/.docker/config.json` in the init container spec.
 
+## Publishing pipeline
+
+The OCI plugin images are published automatically by the `Publish DevPortal Dynamic Plugin Images` workflow in `devportal-plugin-export-overlays`. The pipeline:
+
+1. Exports each workspace's plugins using `rhdh-cli plugin export`
+2. Bundles all exported plugins from a workspace into a single OCI image (multi-stage Containerfile with `FROM scratch` + single `COPY` for exactly 1 layer)
+3. Pushes the image to `quay.io/veecode/<workspace-name>:<tag>`
+4. Sets the Quay.io repository visibility to **public** via the Quay API
+
+### Required secrets
+
+| Secret | Purpose |
+|--------|---------|
+| `QUAY_TOKEN` | Robot account token (`veecode+ci`) for `podman push` |
+| `QUAY_API_TOKEN` | OAuth Application token for Quay API (set repo visibility) |
+
+The `QUAY_API_TOKEN` is needed because quay.io creates repositories as **private** by default when pushed via CLI, and there is no org-level setting to change this default. The workflow calls the Quay API after each successful push to set the repository to public.
+
+To generate a `QUAY_API_TOKEN`: Quay.io > Organization > Applications > Create New Application > Generate Token (with `Administer Repositories` permission).
+
 ## Troubleshooting
 
 ### Plugin not appearing in UI
