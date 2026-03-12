@@ -51,6 +51,7 @@ main and save the exit codes:
 
 ```bash
 mkdir -p /tmp/logs
+date +%s > /tmp/logs/start_time.txt
 cd dynamic-plugins
 yarn install > /tmp/logs/baseline-install.log 2>&1; echo "install=$?" >> /tmp/logs/baseline.txt
 yarn build > /tmp/logs/baseline-build.log 2>&1; echo "build=$?" >> /tmp/logs/baseline.txt
@@ -151,30 +152,128 @@ passes after your changes.
 If no update step produced changes: exit silently, with no branch, PR,
 or artifact.
 
-If changes were made: push the branch and open a PR with the following body format:
+If changes were made: open a PR using the structure and rules below.
 
----
-## Automated Update — YYYY-MM-DD
+### Pre-PR: collect metadata
 
-### Updates applied
-- [ ] Base image: <previous version> → <new version> (or "no updates")
-- [ ] Wrapper plugins: <N> upgrades applied (or "no updates")
-- [ ] Downloaded plugins: <N> upgrades applied (or "no updates")
-- [ ] Build tools: <N> upgrades applied (or "no updates")
+Before composing the PR body, gather these values:
+
+```bash
+RUN_URL="https://github.com/veecode-platform/devportal-distro/actions/runs/$GITHUB_RUN_ID"
+BASE_IMAGE_TAG=$(grep -m1 '^ARG TAG=' Dockerfile | cut -d'=' -f2)
+START_TS=$(cat /tmp/logs/start_time.txt)
+DURATION=$(( ($(date +%s) - START_TS) / 60 ))
+```
+
+Use `$RUN_URL`, `$BASE_IMAGE_TAG`, and `$DURATION` when filling in the
+PR body below.
+
+### PR body rules
+
+Read ALL rules in this section before generating the PR body.
+
+**Sections** (in order): header with blockquote, pipeline diagram,
+dependency changes table, validation matrix, major upgrades available,
+errors, manual attention, footer.
+
+**Pipeline diagram**: Mermaid `graph TB` with 2 phases:
+
+1. **Scan phase**: fan-out from start node into 4 parallel scan nodes
+   (Base Image, Wrapper Plugins, Downloaded Plugins, Build Tools). Each
+   node shows its name and outcome on two lines using `<br/>`.
+2. **Validation gate**: single hexagon node showing checks performed and
+   pass count (`install · build · export-dynamic` + `N/3 pass`).
+
+Color coding (apply via `style` directives):
+- `fill:#238636,color:#fff` — green: updated or pass
+- `fill:#6e7681,color:#adbac7` — gray: no changes / skipped
+- `fill:#da3633,color:#fff` — red: failed or reverted
+- `fill:#d29922,color:#fff` — yellow: warning
+- `fill:#1f2937,color:#e6edf3,stroke:#30363d` — dark: gate nodes (pass)
+- `fill:#1f6feb,color:#fff,stroke:#388bfd` — blue: start node
+- `fill:#238636,color:#fff,stroke:#2ea043` — green: final "PR Ready" node
+
+If a scan step was reverted due to regression, color it red and label it
+`⚠️ reverted — <reason>`. If a gate has failures, color it red instead
+of dark. After the diagram, if any step was reverted or had errors, add a
+blockquote explaining what happened and how the agent resolved it.
+
+**Dependency changes table**: one row per changed package showing name,
+previous version, updated version, and scope (base image / wrapper /
+downloaded / build tool). Omit rows for categories with no changes.
+
+**Validation matrix**: one row per check (install, build, export-dynamic).
+Use ✅ for pass, ⚠️ for warning, ❌ for fail.
+
+**Footer**: always include the branding line exactly as shown in the example.
+
+### Example PR body
+
+Below is a complete example. Adapt all values to match this run's actual
+results. The example shows the happy path; for failures, apply the color
+rules above.
+
+<!-- EXAMPLE START -->
+## Automated Maintenance — YYYY-MM-DD
+
+> Autonomous dependency management for VeeCode DevPortal Distro.
+> This PR was created, validated, and verified by an AI agent
+> without human intervention.
+
+### Pipeline
+
+```mermaid
+graph TB
+    Start(["🔄 Automated Maintenance"])
+
+    Start --> A & B & C & D
+
+    A["Base Image<br/>1.2.6 → 1.2.7"]
+    B["Wrapper Plugins<br/>3 upgrades"]
+    C["Downloaded Plugins<br/>no changes"]
+    D["Build Tools<br/>1 upgrade"]
+
+    A & B & C & D --> V{{"Validation Gate<br/><i>install · build · export-dynamic</i><br/>3/3 pass ✅"}}
+
+    V --> Done(["✅ PR Ready for Review"])
+
+    style A fill:#238636,color:#fff
+    style B fill:#238636,color:#fff
+    style C fill:#6e7681,color:#adbac7
+    style D fill:#238636,color:#fff
+    style V fill:#1f2937,color:#e6edf3,stroke:#30363d
+    style Start fill:#1f6feb,color:#fff,stroke:#388bfd
+    style Done fill:#238636,color:#fff,stroke:#2ea043
+```
+
+### Dependency changes
+
+| Package | Previous | Updated | Scope |
+|---------|----------|---------|-------|
+| `veecode/devportal-base` | `1.2.6` | `1.2.7` | base image |
+| `@backstage-community/plugin-rbac` | `^1.49.0` | `^1.50.0` | wrapper |
+| `@backstage/plugin-catalog-backend` | `^1.35.0` | `^1.36.1` | wrapper |
+| `@backstage/cli` | `^0.29.3` | `^0.29.5` | build tool |
+
+### Validation matrix
+
+| Check | Result | Details |
+|-------|--------|---------|
+| Install | ✅ pass | — |
+| Build | ✅ pass | — |
+| Export Dynamic | ✅ pass | — |
 
 ### Major upgrades available (not applied)
-<list of packages with available major, or "none">
-
-### Validation results
-- install: pass / fail (regression / pre-existing if failed)
-- build: pass / fail (regression / pre-existing if failed)
-- export-dynamic: pass / fail (regression / pre-existing if failed)
+none
 
 ### Errors encountered
-<errors that could not be fixed, or "none">
+none
 
 ### Manual attention required
-<items requiring human intervention, or "none">
+none
+
 ---
+<sub>🤖 Generated by <a href="https://github.com/veecode-platform/devportal-distro/blob/main/.github/workflows/automated-update.yml">VeeCode Automated Maintenance</a> · powered by Claude Code</sub>
+<!-- EXAMPLE END -->
 
 Mark the PR as ready for review.
