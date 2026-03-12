@@ -15,14 +15,14 @@ DevPortal supports loading dynamic plugins from OCI (Open Container Initiative) 
 oci://<registry>/<image>:<tag>!<plugin-directory>
 ```
 
-- `<registry>/<image>` — full OCI image path (e.g. `ghcr.io/my-org/my-plugins/plugin-name`)
+- `<registry>/<image>` — full OCI image path (e.g. `quay.io/veecode/plugin-name`)
 - `<tag>` — image tag (e.g. `1.0.0`, `latest`)
 - `!<plugin-directory>` — directory name inside the OCI layer where the plugin files live
 
 Example:
 
 ```
-oci://ghcr.io/my-org/my-plugins/backstage-community-plugin-todo:1.0.0!backstage-community-plugin-todo
+oci://quay.io/veecode/backstage-community-plugin-todo:1.0.0!backstage-community-plugin-todo
 ```
 
 ## Adding an OCI plugin
@@ -34,11 +34,11 @@ Edit `dynamic-plugins.yaml` and add an entry under `plugins`:
 ```yaml
 plugins:
   # Backend plugin (no pluginConfig needed)
-  - package: oci://ghcr.io/my-org/my-plugins/my-plugin-backend:1.0.0!my-plugin-backend
+  - package: oci://quay.io/veecode/my-plugin-backend:1.0.0!my-plugin-backend
     disabled: false
 
   # Frontend plugin (needs pluginConfig for UI mount points)
-  - package: oci://ghcr.io/my-org/my-plugins/my-plugin:1.0.0!my-plugin
+  - package: oci://quay.io/veecode/my-plugin:1.0.0!my-plugin
     disabled: false
     pluginConfig:
       dynamicPlugins:
@@ -122,9 +122,9 @@ No authentication needed. Just reference the OCI image directly.
 For Kubernetes, create a Secret with registry credentials and mount it in the init container that runs `install-dynamic-plugins.py`:
 
 ```yaml
-# Example: create a secret for ghcr.io
+# Example: create a secret for quay.io
 kubectl create secret docker-registry oci-registry-auth \
-  --docker-server=ghcr.io \
+  --docker-server=quay.io \
   --docker-username=<user> \
   --docker-password=<token>
 ```
@@ -146,7 +146,7 @@ unable to retrieve auth token: invalid username/password: unauthorized
 ```
 
 - Ensure Docker credentials are mounted and readable (chmod 644)
-- Verify the token has `read:packages` scope (for ghcr.io)
+- Verify the token has read access to the registry (e.g. robot account for quay.io)
 - Both auth paths must be mounted (`~/.docker/config.json` and `/run/containers/0/auth.json`)
 
 ### Plugin installed but config not applied
