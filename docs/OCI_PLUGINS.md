@@ -15,14 +15,17 @@ DevPortal supports loading dynamic plugins from OCI (Open Container Initiative) 
 oci://<registry>/<image>:<tag>!<plugin-directory>
 ```
 
-- `<registry>/<image>` — full OCI image path (e.g. `quay.io/veecode/plugin-name`)
-- `<tag>` — image tag (e.g. `1.0.0`, `latest`)
+- `<registry>/<image>` — full OCI image path (e.g. `quay.io/veecode/todo` for workspace bundles)
+- `<tag>` — image tag (e.g. `bs_1.48.4` for workspace bundles, or `1.0.0`)
 - `!<plugin-directory>` — directory name inside the OCI layer where the plugin files live
 
-Example:
+Plugins are bundled by workspace — one OCI image per workspace containing all its plugins. Each plugin is extracted by its `!<plugin-directory>` suffix.
+
+Example (workspace bundle with multiple plugins):
 
 ```
-oci://quay.io/veecode/backstage-community-plugin-todo:1.0.0!backstage-community-plugin-todo
+oci://quay.io/veecode/todo:bs_1.48.4!backstage-community-plugin-todo
+oci://quay.io/veecode/todo:bs_1.48.4!backstage-community-plugin-todo-backend
 ```
 
 ## Adding an OCI plugin
@@ -34,11 +37,11 @@ Edit `dynamic-plugins.yaml` and add an entry under `plugins`:
 ```yaml
 plugins:
   # Backend plugin (no pluginConfig needed)
-  - package: oci://quay.io/veecode/my-plugin-backend:1.0.0!my-plugin-backend
+  - package: oci://quay.io/veecode/my-workspace:bs_1.48.4!my-plugin-backend
     disabled: false
 
   # Frontend plugin (needs pluginConfig for UI mount points)
-  - package: oci://quay.io/veecode/my-plugin:1.0.0!my-plugin
+  - package: oci://quay.io/veecode/my-workspace:bs_1.48.4!my-plugin
     disabled: false
     pluginConfig:
       dynamicPlugins:
