@@ -43,3 +43,5 @@ COPY --chown=default:default docker/install-dynamic-plugins.py /app/install-dyna
 COPY --chown=default:default --chmod=755 docker/install-dynamic-plugins.sh /app/install-dynamic-plugins.sh
 # override profile config files - these will take precedence over the base image ones
 COPY --chown=default:default profiles/*.yaml /app/
+# marketplace catalog entities (Plugin/Package/Collection YAMLs from export-overlays)
+COPY --chown=default:default catalog-entities /app/catalog-entities
