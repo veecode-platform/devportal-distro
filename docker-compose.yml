@@ -12,7 +12,7 @@ services:
   devportal:
     # depends_on:
     #   - kubectl-proxy
-    image: veecode/devportal:1.2.8-rc2
+    image: veecode/devportal:local
     ports:
       - "7007:7007"
     environment:
