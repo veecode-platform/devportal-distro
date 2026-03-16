@@ -40,6 +40,41 @@ if [ -n "$THEME_FAV_ICON" ]; then
     curl -L -o /app/packages/app/dist/favicon.ico "$THEME_FAV_ICON"
 fi
 
+# Remove RHDH extensions backend — replaced by devportal-marketplace-backend.
+# It ships in the base image and would conflict (same pluginId "extensions").
+rm -rf /app/dynamic-plugins-root/red-hat-developer-hub-backstage-plugin-extensions-backend 2>/dev/null
+
+# ENTRYPOINT DOWNLOAD CATALOG INDEX
+# Downloads the marketplace catalog entities (Plugin/Package/Collection YAMLs)
+# from the OCI catalog index image published by export-overlays.
+CATALOG_INDEX_IMAGE="${CATALOG_INDEX_IMAGE:-quay.io/veecode/plugin-catalog-index:latest}"
+CATALOG_DIR="/app/catalog-entities/extensions"
+if [ ! -d "$CATALOG_DIR/plugins" ] || [ "${CATALOG_INDEX_REFRESH:-false}" = "true" ]; then
+    echo "Downloading catalog index from $CATALOG_INDEX_IMAGE"
+    TMP_CATALOG="$(mktemp -d)"
+    if skopeo copy "docker://$CATALOG_INDEX_IMAGE" "dir:$TMP_CATALOG"; then
+        # Extract the single layer (tar) into the catalog directory
+        mkdir -p "$CATALOG_DIR"
+        LAYER=$(jq -r '.layers[0].digest' "$TMP_CATALOG/manifest.json" | sed 's/sha256://')
+        tar -xf "$TMP_CATALOG/$LAYER" -C "$CATALOG_DIR" --strip-components=1 2>/dev/null || \
+        tar -xzf "$TMP_CATALOG/$LAYER" -C "$CATALOG_DIR" --strip-components=1 2>/dev/null || \
+        { echo "ERROR: Failed to extract catalog index layer"; }
+        # Validate extraction
+        YAML_COUNT=$(find "$CATALOG_DIR" -name '*.yaml' 2>/dev/null | wc -l)
+        if [ "$YAML_COUNT" -lt 50 ]; then
+            echo "WARNING: Catalog index has only $YAML_COUNT YAML files (expected ~215). Marketplace may be incomplete."
+        else
+            echo "Catalog index loaded: $YAML_COUNT YAML files"
+        fi
+    else
+        echo "WARNING: Failed to download catalog index from $CATALOG_INDEX_IMAGE"
+        echo "Marketplace will use any pre-existing catalog entities (baked-in or from previous run)."
+    fi
+    rm -rf "$TMP_CATALOG"
+else
+    echo "Catalog entities already present, skipping download (set CATALOG_INDEX_REFRESH=true to force)"
+fi
+
 # ENTRYPOINT INSTALL PLUGINS
 /app/install-dynamic-plugins.sh /app/dynamic-plugins-root
 

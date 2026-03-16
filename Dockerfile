@@ -21,6 +21,12 @@ COPY --chown=default:default dynamic-plugins /app/dynamic-plugins
 RUN mkdir -p /app/dynamic-plugins-store && \
     cd /app/dynamic-plugins && \
     yarn install --immutable && \
+    yarn workspace devportal-marketplace-backend run tsc && \
+    yarn workspace devportal-marketplace-backend run build && \
+    yarn workspace devportal-marketplace-backend-dynamic run tsc && \
+    yarn workspace devportal-pending-changes run tsc && \
+    yarn workspace devportal-pending-changes run build && \
+    yarn workspace devportal-pending-changes-dynamic run tsc && \
     yarn build && \
     yarn export-dynamic && \
     yarn copy-dynamic-plugins $(pwd)/../dynamic-plugins-store
