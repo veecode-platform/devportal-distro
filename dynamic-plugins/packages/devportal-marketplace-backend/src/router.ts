@@ -458,13 +458,42 @@ export async function createRouter(
       if (!newConfig) {
         throw new InputError("'configYaml' object must be present");
       }
+
+      // Auto-config: enrich each package entry with appConfigExamples
+      // if the frontend-provided configYaml doesn't include pluginConfig.
       try {
-        await installationDataService.updatePluginConfig(plugin, newConfig);
-      } catch (e) {
-        if (e instanceof ConfigFormatError) {
-          throw new InputError(e.message);
+        const packages = await extensionsApi.getPluginPackages(
+          plugin.metadata.namespace ?? DEFAULT_NAMESPACE,
+          plugin.metadata.name,
+        );
+        for (const pkg of packages) {
+          const artifact = pkg.spec?.dynamicArtifact;
+          if (!artifact) continue;
+
+          const existingConfig =
+            installationDataService.getPackageConfig(artifact);
+          const yamlStr = buildPackageYaml(
+            artifact,
+            false,
+            pkg,
+            existingConfig,
+          );
+          installationDataService.updatePackageConfig(artifact, yamlStr);
+          changedThisSession.add(artifact);
         }
-        throw e;
+      } catch (e) {
+        // Fallback: use the frontend-provided configYaml as-is
+        logger.warn(
+          `Auto-config failed for plugin ${plugin.metadata.name}, falling back to frontend config: ${e}`,
+        );
+        try {
+          await installationDataService.updatePluginConfig(plugin, newConfig);
+        } catch (e2) {
+          if (e2 instanceof ConfigFormatError) {
+            throw new InputError(e2.message);
+          }
+          throw e2;
+        }
       }
       res.status(200).json({ status: 'OK' });
     },
