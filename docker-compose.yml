@@ -45,7 +45,10 @@ services:
       #- ./examples:/app/examples:ro
       # marketplace catalog entities
       - ./catalog-entities:/app/catalog-entities:ro
-      # extensions installation config (writable for install/uninstall)
+      # Marketplace install state — persists user install/uninstall choices.
+      # IMPORTANT: This file MUST be on persistent storage. Without it, all
+      # user plugin selections are lost on container restart/redeploy.
+      # In K8s: use a PVC mounted at /app/ or mount this single file.
       - ./extensions-install.yaml:/app/extensions-install.yaml
 
   kubectl-proxy:
