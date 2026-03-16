@@ -40,10 +40,6 @@ if [ -n "$THEME_FAV_ICON" ]; then
     curl -L -o /app/packages/app/dist/favicon.ico "$THEME_FAV_ICON"
 fi
 
-# Remove RHDH extensions backend — replaced by devportal-marketplace-backend.
-# It ships in the base image and would conflict (same pluginId "extensions").
-rm -rf /app/dynamic-plugins-root/red-hat-developer-hub-backstage-plugin-extensions-backend 2>/dev/null
-
 # ENTRYPOINT DOWNLOAD CATALOG INDEX
 # Downloads the marketplace catalog entities (Plugin/Package/Collection YAMLs)
 # from the OCI catalog index image published by export-overlays.
@@ -77,6 +73,11 @@ fi
 
 # ENTRYPOINT INSTALL PLUGINS
 /app/install-dynamic-plugins.sh /app/dynamic-plugins-root
+
+# Remove RHDH extensions backend AFTER install — it ships in the base image
+# and gets re-installed by install-dynamic-plugins.sh from defaults.
+# Our devportal-marketplace-backend replaces it (same pluginId "extensions").
+rm -rf /app/dynamic-plugins-root/red-hat-developer-hub-backstage-plugin-extensions-backend 2>/dev/null
 
 # SAAS: expands VEECODE_APP_CONFIG and VEECODE_DYNAMIC_PLUGINS into files
 if [ ! -z "$VEECODE_APP_CONFIG" ]; then
