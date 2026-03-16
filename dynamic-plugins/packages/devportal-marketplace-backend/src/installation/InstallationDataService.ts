@@ -141,6 +141,10 @@ export class InstallationDataService {
     this.installationStorage.updatePackages(dynamicArtifacts, newConfig);
   }
 
+  removePackage(packageDynamicArtifact: string): void {
+    this.installationStorage.removePackage(packageDynamicArtifact);
+  }
+
   setPackageDisabled(packageDynamicArtifact: string, disabled: boolean) {
     this.installationStorage.setPackageDisabled(
       packageDynamicArtifact,

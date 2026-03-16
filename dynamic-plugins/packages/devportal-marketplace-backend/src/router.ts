@@ -272,6 +272,7 @@ export async function createRouter(
           extensionsPackage.spec.dynamicArtifact,
           newConfig,
         );
+        changedThisSession.add(extensionsPackage.spec.dynamicArtifact);
       } catch (e) {
         if (e instanceof ConfigFormatError) {
           throw new InputError(e.message);
@@ -305,6 +306,7 @@ export async function createRouter(
         extensionsPackage.spec.dynamicArtifact,
         disabled,
       );
+      changedThisSession.add(extensionsPackage.spec.dynamicArtifact);
       res.status(200).json({ status: 'OK' });
     },
   );
@@ -523,6 +525,10 @@ export async function createRouter(
     return pkg;
   };
 
+  // Track packages changed during THIS session (after startup).
+  // Only these are truly "pending" — they haven't had a chance to load/unload yet.
+  const changedThisSession = new Set<string>();
+
   router.get(
     '/pending-changes',
     requireInitializedInstallationDataService,
@@ -535,21 +541,43 @@ export async function createRouter(
 
       const pendingInstalls: string[] = [];
       const pendingRemovals: string[] = [];
+      const staleEntries: string[] = [];
 
       for (const entry of installedPackages) {
         const name = extractPluginName(entry.package);
         if (!entry.disabled && !loadedNames.has(name)) {
-          pendingInstalls.push(entry.package);
+          if (changedThisSession.has(entry.package)) {
+            pendingInstalls.push(entry.package);
+          } else {
+            // Was in YAML before startup but didn't load — failed install
+            staleEntries.push(entry.package);
+          }
         }
         if (entry.disabled && loadedNames.has(name)) {
-          pendingRemovals.push(entry.package);
+          if (changedThisSession.has(entry.package)) {
+            pendingRemovals.push(entry.package);
+          } else {
+            // Was disabled before startup but still loaded (comes from defaults) — can't remove
+            staleEntries.push(entry.package);
+          }
         }
+      }
+
+      // Auto-remove stale entries from the install YAML so they don't
+      // pollute the pending count forever. Covers both failed installs
+      // and disable attempts on default-shipped plugins.
+      for (const pkg of staleEntries) {
+        logger.warn(
+          `Removing stale entry from install file: ${pkg} (change did not take effect after restart)`,
+        );
+        installationDataService.removePackage(pkg);
       }
 
       response.json({
         count: pendingInstalls.length + pendingRemovals.length,
         pendingInstalls,
         pendingRemovals,
+        staleEntries,
       });
     },
   );

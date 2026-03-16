@@ -26,6 +26,7 @@ export interface InstallationStorage {
   setPackageDisabled(packageName: string, disabled: boolean): void;
   setPackagesDisabled(packageNames: Set<string>, disabled: boolean): void;
   getAllPackageEntries(): PackageEntry[];
+  removePackage(packageName: string): void;
 }
 
 export class FileInstallationStorage implements InstallationStorage {
@@ -144,6 +145,16 @@ export class FileInstallationStorage implements InstallationStorage {
       package: item.get('package') as string,
       disabled: (item.get('disabled') as boolean) ?? false,
     }));
+  }
+
+  removePackage(packageName: string): void {
+    const idx = this.packages.items.findIndex(
+      p => isMap(p) && p.get('package') === packageName,
+    );
+    if (idx !== -1) {
+      this.packages.items.splice(idx, 1);
+      this.save();
+    }
   }
 
   setPackagesDisabled(packageNames: Set<string>, disabled: boolean) {
