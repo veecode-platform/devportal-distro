@@ -707,43 +707,35 @@ export async function createRouter(
 
       const pendingInstalls: string[] = [];
       const pendingRemovals: string[] = [];
-      const staleEntries: string[] = [];
 
       for (const entry of installedPackages) {
         const name = extractPluginName(entry.package);
         if (!entry.disabled && !loadedNames.has(name)) {
           if (changedThisSession.has(entry.package)) {
             pendingInstalls.push(entry.package);
-          } else {
-            // Was in YAML before startup but didn't load — failed install
-            staleEntries.push(entry.package);
           }
+          // Entries from previous sessions that didn't load are ignored
+          // (not pending, not stale-removed — they stay in YAML for next restart)
         }
         if (entry.disabled && loadedNames.has(name)) {
           if (changedThisSession.has(entry.package)) {
             pendingRemovals.push(entry.package);
-          } else {
-            // Was disabled before startup but still loaded (comes from defaults) — can't remove
-            staleEntries.push(entry.package);
           }
+          // Entries disabled before startup but still loaded (from defaults)
+          // are ignored — can't unload without image change
         }
       }
 
-      // Auto-remove stale entries from the install YAML so they don't
-      // pollute the pending count forever. Covers both failed installs
-      // and disable attempts on default-shipped plugins.
-      for (const pkg of staleEntries) {
-        logger.warn(
-          `Removing stale entry from install file: ${pkg} (change did not take effect after restart)`,
-        );
-        installationDataService.removePackage(pkg);
-      }
+      // Stale entries are NOT auto-removed. They represent installs from
+      // previous sessions that either loaded successfully (and are fine)
+      // or failed to load (user can investigate). Auto-removing was too
+      // aggressive — it deleted legitimate installs after every restart
+      // because changedThisSession resets on startup.
 
       response.json({
         count: pendingInstalls.length + pendingRemovals.length,
         pendingInstalls,
         pendingRemovals,
-        staleEntries,
       });
     },
   );
