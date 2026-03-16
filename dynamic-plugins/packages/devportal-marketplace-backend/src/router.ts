@@ -32,6 +32,8 @@ import { rules as extensionRules } from './permissions/rules';
 import { matches } from './utils/permissionUtils';
 import { InstallationDataService } from './installation/InstallationDataService';
 import { ConfigFormatError } from './errors/ConfigFormatError';
+import { Document, parseDocument } from 'yaml';
+import { DEFAULT_NAMESPACE } from '@backstage/catalog-model';
 
 import { MiddlewareFactory } from '@backstage/backend-defaults/rootHttpRouter';
 import {
@@ -302,10 +304,40 @@ export async function createRouter(
       if (typeof disabled !== 'boolean') {
         throw new InputError("'disabled' must be present boolean");
       }
-      installationDataService.setPackageDisabled(
-        extensionsPackage.spec.dynamicArtifact,
-        disabled,
-      );
+
+      if (!disabled) {
+        // Install: apply auto-config from appConfigExamples
+        try {
+          const existingConfig = installationDataService.getPackageConfig(
+            extensionsPackage.spec.dynamicArtifact,
+          );
+          const yamlStr = buildPackageYaml(
+            extensionsPackage.spec.dynamicArtifact,
+            disabled,
+            extensionsPackage,
+            existingConfig,
+          );
+          installationDataService.updatePackageConfig(
+            extensionsPackage.spec.dynamicArtifact,
+            yamlStr,
+          );
+        } catch (e) {
+          // Fallback: simple disable toggle without pluginConfig
+          logger.warn(
+            `Auto-config failed for ${extensionsPackage.spec.dynamicArtifact}, falling back to simple install: ${e}`,
+          );
+          installationDataService.setPackageDisabled(
+            extensionsPackage.spec.dynamicArtifact,
+            disabled,
+          );
+        }
+      } else {
+        // Disable: no auto-config needed
+        installationDataService.setPackageDisabled(
+          extensionsPackage.spec.dynamicArtifact,
+          disabled,
+        );
+      }
       changedThisSession.add(extensionsPackage.spec.dynamicArtifact);
       res.status(200).json({ status: 'OK' });
     },
@@ -450,7 +482,48 @@ export async function createRouter(
       if (typeof disabled !== 'boolean') {
         throw new InputError("'disabled' must be present boolean");
       }
-      await installationDataService.setPluginDisabled(plugin, disabled);
+
+      if (!disabled) {
+        // Install: apply auto-config for each package in this plugin
+        const packages = await extensionsApi.getPluginPackages(
+          plugin.metadata.namespace ?? DEFAULT_NAMESPACE,
+          plugin.metadata.name,
+        );
+        for (const pkg of packages) {
+          const artifact = pkg.spec?.dynamicArtifact;
+          if (!artifact) continue;
+
+          try {
+            const existingConfig =
+              installationDataService.getPackageConfig(artifact);
+            const yamlStr = buildPackageYaml(
+              artifact,
+              disabled,
+              pkg,
+              existingConfig,
+            );
+            installationDataService.updatePackageConfig(artifact, yamlStr);
+          } catch (e) {
+            logger.warn(
+              `Auto-config failed for ${artifact}, falling back to simple install: ${e}`,
+            );
+            installationDataService.setPackageDisabled(artifact, disabled);
+          }
+          changedThisSession.add(artifact);
+        }
+      } else {
+        // Disable: no auto-config needed, but track for pending-changes
+        const disablePackages = await extensionsApi.getPluginPackages(
+          plugin.metadata.namespace ?? DEFAULT_NAMESPACE,
+          plugin.metadata.name,
+        );
+        await installationDataService.setPluginDisabled(plugin, disabled);
+        for (const pkg of disablePackages) {
+          if (pkg.spec?.dynamicArtifact) {
+            changedThisSession.add(pkg.spec.dynamicArtifact);
+          }
+        }
+      }
       res.status(200).json({ status: 'OK' });
     },
   );
@@ -528,6 +601,70 @@ export async function createRouter(
   // Track packages changed during THIS session (after startup).
   // Only these are truly "pending" — they haven't had a chance to load/unload yet.
   const changedThisSession = new Set<string>();
+
+  /**
+   * Builds a YAML string for a single package entry, optionally including
+   * pluginConfig from the Package entity's appConfigExamples[0].content.
+   *
+   * Always returns a YAML map (not sequence), because
+   * updatePackageConfig → validatePackageFormat expects isMap(contents).
+   * Note: getPackageConfig() returns a YAML sequence (via toStringYaml),
+   * so we extract the map item from it, not return it as-is.
+   */
+  const buildPackageYaml = (
+    dynamicArtifact: string,
+    disabled: boolean,
+    extensionsPackage: { spec?: { appConfigExamples?: Array<{ title?: string; content?: unknown }> } },
+    existingConfig: string | undefined,
+  ): string => {
+    // Extract existing pluginConfig if present.
+    // getPackageConfig returns a YAML sequence: "- package: ...\n  pluginConfig: ..."
+    // We parse it and pull pluginConfig from the first (only) map item.
+    let existingPluginConfig: unknown | undefined;
+    if (existingConfig) {
+      try {
+        const doc = parseDocument(existingConfig);
+        const seq = doc.contents as any;
+        const firstItem = seq?.items?.[0];
+        if (firstItem?.has?.('pluginConfig')) {
+          existingPluginConfig = firstItem.toJSON?.().pluginConfig;
+        }
+      } catch {
+        // If parsing fails, treat as no existing config
+      }
+    }
+
+    // Always build a fresh document (single map, not sequence)
+    const entry: Record<string, unknown> = {
+      package: dynamicArtifact,
+      disabled,
+    };
+
+    if (existingPluginConfig) {
+      // Preserve manually-edited pluginConfig
+      entry.pluginConfig = existingPluginConfig;
+    } else {
+      // Try to apply appConfigExamples[0].content as default pluginConfig
+      try {
+        const appConfigExamples = extensionsPackage.spec?.appConfigExamples;
+        if (
+          Array.isArray(appConfigExamples) &&
+          appConfigExamples.length > 0 &&
+          appConfigExamples[0].content &&
+          typeof appConfigExamples[0].content === 'object'
+        ) {
+          entry.pluginConfig = appConfigExamples[0].content;
+        }
+      } catch (e) {
+        logger.warn(
+          `Failed to read appConfigExamples for ${dynamicArtifact}: ${e}`,
+        );
+      }
+    }
+
+    const doc = new Document(entry);
+    return doc.toString({ lineWidth: 0 });
+  };
 
   router.get(
     '/pending-changes',
