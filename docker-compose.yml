@@ -12,7 +12,7 @@ services:
   devportal:
     # depends_on:
     #   - kubectl-proxy
-    image: veecode/devportal:latest
+    image: veecode/devportal:local
     ports:
       - "7007:7007"
     environment:
@@ -43,6 +43,10 @@ services:
       - ./dynamic-plugins.default.yaml:/app/dynamic-plugins.default.yaml:ro
       # examples folder
       #- ./examples:/app/examples:ro
+      # marketplace catalog entities
+      - ./catalog-entities:/app/catalog-entities:ro
+      # extensions installation config (writable for install/uninstall)
+      - ./extensions-install.yaml:/app/extensions-install.yaml
 
   kubectl-proxy:
     image: alpine/socat:latest

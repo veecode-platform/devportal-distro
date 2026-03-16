@@ -22,6 +22,7 @@
     "packages": [
       "_utils",
       "downloads",
+      "packages/*",
       "wrappers/*"
     ]
   },

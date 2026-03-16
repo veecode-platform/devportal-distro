@@ -150,3 +150,15 @@ dynamic-plugins-store/*
 # Trivy scan output
 .trivyscan/*
 !.trivyscan/.gitkeep
+
+# Catalog entities (downloaded from export-overlays at build time)
+catalog-entities/extensions/plugins/
+catalog-entities/extensions/packages/
+catalog-entities/extensions/collections/
+catalog-entities/extensions/README.md
+
+# Temporary patch files
+patch-*.js
+
+# Claude Code local settings
+.claude/

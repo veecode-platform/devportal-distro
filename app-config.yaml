@@ -17,22 +17,15 @@
 #     - type: file
 #       target: /app/examples/clusters.yaml
 
-# permission:
-#   enabled: false
-#   rbac:
-#     policies-csv-file: ../../rbac-policy.csv
-#     pluginsWithPermission:
-#       - catalog
-#       - scaffolder
-#       - permission
-#     admin:
-#       users:
-#         - name: group:default/admins
-#       superUsers:
-#         - name: group:default/admins
+permission:
+  enabled: false
 
 extensions:
   directory: /app/catalog-entities/extensions
+  installation:
+    enabled: true
+    saveToSingleFile:
+      file: /app/extensions-install.yaml
 
 kubernetes:
   serviceLocatorMethod:
