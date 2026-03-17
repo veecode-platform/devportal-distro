@@ -69,7 +69,7 @@ jobs:
 
     - name: Fetch marketplace catalog entities
       run: |
-        git clone --depth 1 --filter=blob:none --sparse \
+        git clone --depth 1 --filter=blob:none --sparse --branch main \
           https://github.com/veecode-platform/devportal-plugin-export-overlays.git /tmp/export-overlays
         cd /tmp/export-overlays
         git sparse-checkout set catalog-entities

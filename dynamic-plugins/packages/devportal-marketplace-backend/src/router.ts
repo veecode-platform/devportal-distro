@@ -33,6 +33,7 @@ import { matches } from './utils/permissionUtils';
 import { InstallationDataService } from './installation/InstallationDataService';
 import { ConfigFormatError } from './errors/ConfigFormatError';
 import { Document, parseDocument } from 'yaml';
+import { toBlockStyle } from './utils/yamlFormat';
 import { DEFAULT_NAMESPACE } from '@backstage/catalog-model';
 
 import { MiddlewareFactory } from '@backstage/backend-defaults/rootHttpRouter';
@@ -202,8 +203,7 @@ export async function createRouter(
       req.params.namespace,
       req.params.name,
     );
-    removeVerboseSpecContent(plugins);
-    res.json(plugins);
+    res.json(removeVerboseSpecContent(plugins));
   });
 
   // ─── Package routes ─────────────────────────────────────────────────
@@ -211,8 +211,7 @@ export async function createRouter(
   router.get('/packages', async (req, res) => {
     const request = decodeGetEntitiesRequest(createSearchParams(req));
     const packages = await extensionsApi.getPackages(request);
-    removeVerboseSpecContent(packages.items);
-    res.json(packages);
+    res.json({ ...packages, items: removeVerboseSpecContent(packages.items) });
   });
 
   router.get('/packages/facets', async (req, res) => {
@@ -348,8 +347,7 @@ export async function createRouter(
   router.get('/plugins', async (req, res) => {
     const request = decodeGetEntitiesRequest(createSearchParams(req));
     const plugins = await extensionsApi.getPlugins(request);
-    removeVerboseSpecContent(plugins.items);
-    res.json(plugins);
+    res.json({ ...plugins, items: removeVerboseSpecContent(plugins.items) });
   });
 
   router.get('/plugins/facets', async (req, res) => {
@@ -398,20 +396,26 @@ export async function createRouter(
       }
 
       let authorizedActions = {};
-      let plugin: ExtensionsPlugin;
 
-      const evaluateConditional = async (
+      // Pre-fetch plugin if either decision needs conditional evaluation
+      // to avoid duplicate fetches from concurrent promises.
+      let plugin: ExtensionsPlugin | undefined;
+      if (
+        readDecision.result === AuthorizeResult.CONDITIONAL ||
+        installDecision.result === AuthorizeResult.CONDITIONAL
+      ) {
+        plugin = await extensionsApi.getPluginByName(
+          req.params.namespace,
+          req.params.name,
+        );
+      }
+
+      const evaluateConditional = (
         decision: PolicyDecision,
         action: string,
       ) => {
         if (decision.result === AuthorizeResult.CONDITIONAL) {
-          if (!plugin) {
-            plugin = await extensionsApi.getPluginByName(
-              req.params.namespace,
-              req.params.name,
-            );
-          }
-          if (matches(plugin, decision.conditions)) {
+          if (plugin && matches(plugin, decision.conditions)) {
             authorizedActions = { ...authorizedActions, [action]: 'ALLOW' };
           }
         } else if (decision.result === AuthorizeResult.ALLOW) {
@@ -419,10 +423,8 @@ export async function createRouter(
         }
       };
 
-      await Promise.all([
-        evaluateConditional(readDecision, 'read'),
-        evaluateConditional(installDecision, 'write'),
-      ]);
+      evaluateConditional(readDecision, 'read');
+      evaluateConditional(installDecision, 'write');
 
       if (Object.keys(authorizedActions).length === 0) {
         res.status(200).json({ read: 'DENY', write: 'DENY' });
@@ -692,7 +694,8 @@ export async function createRouter(
     }
 
     const doc = new Document(entry);
-    return doc.toString({ lineWidth: 0 });
+    toBlockStyle(doc.contents);
+    return doc.toString({ lineWidth: 120 });
   };
 
   router.get(
