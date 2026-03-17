@@ -10,6 +10,7 @@ import {
   InstallationInitError,
   InstallationInitErrorReason,
 } from '../errors/InstallationInitError';
+import { toBlockStyle } from '../utils/yamlFormat';
 import type { JsonValue } from '@backstage/types';
 
 export interface PackageEntry {
@@ -42,9 +43,14 @@ export class FileInstallationStorage implements InstallationStorage {
     return this.config.get('plugins') as YAMLSeq<YAMLMap<string, JsonValue>>;
   }
 
+  private serializeYaml(doc: Document): string {
+    toBlockStyle(doc.contents);
+    return doc.toString({ lineWidth: 120 });
+  }
+
   private toStringYaml(mapNodes: YAMLMap<string, JsonValue>[]): string {
     const tempDoc = new Document(mapNodes);
-    return tempDoc.toString({ lineWidth: 0 });
+    return this.serializeYaml(tempDoc);
   }
 
   private getPackageYamlMap(
@@ -57,7 +63,7 @@ export class FileInstallationStorage implements InstallationStorage {
 
   private save() {
     const tmp = `${this.configFile}.tmp`;
-    fs.writeFileSync(tmp, this.config.toString({ lineWidth: 0 }));
+    fs.writeFileSync(tmp, this.serializeYaml(this.config));
     fs.renameSync(tmp, this.configFile);
   }
 
@@ -75,7 +81,7 @@ export class FileInstallationStorage implements InstallationStorage {
   }
 
   getConfigYaml(): string {
-    return this.config.toString({ lineWidth: 0 });
+    return this.serializeYaml(this.config);
   }
 
   getPackage(packageName: string): string | undefined {
