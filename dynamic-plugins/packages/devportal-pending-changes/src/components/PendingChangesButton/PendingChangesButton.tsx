@@ -48,11 +48,30 @@ export interface PendingChangesButtonProps {
 }
 
 const extractPluginName = (pkg: string): string => {
-  const ociIdx = pkg.indexOf('!');
-  if (ociIdx !== -1) return pkg.substring(ociIdx + 1);
-  const lastSlash = pkg.lastIndexOf('/');
-  if (lastSlash !== -1) return pkg.substring(lastSlash + 1);
-  return pkg;
+  let name = pkg;
+  // OCI format: oci://registry/repo:tag!package-name
+  const ociIdx = name.indexOf('!');
+  if (ociIdx !== -1) name = name.substring(ociIdx + 1);
+  // Local path: ./dynamic-plugins/dist/package-name
+  const lastSlash = name.lastIndexOf('/');
+  if (lastSlash !== -1) name = name.substring(lastSlash + 1);
+  // Strip -dynamic suffix
+  name = name.replace(/-dynamic$/, '');
+  // Strip everything before "-plugin-" (covers all vendor prefixes)
+  // e.g. "red-hat-developer-hub-backstage-plugin-dynamic-home-page" → "dynamic-home-page"
+  // e.g. "backstage-community-plugin-todo-backend" → "todo-backend"
+  const pluginIdx = name.indexOf('-plugin-');
+  if (pluginIdx !== -1) {
+    name = name.substring(pluginIdx + '-plugin-'.length);
+  } else {
+    // Fallback: take last 2 segments for readability
+    // e.g. "some-long-unknown-package-name" → "package-name"
+    const parts = name.split('-');
+    if (parts.length > 3) {
+      name = parts.slice(-2).join('-');
+    }
+  }
+  return name;
 };
 
 const pendingMessage = (count: number) =>
