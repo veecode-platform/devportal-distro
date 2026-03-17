@@ -62,9 +62,16 @@ export class FileInstallationStorage implements InstallationStorage {
   }
 
   private save() {
+    const content = this.serializeYaml(this.config);
     const tmp = `${this.configFile}.tmp`;
-    fs.writeFileSync(tmp, this.serializeYaml(this.config));
-    fs.renameSync(tmp, this.configFile);
+    try {
+      fs.writeFileSync(tmp, content);
+      fs.renameSync(tmp, this.configFile);
+    } catch {
+      // rename fails on Docker bind mounts (EBUSY) — write directly
+      fs.writeFileSync(this.configFile, content);
+      try { fs.unlinkSync(tmp); } catch { /* ignore cleanup */ }
+    }
   }
 
   initialize(): void {
