@@ -56,7 +56,9 @@ export class FileInstallationStorage implements InstallationStorage {
   }
 
   private save() {
-    fs.writeFileSync(this.configFile, this.config.toString({ lineWidth: 0 }));
+    const tmp = `${this.configFile}.tmp`;
+    fs.writeFileSync(tmp, this.config.toString({ lineWidth: 0 }));
+    fs.renameSync(tmp, this.configFile);
   }
 
   initialize(): void {
@@ -136,7 +138,8 @@ export class FileInstallationStorage implements InstallationStorage {
   }
 
   getAllPackageEntries(): PackageEntry[] {
-    // Re-read from disk to pick up changes made by other backends (e.g. RHDH)
+    // Re-read from disk to get the current persisted state (in-memory Document
+    // may lag behind if initialize() was called long ago).
     const rawContent = fs.readFileSync(this.configFile, 'utf-8');
     const freshConfig = parseDocument(rawContent);
     const plugins = freshConfig.get('plugins') as YAMLSeq<YAMLMap<string, JsonValue>>;

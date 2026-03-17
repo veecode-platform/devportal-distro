@@ -9,20 +9,20 @@ import {
   RESOURCE_TYPE_EXTENSIONS_PLUGIN,
 } from '@red-hat-developer-hub/backstage-plugin-extensions-common';
 
-export type ExtentionFilter = {
+export type ExtensionFilter = {
   key: string;
   values: Array<string> | undefined;
 };
 
-export type ExtentionFilters =
-  | { anyOf: ExtentionFilters[] }
-  | { allOf: ExtentionFilters[] }
-  | { not: ExtentionFilters }
-  | ExtentionFilter;
+export type ExtensionFilters =
+  | { anyOf: ExtensionFilters[] }
+  | { allOf: ExtensionFilters[] }
+  | { not: ExtensionFilters }
+  | ExtensionFilter;
 
 export const extensionsPermissionResourceRef = createPermissionResourceRef<
   ExtensionsPlugin,
-  ExtentionFilter
+  ExtensionFilter
 >().with({
   pluginId: 'extensions',
   resourceType: RESOURCE_TYPE_EXTENSIONS_PLUGIN,
@@ -59,7 +59,7 @@ const hasPluginName = createPermissionRule({
     key: 'name',
     values: params?.pluginNames,
   }),
-}) as PermissionRule<ExtensionsPlugin, ExtentionFilter, 'extensions-plugin', ExtensionParams>;
+}) as PermissionRule<ExtensionsPlugin, ExtensionFilter, 'extensions-plugin', ExtensionParams>;
 
 const hasAnnotation = createPermissionRule({
   name: 'HAS_ANNOTATION' as const,
@@ -74,7 +74,7 @@ const hasAnnotation = createPermissionRule({
       .describe('Value of the annotation to match on'),
   }) as any,
   apply: (plugin: any, params: any) =>
-    !!plugin.metadata.annotations?.hasOwnProperty(params.annotation) &&
+    !!(params.annotation in (plugin.metadata.annotations ?? {})) &&
     (params.value === undefined
       ? true
       : plugin.metadata.annotations?.[params.annotation] === params.value),
@@ -82,6 +82,6 @@ const hasAnnotation = createPermissionRule({
     key: params.annotation,
     values: params.value ? [params.value] : undefined,
   }),
-}) as PermissionRule<ExtensionsPlugin, ExtentionFilter, 'extensions-plugin', ExtensionParams>;
+}) as PermissionRule<ExtensionsPlugin, ExtensionFilter, 'extensions-plugin', ExtensionParams>;
 
 export const rules = { hasPluginName, hasAnnotation };

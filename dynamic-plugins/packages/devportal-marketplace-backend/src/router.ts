@@ -577,7 +577,7 @@ export async function createRouter(
   // endpoint, they will be silently bypassed. Monitor RHDH changelogs on
   // the extensions plugin when upgrading.
   //
-  // TODO: Replace with Opção A (custom `installEnabled` flag) when the
+  // TODO: Replace with a custom `installEnabled` config flag when the
   // RHDH frontend is forked. See: project_marketplace_north_star.md
   router.get('/environment', async (_req, res) => {
     res.status(200).json({ nodeEnv: 'development' });
