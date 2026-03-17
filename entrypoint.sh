@@ -71,6 +71,13 @@ else
     echo "Catalog entities already present, skipping download (set CATALOG_INDEX_REFRESH=true to force)"
 fi
 
+# Ensure extensions-install.yaml is writable (bind mounts may have host permissions)
+EXTENSIONS_INSTALL="/app/extensions-install.yaml"
+if [ -f "$EXTENSIONS_INSTALL" ] && [ ! -w "$EXTENSIONS_INSTALL" ]; then
+    chmod 666 "$EXTENSIONS_INSTALL" 2>/dev/null || \
+        echo "WARNING: Cannot make $EXTENSIONS_INSTALL writable. Plugin install/uninstall via marketplace will fail."
+fi
+
 # ENTRYPOINT INSTALL PLUGINS
 /app/install-dynamic-plugins.sh /app/dynamic-plugins-root
 
