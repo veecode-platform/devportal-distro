@@ -71,11 +71,13 @@ else
     echo "Catalog entities already present, skipping download (set CATALOG_INDEX_REFRESH=true to force)"
 fi
 
-# Ensure extensions-install.yaml is writable (bind mounts may have host permissions)
+# Ensure extensions-install.yaml is writable by the app user (bind mounts
+# inherit host permissions which may not match the container user).
+# Entrypoint runs as root (set in Dockerfile) so chown always succeeds.
 EXTENSIONS_INSTALL="/app/extensions-install.yaml"
-if [ -f "$EXTENSIONS_INSTALL" ] && [ ! -w "$EXTENSIONS_INSTALL" ]; then
-    chmod 666 "$EXTENSIONS_INSTALL" 2>/dev/null || \
-        echo "WARNING: Cannot make $EXTENSIONS_INSTALL writable. Plugin install/uninstall via marketplace will fail."
+if [ -f "$EXTENSIONS_INSTALL" ]; then
+    chown default:root "$EXTENSIONS_INSTALL" 2>/dev/null
+    chmod 664 "$EXTENSIONS_INSTALL" 2>/dev/null
 fi
 
 # ENTRYPOINT INSTALL PLUGINS
@@ -179,11 +181,11 @@ else
     DEBUG_ARGS="--inspect=0.0.0.0:$DEBUG_PORT"
 fi
 
-# EXECUTE THE COMMAND
+# EXECUTE THE COMMAND — drop from root to default user
 if [ "$DEVELOPMENT" = "true" ]; then
     echo "Running in DEVELOPMENT mode with auto-restart on config changes and debug port"
     echo "EXTRA_ARGS=$EXTRA_ARGS"
-    exec npx nodemon \
+    exec runuser -u default -- npx nodemon \
         --watch app-config.yaml \
         --watch app-config.production.yaml \
         --watch app-config.dynamic-plugins.yaml \
@@ -193,7 +195,7 @@ if [ "$DEVELOPMENT" = "true" ]; then
 else
     echo "Running in PRODUCTION mode"
     echo "EXTRA_ARGS=$EXTRA_ARGS"
-    exec node $NODE_OPTIONS $DEBUG_ARGS packages/backend \
+    exec runuser -u default -- node $NODE_OPTIONS $DEBUG_ARGS packages/backend \
         --config app-config.yaml \
         --config app-config.production.yaml \
         --config app-config.dynamic-plugins.yaml $EXTRA_ARGS
