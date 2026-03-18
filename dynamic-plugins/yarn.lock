@@ -4391,7 +4391,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/plugin-bitbucket-cloud-common@npm:^0.3.8":
+"@backstage/plugin-bitbucket-cloud-common@npm:^0.3.7, @backstage/plugin-bitbucket-cloud-common@npm:^0.3.8":
   version: 0.3.8
   resolution: "@backstage/plugin-bitbucket-cloud-common@npm:0.3.8"
   dependencies:
@@ -4401,20 +4401,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/plugin-catalog-backend-module-bitbucket-cloud@npm:0.5.9":
-  version: 0.5.9
-  resolution: "@backstage/plugin-catalog-backend-module-bitbucket-cloud@npm:0.5.9"
+"@backstage/plugin-catalog-backend-module-bitbucket-cloud@npm:0.5.8":
+  version: 0.5.8
+  resolution: "@backstage/plugin-catalog-backend-module-bitbucket-cloud@npm:0.5.8"
   dependencies:
-    "@backstage/backend-plugin-api": "npm:^1.8.0"
-    "@backstage/catalog-model": "npm:^1.7.7"
+    "@backstage/backend-plugin-api": "npm:^1.7.0"
+    "@backstage/catalog-model": "npm:^1.7.6"
     "@backstage/config": "npm:^1.3.6"
-    "@backstage/integration": "npm:^2.0.0"
-    "@backstage/plugin-bitbucket-cloud-common": "npm:^0.3.8"
+    "@backstage/integration": "npm:^1.20.0"
+    "@backstage/plugin-bitbucket-cloud-common": "npm:^0.3.7"
     "@backstage/plugin-catalog-common": "npm:^1.1.8"
-    "@backstage/plugin-catalog-node": "npm:^2.1.0"
-    "@backstage/plugin-events-node": "npm:^0.4.20"
+    "@backstage/plugin-catalog-node": "npm:^2.0.0"
+    "@backstage/plugin-events-node": "npm:^0.4.19"
     uuid: "npm:^11.0.0"
-  checksum: 10c0/b59fbd6f15d338362fd21e91d780e100f67b4012c9583172c96ba06ea269103fd791d81d435d2c6ac80a1d13ab2f44cb52f47e2a968fbac3251fb6bc03890867
+  checksum: 10c0/b6ba2c9bf1b3fdebb1c4a32be1886d8a4cc4e280c96b66c9bf4cfb19a8a3db280d886f34206e570ea411eec57c93be9268765d95de194819c59ffb91b6800b4c
   languageName: node
   linkType: hard
 
@@ -14342,7 +14342,7 @@ __metadata:
   resolution: "backstage-plugin-catalog-backend-module-bitbucket-cloud@workspace:wrappers/backstage-plugin-catalog-backend-module-bitbucket-cloud-dynamic"
   dependencies:
     "@backstage/cli": "npm:^0.34.1"
-    "@backstage/plugin-catalog-backend-module-bitbucket-cloud": "npm:0.5.9"
+    "@backstage/plugin-catalog-backend-module-bitbucket-cloud": "npm:0.5.8"
     "@janus-idp/cli": "npm:3.6.1"
     typescript: "npm:5.9.3"
   languageName: unknown
