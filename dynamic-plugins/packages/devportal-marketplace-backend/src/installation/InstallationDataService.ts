@@ -3,18 +3,16 @@ import {
   ExtensionsPlugin,
 } from '@red-hat-developer-hub/backstage-plugin-extensions-common';
 import { DEFAULT_NAMESPACE } from '@backstage/catalog-model';
-import {
-  FileInstallationStorage,
-  InstallationStorage,
-  PackageEntry,
-} from './FileInstallationStorage';
+import { FileInstallationStorage } from './FileInstallationStorage';
+import { DatabaseInstallationStorage } from './DatabaseInstallationStorage';
+import type { InstallationStorage, PackageEntry } from './InstallationStorage';
 import type { Config } from '@backstage/config';
 import {
   InstallationInitError,
   InstallationInitErrorReason,
   InstallationInitErrorReasonKeys,
 } from '../errors/InstallationInitError';
-import { LoggerService } from '@backstage/backend-plugin-api';
+import { DatabaseService, LoggerService } from '@backstage/backend-plugin-api';
 import { ConfigFormatError } from '../errors/ConfigFormatError';
 
 export class InstallationDataService {
@@ -34,18 +32,20 @@ export class InstallationDataService {
   }
 
   /**
-   * Creates an InstallationDataService from config.
+   * Creates an InstallationDataService backed by the Backstage database.
+   * Falls back to file-based storage if the database is unavailable.
    *
-   * Unlike the RHDH version, this does NOT block when NODE_ENV=production
-   * and does NOT check the extensions.installation.enabled config flag.
-   * Installation is always available when a valid file path is configured.
+   * The YAML file path from config is still used for write-through:
+   * every DB mutation regenerates extensions-install.yaml so the Python
+   * install script can read it on the next container restart.
    */
-  static fromConfig(deps: {
+  static async create(deps: {
     config: Config;
     extensionsApi: ExtensionsApi;
     logger: LoggerService;
-  }): InstallationDataService {
-    const { config, extensionsApi, logger } = deps;
+    database: DatabaseService;
+  }): Promise<InstallationDataService> {
+    const { config, extensionsApi, logger, database } = deps;
 
     const serviceWithInitializationError = (
       reason: InstallationInitErrorReasonKeys,
@@ -62,21 +62,42 @@ export class InstallationDataService {
       );
     };
 
+    const yamlFilePath = config.getOptionalString(
+      'extensions.installation.saveToSingleFile.file',
+    );
+
+    // Try database-backed storage first
     try {
-      const filePath = config.getOptionalString(
-        'extensions.installation.saveToSingleFile.file',
+      const knexClient = await database.getClient();
+      const storage = new DatabaseInstallationStorage(
+        knexClient,
+        yamlFilePath,
+        logger,
       );
-      if (!filePath) {
+      await storage.initialize();
+      logger.info(
+        'Marketplace installation service initialized (database-backed)',
+      );
+      return new InstallationDataService(extensionsApi, storage);
+    } catch (dbError) {
+      logger.warn(
+        `Database storage initialization failed, falling back to file storage: ${dbError}`,
+      );
+    }
+
+    // Fallback: file-based storage
+    try {
+      if (!yamlFilePath) {
         return serviceWithInitializationError(
           InstallationInitErrorReason.FILE_CONFIG_VALUE_MISSING,
-          "The 'extensions.installation.saveToSingleFile.file' config value is not being specified in the extensions configuration",
+          "Database unavailable and 'extensions.installation.saveToSingleFile.file' config value is not specified",
         );
       }
 
-      const storage = new FileInstallationStorage(filePath);
-      storage.initialize();
+      const storage = new FileInstallationStorage(yamlFilePath);
+      await storage.initialize();
       logger.info(
-        `Marketplace installation service initialized (file: ${filePath})`,
+        `Marketplace installation service initialized (file fallback: ${yamlFilePath})`,
       );
       return new InstallationDataService(extensionsApi, storage);
     } catch (e) {
@@ -116,21 +137,31 @@ export class InstallationDataService {
     return this.initializationError;
   }
 
-  getAllInstalledPackages(): PackageEntry[] {
+  async getAllInstalledPackages(): Promise<PackageEntry[]> {
     return this.installationStorage.getAllPackageEntries();
   }
 
-  getPackageConfig(packageDynamicArtifact: string): string | undefined {
+  async getPackageConfig(
+    packageDynamicArtifact: string,
+  ): Promise<string | undefined> {
     return this.installationStorage.getPackage(packageDynamicArtifact);
   }
 
-  async getPluginConfig(plugin: ExtensionsPlugin): Promise<string | undefined> {
+  async getPluginConfig(
+    plugin: ExtensionsPlugin,
+  ): Promise<string | undefined> {
     const dynamicArtifacts = await this.getPluginDynamicArtifacts(plugin);
     return this.installationStorage.getPackages(dynamicArtifacts);
   }
 
-  updatePackageConfig(packageDynamicArtifact: string, newConfig: string): void {
-    this.installationStorage.updatePackage(packageDynamicArtifact, newConfig);
+  async updatePackageConfig(
+    packageDynamicArtifact: string,
+    newConfig: string,
+  ): Promise<void> {
+    await this.installationStorage.updatePackage(
+      packageDynamicArtifact,
+      newConfig,
+    );
   }
 
   async updatePluginConfig(
@@ -138,22 +169,31 @@ export class InstallationDataService {
     newConfig: string,
   ): Promise<void> {
     const dynamicArtifacts = await this.getPluginDynamicArtifacts(plugin);
-    this.installationStorage.updatePackages(dynamicArtifacts, newConfig);
+    await this.installationStorage.updatePackages(dynamicArtifacts, newConfig);
   }
 
-  removePackage(packageDynamicArtifact: string): void {
-    this.installationStorage.removePackage(packageDynamicArtifact);
+  async removePackage(packageDynamicArtifact: string): Promise<void> {
+    await this.installationStorage.removePackage(packageDynamicArtifact);
   }
 
-  setPackageDisabled(packageDynamicArtifact: string, disabled: boolean) {
-    this.installationStorage.setPackageDisabled(
+  async setPackageDisabled(
+    packageDynamicArtifact: string,
+    disabled: boolean,
+  ): Promise<void> {
+    await this.installationStorage.setPackageDisabled(
       packageDynamicArtifact,
       disabled,
     );
   }
 
-  async setPluginDisabled(plugin: ExtensionsPlugin, disabled: boolean) {
+  async setPluginDisabled(
+    plugin: ExtensionsPlugin,
+    disabled: boolean,
+  ): Promise<void> {
     const dynamicArtifacts = await this.getPluginDynamicArtifacts(plugin);
-    this.installationStorage.setPackagesDisabled(dynamicArtifacts, disabled);
+    await this.installationStorage.setPackagesDisabled(
+      dynamicArtifacts,
+      disabled,
+    );
   }
 }

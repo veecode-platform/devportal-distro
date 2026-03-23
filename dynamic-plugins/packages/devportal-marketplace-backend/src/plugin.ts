@@ -28,6 +28,7 @@ export const extensionsPlugin = createBackendPlugin({
       deps: {
         auth: coreServices.auth,
         config: coreServices.rootConfig,
+        database: coreServices.database,
         httpAuth: coreServices.httpAuth,
         httpRouter: coreServices.httpRouter,
         discovery: coreServices.discovery,
@@ -39,6 +40,7 @@ export const extensionsPlugin = createBackendPlugin({
         pluginProvider,
         auth,
         config,
+        database,
         httpAuth,
         httpRouter,
         discovery,
@@ -52,12 +54,12 @@ export const extensionsPlugin = createBackendPlugin({
           catalogApi,
         });
 
-        const installationDataService: InstallationDataService =
-          InstallationDataService.fromConfig({
-            config,
-            extensionsApi,
-            logger,
-          });
+        const installationDataService = await InstallationDataService.create({
+          config,
+          extensionsApi,
+          logger,
+          database,
+        });
 
         httpRouter.use(
           await createRouter({
