@@ -243,7 +243,7 @@ export async function createRouter(
           `Package catalog entity ${extensionsPackage.metadata.name} is missing 'spec.dynamicArtifact'`,
         );
       }
-      const result = installationDataService.getPackageConfig(
+      const result = await installationDataService.getPackageConfig(
         extensionsPackage.spec?.dynamicArtifact,
       );
       res.status(200).json({ configYaml: result });
@@ -269,7 +269,7 @@ export async function createRouter(
         throw new InputError("'configYaml' object must be present");
       }
       try {
-        installationDataService.updatePackageConfig(
+        await installationDataService.updatePackageConfig(
           extensionsPackage.spec.dynamicArtifact,
           newConfig,
         );
@@ -307,7 +307,7 @@ export async function createRouter(
       if (!disabled) {
         // Install: apply auto-config from appConfigExamples
         try {
-          const existingConfig = installationDataService.getPackageConfig(
+          const existingConfig = await installationDataService.getPackageConfig(
             extensionsPackage.spec.dynamicArtifact,
           );
           const yamlStr = buildPackageYaml(
@@ -316,7 +316,7 @@ export async function createRouter(
             extensionsPackage,
             existingConfig,
           );
-          installationDataService.updatePackageConfig(
+          await installationDataService.updatePackageConfig(
             extensionsPackage.spec.dynamicArtifact,
             yamlStr,
           );
@@ -325,14 +325,14 @@ export async function createRouter(
           logger.warn(
             `Auto-config failed for ${extensionsPackage.spec.dynamicArtifact}, falling back to simple install: ${e}`,
           );
-          installationDataService.setPackageDisabled(
+          await installationDataService.setPackageDisabled(
             extensionsPackage.spec.dynamicArtifact,
             disabled,
           );
         }
       } else {
         // Disable: no auto-config needed
-        installationDataService.setPackageDisabled(
+        await installationDataService.setPackageDisabled(
           extensionsPackage.spec.dynamicArtifact,
           disabled,
         );
@@ -473,14 +473,14 @@ export async function createRouter(
           if (!artifact) continue;
 
           const existingConfig =
-            installationDataService.getPackageConfig(artifact);
+            await installationDataService.getPackageConfig(artifact);
           const yamlStr = buildPackageYaml(
             artifact,
             false,
             pkg,
             existingConfig,
           );
-          installationDataService.updatePackageConfig(artifact, yamlStr);
+          await installationDataService.updatePackageConfig(artifact, yamlStr);
           changedThisSession.add(artifact);
         }
       } catch (e) {
@@ -526,19 +526,19 @@ export async function createRouter(
 
           try {
             const existingConfig =
-              installationDataService.getPackageConfig(artifact);
+              await installationDataService.getPackageConfig(artifact);
             const yamlStr = buildPackageYaml(
               artifact,
               disabled,
               pkg,
               existingConfig,
             );
-            installationDataService.updatePackageConfig(artifact, yamlStr);
+            await installationDataService.updatePackageConfig(artifact, yamlStr);
           } catch (e) {
             logger.warn(
               `Auto-config failed for ${artifact}, falling back to simple install: ${e}`,
             );
-            installationDataService.setPackageDisabled(artifact, disabled);
+            await installationDataService.setPackageDisabled(artifact, disabled);
           }
           changedThisSession.add(artifact);
         }
@@ -706,7 +706,7 @@ export async function createRouter(
 
       const loadedNames = new Set(dynamicPlugins.map(p => p.name));
       const installedPackages =
-        installationDataService.getAllInstalledPackages();
+        await installationDataService.getAllInstalledPackages();
 
       const pendingInstalls: string[] = [];
       const pendingRemovals: string[] = [];

@@ -50,6 +50,7 @@
     "typescript": "5.9.3"
   },
   "files": [
-    "dist"
+    "dist",
+    "migrations"
   ]
 }

@@ -12,23 +12,7 @@ import {
 } from '../errors/InstallationInitError';
 import { toBlockStyle } from '../utils/yamlFormat';
 import type { JsonValue } from '@backstage/types';
-
-export interface PackageEntry {
-  package: string;
-  disabled: boolean;
-}
-
-export interface InstallationStorage {
-  initialize?(): void;
-  getPackage(packageName: string): string | undefined;
-  updatePackage(packageName: string, newConfig: string): void;
-  getPackages(packageNames: Set<string>): string | undefined;
-  updatePackages(packageNames: Set<string>, newConfig: string): void;
-  setPackageDisabled(packageName: string, disabled: boolean): void;
-  setPackagesDisabled(packageNames: Set<string>, disabled: boolean): void;
-  getAllPackageEntries(): PackageEntry[];
-  removePackage(packageName: string): void;
-}
+import type { InstallationStorage, PackageEntry } from './InstallationStorage';
 
 export class FileInstallationStorage implements InstallationStorage {
   private readonly configFile: string;
@@ -74,7 +58,7 @@ export class FileInstallationStorage implements InstallationStorage {
     }
   }
 
-  initialize(): void {
+  async initialize(): Promise<void> {
     if (!fs.existsSync(this.configFile)) {
       throw new InstallationInitError(
         InstallationInitErrorReason.FILE_NOT_EXISTS,
@@ -91,12 +75,12 @@ export class FileInstallationStorage implements InstallationStorage {
     return this.serializeYaml(this.config);
   }
 
-  getPackage(packageName: string): string | undefined {
+  async getPackage(packageName: string): Promise<string | undefined> {
     const res = this.getPackageYamlMap(packageName);
     return res ? this.toStringYaml([res]) : res;
   }
 
-  getPackages(packageNames: Set<string>): string | undefined {
+  async getPackages(packageNames: Set<string>): Promise<string | undefined> {
     const res = [];
     for (const packageName of packageNames) {
       const packageMap = this.getPackageYamlMap(packageName);
@@ -107,7 +91,7 @@ export class FileInstallationStorage implements InstallationStorage {
     return res.length === 0 ? undefined : this.toStringYaml(res);
   }
 
-  updatePackage(packageName: string, newConfig: string): void {
+  async updatePackage(packageName: string, newConfig: string): Promise<void> {
     const newNode = parseDocument(newConfig).contents;
     validatePackageFormat(newNode, packageName);
 
@@ -122,7 +106,7 @@ export class FileInstallationStorage implements InstallationStorage {
     this.save();
   }
 
-  updatePackages(packageNames: Set<string>, newConfig: string): void {
+  async updatePackages(packageNames: Set<string>, newConfig: string): Promise<void> {
     const newNodes = parseDocument(newConfig);
     validatePluginFormat(newNodes, packageNames);
 
@@ -139,7 +123,7 @@ export class FileInstallationStorage implements InstallationStorage {
     this.save();
   }
 
-  setPackageDisabled(packageName: string, disabled: boolean) {
+  async setPackageDisabled(packageName: string, disabled: boolean): Promise<void> {
     let pkg = this.getPackageYamlMap(packageName);
     if (!pkg) {
       pkg = new YAMLMap<string, JsonValue>();
@@ -150,7 +134,7 @@ export class FileInstallationStorage implements InstallationStorage {
     this.save();
   }
 
-  getAllPackageEntries(): PackageEntry[] {
+  async getAllPackageEntries(): Promise<PackageEntry[]> {
     // Re-read from disk to get the current persisted state (in-memory Document
     // may lag behind if initialize() was called long ago).
     const rawContent = fs.readFileSync(this.configFile, 'utf-8');
@@ -163,7 +147,7 @@ export class FileInstallationStorage implements InstallationStorage {
     }));
   }
 
-  removePackage(packageName: string): void {
+  async removePackage(packageName: string): Promise<void> {
     const idx = this.packages.items.findIndex(
       p => isMap(p) && p.get('package') === packageName,
     );
@@ -173,7 +157,7 @@ export class FileInstallationStorage implements InstallationStorage {
     }
   }
 
-  setPackagesDisabled(packageNames: Set<string>, disabled: boolean) {
+  async setPackagesDisabled(packageNames: Set<string>, disabled: boolean): Promise<void> {
     const packages = this.config.get('plugins') as YAMLSeq<
       YAMLMap<string, JsonValue>
     >;
