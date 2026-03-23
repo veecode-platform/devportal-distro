@@ -78,7 +78,6 @@ fi
 EXTENSIONS_INSTALL="/app/extensions-install.yaml"
 if [ ! -f "$EXTENSIONS_INSTALL" ]; then
     echo 'plugins: []' > "$EXTENSIONS_INSTALL"
-    chown default:root "$EXTENSIONS_INSTALL" 2>/dev/null
 fi
 
 # ENTRYPOINT INSTALL PLUGINS
@@ -182,11 +181,11 @@ else
     DEBUG_ARGS="--inspect=0.0.0.0:$DEBUG_PORT"
 fi
 
-# EXECUTE THE COMMAND — drop from root to default user
+# EXECUTE THE COMMAND
 if [ "$DEVELOPMENT" = "true" ]; then
     echo "Running in DEVELOPMENT mode with auto-restart on config changes and debug port"
     echo "EXTRA_ARGS=$EXTRA_ARGS"
-    exec runuser -u default -- npx nodemon \
+    exec npx nodemon \
         --watch app-config.yaml \
         --watch app-config.production.yaml \
         --watch app-config.dynamic-plugins.yaml \
@@ -196,7 +195,7 @@ if [ "$DEVELOPMENT" = "true" ]; then
 else
     echo "Running in PRODUCTION mode"
     echo "EXTRA_ARGS=$EXTRA_ARGS"
-    exec runuser -u default -- node $NODE_OPTIONS $DEBUG_ARGS packages/backend \
+    exec node $NODE_OPTIONS $DEBUG_ARGS packages/backend \
         --config app-config.yaml \
         --config app-config.production.yaml \
         --config app-config.dynamic-plugins.yaml $EXTRA_ARGS

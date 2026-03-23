@@ -56,6 +56,3 @@ COPY --chown=default:default profiles/*.yaml /app/
 # this baked-in copy ensures the marketplace is never completely empty.
 COPY --chown=default:default catalog-entities /app/catalog-entities
 
-# Entrypoint runs as root to fix bind-mount permissions, then drops
-# to the default user via runuser before exec'ing the Node.js process.
-USER root
