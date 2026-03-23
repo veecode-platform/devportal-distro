@@ -12,7 +12,7 @@ services:
   devportal:
     # depends_on:
     #   - kubectl-proxy
-    image: veecode/devportal:latest
+    image: veecode/devportal:local
     ports:
       - "7007:7007"
     environment:
@@ -34,6 +34,8 @@ services:
       - AZURE_ORGANIZATION
       - AZURE_PROJECT
       - AZURE_TOKEN
+      # Force OCI catalog index download on startup (baked-in has no packages)
+      - CATALOG_INDEX_REFRESH=true
     volumes:
       # your config will add/override the default image config
       - ./app-config.yaml:/app/app-config.local.yaml:ro
@@ -43,6 +45,12 @@ services:
       - ./dynamic-plugins.default.yaml:/app/dynamic-plugins.default.yaml:ro
       # examples folder
       #- ./examples:/app/examples:ro
+      # catalog-entities: NOT mounted — image uses baked-in + OCI refresh at startup
+      # Marketplace install state — persists user install/uninstall choices.
+      # IMPORTANT: This file MUST be on persistent storage. Without it, all
+      # user plugin selections are lost on container restart/redeploy.
+      # In K8s: use a PVC mounted at /app/ or mount this single file.
+      - ./extensions-install.yaml:/app/extensions-install.yaml
 
   kubectl-proxy:
     image: alpine/socat:latest
