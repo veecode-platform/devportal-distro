@@ -46,10 +46,9 @@ services:
       # examples folder
       #- ./examples:/app/examples:ro
       # catalog-entities: NOT mounted — image uses baked-in + OCI refresh at startup
-      # Marketplace install state — persists user install/uninstall choices.
-      # IMPORTANT: This file MUST be on persistent storage. Without it, all
-      # user plugin selections are lost on container restart/redeploy.
-      # In K8s: use a PVC mounted at /app/ or mount this single file.
+      # Marketplace YAML write-through cache (DB is the source of truth).
+      # The Python install script reads this file on startup to know which
+      # marketplace plugins to load. The Node app regenerates it from the DB.
       - ./extensions-install.yaml:/app/extensions-install.yaml
 
   kubectl-proxy:
