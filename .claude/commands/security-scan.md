@@ -1,25 +1,20 @@
-Scan a Docker image for security vulnerabilities using Trivy:
+Scan a Docker image for security vulnerabilities using Trivy.
 
 ## Arguments
 
-- `$ARGUMENTS` - Docker image to scan (e.g., `veecode/devportal:1.0.0`). If not provided, defaults to `veecode/devportal:latest`.
+- `$ARGUMENTS` - Docker image to scan (e.g., `veecode/devportal:1.0.0`).
+  Defaults to `veecode/devportal:latest` if omitted.
 
 ## Steps
 
 1. **Determine the image to scan**:
 
-   - Use `$ARGUMENTS` if provided
-   - Otherwise default to `veecode/devportal:latest`
+   Use `$ARGUMENTS` if provided, otherwise default to `veecode/devportal:latest`.
 
 2. **Create output directory and run scan**:
 
    ```bash
    mkdir -p .trivyscan
-   ```
-
-   Run the JSON scan and save to `.trivyscan/report.json`:
-
-   ```bash
    trivy image --ignore-policy .trivy/ignore-kernel.rego --quiet --format json <image> > .trivyscan/report.json
    ```
 
@@ -30,9 +25,8 @@ Scan a Docker image for security vulnerabilities using Trivy:
    ```
 
    This creates:
-
-   - `.trivyscan/main-report.json` - DevPortal distro vulnerabilities (actionable by this project)
-   - `.trivyscan/plugins-report.json` - Dynamic plugin vulnerabilities (maintained by upstream projects)
+   - `.trivyscan/main-report.json` - DevPortal distro vulnerabilities (actionable)
+   - `.trivyscan/plugins-report.json` - Dynamic plugin vulnerabilities (upstream-maintained)
 
 4. **Generate markdown reports**:
 
@@ -41,7 +35,7 @@ Scan a Docker image for security vulnerabilities using Trivy:
    .trivy/generate-report.sh .trivyscan/plugins-report.json "Dynamic Plugins" > .trivyscan/plugins-report.md
    ```
 
-5. **Report results** with separate summary tables for each:
+5. **Report results** with separate summary tables:
 
    ### DevPortal Distro (Actionable)
 
@@ -54,7 +48,6 @@ Scan a Docker image for security vulnerabilities using Trivy:
 
    - List packages with high-severity vulnerabilities
    - Note which vulnerabilities have fixes available
-   - These are actionable within this project
 
    ### Dynamic Plugins (Upstream)
 
@@ -66,21 +59,21 @@ Scan a Docker image for security vulnerabilities using Trivy:
    | Low      | X     |
 
    - List packages with high-severity vulnerabilities
-   - Note: These are maintained by upstream plugin projects and not directly actionable here
+   - These are maintained by upstream plugin projects
 
 ## Output Files
 
-- `.trivyscan/report.json` - Full JSON report (all vulnerabilities)
-- `.trivyscan/main-report.json` - DevPortal distro vulnerabilities only
-- `.trivyscan/main-report.md` - Human-readable DevPortal report
-- `.trivyscan/plugins-report.json` - Dynamic plugin vulnerabilities only
-- `.trivyscan/plugins-report.md` - Human-readable plugins report
+| File | Content |
+|------|---------|
+| `.trivyscan/report.json` | Full JSON report (all vulnerabilities) |
+| `.trivyscan/main-report.json` | DevPortal distro vulnerabilities only |
+| `.trivyscan/main-report.md` | Human-readable DevPortal report |
+| `.trivyscan/plugins-report.json` | Dynamic plugin vulnerabilities only |
+| `.trivyscan/plugins-report.md` | Human-readable plugins report |
 
-## Notes
+## Prerequisites
 
-- Trivy must be installed (`brew install trivy` or see <https://trivy.dev>)
-- The scan analyzes OS packages (RPM, APT) and application dependencies (npm, Python, Go, etc.)
-- Kernel packages are ignored via `.trivy/ignore-kernel.rego` Rego policy - they require host-level fixes and are not actionable within containers
-- Dynamic plugins (in `dynamic-plugins-root/`) are split into a separate report because they are maintained by upstream projects
-- Use `--ignore-unfixed` flag to show only vulnerabilities with available fixes
-- The `.trivyscan/` folder should be added to `.gitignore`
+- Trivy must be installed (`brew install trivy` or see https://trivy.dev)
+- The `.trivyscan/` folder is gitignored
+- Kernel packages are excluded via `.trivy/ignore-kernel.rego` (requires host-level fixes)
+- Dynamic plugins are split into a separate report because they are upstream-maintained

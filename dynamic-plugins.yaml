@@ -25,6 +25,8 @@ includes:
   # That makes it easy to enable plugins with defaults that would otherwise
   # be painful to configure.
   - dynamic-plugins.default.yaml
+  # Plugins installed/enabled via marketplace UI
+  - extensions-install.yaml
 
 plugins:
   #- package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
@@ -43,10 +45,7 @@ plugins:
     disabled: true
   - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-github-workflows-dynamic
     disabled: true
-  - package: ./dynamic-plugins/dist/backstage-community-plugin-azure-devops-dynamic
-    disabled: true
-  - package: ./dynamic-plugins/dist/backstage-community-plugin-azure-devops-backend-dynamic
-    disabled: true
+  # azure-devops: managed via marketplace (extensions-install.yaml)
   - package: ./dynamic-plugins/dist/backstage-community-plugin-jenkins-backend-dynamic
     disabled: true
   - package: ./dynamic-plugins/dist/backstage-community-plugin-jenkins
@@ -54,4 +53,50 @@ plugins:
   - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-backend-dynamic
     disabled: false
   - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-dynamic
+    disabled: false
+  # ── Extensions Marketplace ──────────────────────────────────────────
+  # Frontend (RHDH) — provides the /marketplace UI
+  - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-extensions
+    disabled: false
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          red-hat-developer-hub.backstage-plugin-extensions:
+            appIcons:
+              - name: pluginsIcon
+                importName: PluginsIcon
+            dynamicRoutes:
+              - path: /marketplace
+                importName: DynamicExtensionsPluginRouter
+                menuItem:
+                  icon: pluginsIcon
+                  text: Marketplace
+            menuItems:
+              marketplace:
+                title: Marketplace
+                icon: pluginsIcon
+  # ⚠️ RHDH backend DISABLED — replaced by devportal-marketplace-backend.
+  # DO NOT enable both simultaneously — they share pluginId "extensions"
+  # and would conflict on /api/extensions/* routes.
+  - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-extensions-backend
+    disabled: true
+  # DevPortal custom marketplace backend (no production block)
+  - package: ./dynamic-plugins/dist/devportal-marketplace-backend-dynamic-dynamic
+    disabled: false
+  # Pending changes indicator (header badge next to notifications bell)
+  - package: ./dynamic-plugins/dist/devportal-pending-changes-dynamic
+    disabled: false
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          devportal.pending-changes:
+            mountPoints:
+              - mountPoint: global.header/component
+                importName: PendingChangesButton
+                config:
+                  priority: 55
+                  props:
+                    pollingIntervalMs: 30000
+  # Catalog backend module — entity providers for Extension/Package/Collection kinds
+  - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-catalog-backend-module-extensions
     disabled: false

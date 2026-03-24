@@ -67,6 +67,7 @@ Please check our [docs](https://docs.platform.vee.codes) for more information.
 
 This repo also has some examples of plugin use for quick reference:
 
+- [OCI dynamic plugins](docs/OCI_PLUGINS.md): load plugins from OCI registries (ghcr.io, quay.io, etc.) at startup without rebuilding the image.
 - [Kubernetes plugin testing](docs/KUBERNETES.md): run a local cluster with `vkdr` and see it from a cluster catalog object.
 
 ## How to Build

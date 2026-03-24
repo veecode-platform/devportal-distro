@@ -12,7 +12,7 @@ services:
   devportal:
     # depends_on:
     #   - kubectl-proxy
-    image: veecode/devportal:latest
+    image: veecode/devportal:local
     ports:
       - "7007:7007"
     environment:
@@ -34,6 +34,8 @@ services:
       - AZURE_ORGANIZATION
       - AZURE_PROJECT
       - AZURE_TOKEN
+      # Force OCI catalog index download on startup (baked-in has no packages)
+      - CATALOG_INDEX_REFRESH=true
     volumes:
       # your config will add/override the default image config
       - ./app-config.yaml:/app/app-config.local.yaml:ro
@@ -43,6 +45,11 @@ services:
       - ./dynamic-plugins.default.yaml:/app/dynamic-plugins.default.yaml:ro
       # examples folder
       #- ./examples:/app/examples:ro
+      # catalog-entities: NOT mounted — image uses baked-in + OCI refresh at startup
+      # Marketplace YAML write-through cache (DB is the source of truth).
+      # The Python install script reads this file on startup to know which
+      # marketplace plugins to load. The Node app regenerates it from the DB.
+      - ./extensions-install.yaml:/app/extensions-install.yaml
 
   kubectl-proxy:
     image: alpine/socat:latest

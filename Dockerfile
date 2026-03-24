@@ -1,4 +1,4 @@
-ARG TAG=1.2.5
+ARG TAG=1.2.8
 FROM veecode/devportal-base:${TAG} AS base
 
 # allows setting NPM registry from build arg
@@ -21,6 +21,12 @@ COPY --chown=default:default dynamic-plugins /app/dynamic-plugins
 RUN mkdir -p /app/dynamic-plugins-store && \
     cd /app/dynamic-plugins && \
     yarn install --immutable && \
+    yarn workspace devportal-marketplace-backend run tsc && \
+    yarn workspace devportal-marketplace-backend run build && \
+    yarn workspace devportal-marketplace-backend-dynamic run tsc && \
+    yarn workspace devportal-pending-changes run tsc && \
+    yarn workspace devportal-pending-changes run build && \
+    yarn workspace devportal-pending-changes-dynamic run tsc && \
     yarn build && \
     yarn export-dynamic && \
     yarn copy-dynamic-plugins $(pwd)/../dynamic-plugins-store
@@ -33,9 +39,20 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["node", "packages/backend", "--config", "app-config.yaml", "--config", "app-config.production.yaml", "--config", "app-config.dynamic-plugins.yaml", "--config", "/app/dynamic-plugins-root/app-config.dynamic-plugins.yaml"]
 
 COPY --from=base --chown=default:default /app/dynamic-plugins-store /app/dynamic-plugins/dist
+
+# Generate devportal.json with version info (consumed by about plugin)
+ARG DEVPORTAL_VERSION=dev
+RUN echo "{\"version\":\"${DEVPORTAL_VERSION}\"}" > /app/devportal.json
 COPY --chown=default:default dynamic-plugins.yaml /app/dynamic-plugins.yaml
 COPY --chown=default:default dynamic-plugins.default.yaml /app/dynamic-plugins.default.yaml
 COPY --chown=default:default docker/install-dynamic-plugins.py /app/install-dynamic-plugins.py
 COPY --chown=default:default --chmod=755 docker/install-dynamic-plugins.sh /app/install-dynamic-plugins.sh
 # override profile config files - these will take precedence over the base image ones
 COPY --chown=default:default profiles/*.yaml /app/
+# Marketplace catalog entities — baked-in fallback.
+# In CI, the build job should populate catalog-entities/ from the OCI catalog
+# index (or sparse checkout from export-overlays) BEFORE building the image.
+# At runtime, entrypoint.sh will try to refresh from OCI; if that fails,
+# this baked-in copy ensures the marketplace is never completely empty.
+COPY --chown=default:default catalog-entities /app/catalog-entities
+

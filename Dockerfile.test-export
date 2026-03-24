@@ -1,0 +1,28 @@
+ARG TAG=1.2.7
+FROM veecode/devportal-base:${TAG}
+
+ARG NPM_REGISTRY=https://registry.npmjs.org/
+ENV NPM_REGISTRY=$NPM_REGISTRY NPM_CONFIG_REGISTRY=$NPM_REGISTRY YARN_REGISTRY=$NPM_REGISTRY
+RUN echo "Using NPM Registry: $NPM_REGISTRY" && \
+    if [ "$NPM_REGISTRY" != "https://registry.npmjs.org/" ]; then \
+      HOST=$(printf '%s\n' "$NPM_REGISTRY" | awk -F[/:] '{print $4}') && \
+      yarn config set unsafeHttpWhitelist --json "[\"localhost\",\"$HOST\"]"; \
+    fi && \
+    yarn config set nodeLinker node-modules && \
+    yarn config set npmRegistryServer "$NPM_REGISTRY" && \
+    cp .yarnrc.yml $HOME/.yarnrc.yml
+
+COPY --chown=default:default dynamic-plugins /app/dynamic-plugins
+
+RUN cd /app/dynamic-plugins && \
+    yarn install --immutable && \
+    yarn workspace devportal-marketplace-backend run tsc && \
+    yarn workspace devportal-marketplace-backend run build && \
+    yarn workspace devportal-marketplace-backend-dynamic run tsc && \
+    yarn workspace devportal-marketplace-backend-dynamic run build && \
+    yarn workspace devportal-marketplace-backend-dynamic run export-dynamic && \
+    yarn workspace devportal-pending-changes run tsc && \
+    yarn workspace devportal-pending-changes run build && \
+    yarn workspace devportal-pending-changes-dynamic run tsc && \
+    yarn workspace devportal-pending-changes-dynamic run build && \
+    yarn workspace devportal-pending-changes-dynamic run export-dynamic

@@ -21,11 +21,19 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-      - name: Ensure tag exists in main
+      - name: Ensure tag exists in main (skip for pre-releases)
+        env:
+          TAG_REF: ${{ github.ref }}
         run: |
-          git fetch origin main
-          TAG="${GITHUB_REF#refs/tags/}"
+          TAG="${TAG_REF#refs/tags/}"
           echo "Pushed TAG=$TAG"
+          # Pre-release tags (e.g. 2.0.0-rc1, v2.0.0-beta.1) can come from
+          # feature branches — skip the main-ancestry check for those.
+          if echo "$TAG" | grep -qE '[-](rc|alpha|beta|preview)'; then
+            echo "OK: pre-release tag, skipping main-ancestry check."
+            exit 0
+          fi
+          git fetch origin main
           SHA="$(git rev-parse "$TAG^{commit}")"
           if git merge-base --is-ancestor "$SHA" origin/main; then
             echo "OK: tag commit is reachable from main."
@@ -58,7 +66,15 @@ jobs:
         TAG="${GITHUB_REF#refs/tags/}"
         echo "tag=$TAG" >> $GITHUB_OUTPUT
         echo "Extracted TAG=$TAG"
-      
+
+    - name: Fetch marketplace catalog entities
+      run: |
+        git clone --depth 1 --filter=blob:none --sparse --branch main \
+          https://github.com/veecode-platform/devportal-plugin-export-overlays.git /tmp/export-overlays
+        cd /tmp/export-overlays
+        git sparse-checkout set catalog-entities
+        cp -r catalog-entities $GITHUB_WORKSPACE/catalog-entities
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
@@ -75,6 +91,8 @@ jobs:
         context: .
         platforms: ${{ matrix.platform }}
         push: true
+        build-args: |
+          DEVPORTAL_VERSION=${{ steps.extract-tag.outputs.tag }}
         tags: |
           ${{ env.IMAGE_NAME }}:${{ steps.extract-tag.outputs.tag }}-${{ matrix.arch }}
 
@@ -109,7 +127,20 @@ jobs:
             ${{ env.IMAGE_NAME }}:${{ steps.extract-tag.outputs.tag }}-amd64 \
             ${{ env.IMAGE_NAME }}:${{ steps.extract-tag.outputs.tag }}-arm64
 
+      - name: Check if pre-release
+        id: check-prerelease
+        env:
+          TAG: ${{ steps.extract-tag.outputs.tag }}
+        run: |
+          if echo "$TAG" | grep -qE '[-](rc|alpha|beta|preview)'; then
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+            echo "Pre-release detected, will NOT update :latest"
+          else
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Create multi-arch manifest (latest)
+        if: steps.check-prerelease.outputs.prerelease == 'false'
         run: |
           docker buildx imagetools create -t ${{ env.IMAGE_NAME }}:latest \
             ${{ env.IMAGE_NAME }}:${{ steps.extract-tag.outputs.tag }}-amd64 \
