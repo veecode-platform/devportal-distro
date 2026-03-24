@@ -314,3 +314,50 @@ plugins:
                 parent: admin
                 title: About
                 icon: aboutIcon
+
+  # ── Extensions Marketplace ──────────────────────────────────────────
+  # Frontend (RHDH) — provides the /marketplace UI
+  - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-extensions
+    disabled: false
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          red-hat-developer-hub.backstage-plugin-extensions:
+            appIcons:
+              - name: pluginsIcon
+                importName: PluginsIcon
+            dynamicRoutes:
+              - path: /marketplace
+                importName: DynamicExtensionsPluginRouter
+                menuItem:
+                  icon: pluginsIcon
+                  text: Marketplace
+            menuItems:
+              marketplace:
+                title: Marketplace
+                icon: pluginsIcon
+  # RHDH backend DISABLED — replaced by devportal-marketplace-backend.
+  # DO NOT enable both simultaneously — they share pluginId "extensions"
+  # and would conflict on /api/extensions/* routes.
+  - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-extensions-backend
+    disabled: true
+  # DevPortal custom marketplace backend
+  - package: ./dynamic-plugins/dist/devportal-marketplace-backend-dynamic-dynamic
+    disabled: false
+  # Pending changes indicator (header badge next to notifications bell)
+  - package: ./dynamic-plugins/dist/devportal-pending-changes-dynamic
+    disabled: false
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          devportal.pending-changes:
+            mountPoints:
+              - mountPoint: global.header/component
+                importName: PendingChangesButton
+                config:
+                  priority: 55
+                  props:
+                    pollingIntervalMs: 30000
+  # Catalog backend module — entity providers for Extension/Package/Collection kinds
+  - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-catalog-backend-module-extensions
+    disabled: false
