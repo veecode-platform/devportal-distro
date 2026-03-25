@@ -45,12 +45,12 @@ fi
 # from the OCI catalog index image published by export-overlays.
 CATALOG_INDEX_IMAGE="${CATALOG_INDEX_IMAGE:-quay.io/veecode/plugin-catalog-index:latest}"
 CATALOG_DIR="/app/catalog-entities/extensions"
-if [ ! -d "$CATALOG_DIR/plugins" ] || [ "${CATALOG_INDEX_REFRESH:-false}" = "true" ]; then
+YAML_COUNT=$(find "$CATALOG_DIR" -name '*.yaml' 2>/dev/null | wc -l)
+if [ "$YAML_COUNT" -eq 0 ] || [ "${CATALOG_INDEX_REFRESH:-false}" = "true" ]; then
     echo "Downloading catalog index from $CATALOG_INDEX_IMAGE"
     TMP_CATALOG="$(mktemp -d)"
     if skopeo copy "docker://$CATALOG_INDEX_IMAGE" "dir:$TMP_CATALOG"; then
         # Extract the single layer (tar) into the catalog directory
-        mkdir -p "$CATALOG_DIR"
         LAYER=$(jq -r '.layers[0].digest' "$TMP_CATALOG/manifest.json" | sed 's/sha256://')
         tar -xf "$TMP_CATALOG/$LAYER" -C "$CATALOG_DIR" --strip-components=1 2>/dev/null || \
         tar -xzf "$TMP_CATALOG/$LAYER" -C "$CATALOG_DIR" --strip-components=1 2>/dev/null || \

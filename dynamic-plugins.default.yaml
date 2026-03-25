@@ -361,3 +361,10 @@ plugins:
   # Catalog backend module — entity providers for Extension/Package/Collection kinds
   - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-catalog-backend-module-extensions
     disabled: false
+    pluginConfig:
+      extensions:
+        directory: /app/catalog-entities/extensions
+        installation:
+          enabled: true
+          saveToSingleFile:
+            file: /app/extensions-install.yaml

@@ -20,13 +20,6 @@
 permission:
   enabled: false
 
-extensions:
-  directory: /app/catalog-entities/extensions
-  installation:
-    enabled: true
-    saveToSingleFile:
-      file: /app/extensions-install.yaml
-
 kubernetes:
   serviceLocatorMethod:
     type: 'singleTenant'

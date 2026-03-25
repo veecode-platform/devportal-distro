@@ -55,4 +55,7 @@ COPY --chown=default:default profiles/*.yaml /app/
 # At runtime, entrypoint.sh will try to refresh from OCI; if that fails,
 # this baked-in copy ensures the marketplace is never completely empty.
 COPY --chown=default:default catalog-entities /app/catalog-entities
+RUN mkdir -p /app/catalog-entities/extensions/plugins \
+            /app/catalog-entities/extensions/packages \
+            /app/catalog-entities/extensions/collections
 
