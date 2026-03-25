@@ -45,8 +45,8 @@ fi
 # from the OCI catalog index image published by export-overlays.
 CATALOG_INDEX_IMAGE="${CATALOG_INDEX_IMAGE:-quay.io/veecode/plugin-catalog-index:latest}"
 CATALOG_DIR="/app/catalog-entities/extensions"
-YAML_COUNT=$(find "$CATALOG_DIR" -name '*.yaml' 2>/dev/null | wc -l)
-if [ "$YAML_COUNT" -eq 0 ] || [ "${CATALOG_INDEX_REFRESH:-false}" = "true" ]; then
+PACKAGES_COUNT=$(find "$CATALOG_DIR/packages" -name '*.yaml' 2>/dev/null | wc -l)
+if [ "$PACKAGES_COUNT" -eq 0 ] || [ "${CATALOG_INDEX_REFRESH:-false}" = "true" ]; then
     echo "Downloading catalog index from $CATALOG_INDEX_IMAGE"
     TMP_CATALOG="$(mktemp -d)"
     if skopeo copy "docker://$CATALOG_INDEX_IMAGE" "dir:$TMP_CATALOG"; then
