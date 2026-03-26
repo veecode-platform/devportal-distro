@@ -129,6 +129,25 @@ plugins:
                 importName: MyComponent
 ```
 
+### Base Image Plugins (pre-installed)
+
+Plugins that come from `devportal-base` are already installed in `dynamic-plugins-root/` at build time. To configure them without re-installing, use `preInstalled: true`:
+
+```yaml
+plugins:
+  - package: my-base-plugin-name
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          my.base-plugin:
+            dynamicRoutes:
+              - path: /my-route
+                importName: MyPage
+```
+
+The `preInstalled` flag tells `install-dynamic-plugins.py` to skip download/installation but still merge the `pluginConfig` into the generated `app-config.dynamic-plugins.yaml`.
+
 ## Environment Variables
 
 Key variables for Docker runtime:

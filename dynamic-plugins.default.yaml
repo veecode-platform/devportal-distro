@@ -290,6 +290,144 @@ plugins:
   - package: ./dynamic-plugins/dist/backstage-community-plugin-sonarqube-backend-dynamic
     disabled: true
 
+  # ── Base image plugins (pre-installed, config only) ─────────────────
+  # These plugins come from devportal-base. They are already installed
+  # in dynamic-plugins-root/ by the base image build. The preInstalled
+  # flag tells the install script to skip installation and only merge
+  # the pluginConfig into the generated app-config.
+  - package: backstage-community-plugin-rbac
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          backstage-community.plugin-rbac:
+            dynamicRoutes:
+              - path: /rbac
+                importName: RbacPage
+                menuItem:
+                  text: RBAC
+                  textKey: menuItem.rbac
+                  icon: admin
+                config:
+                  props:
+                    width: 1500
+                    height: 800
+            appIcons:
+              - name: admin
+                importName: RbacIcon
+            menuItems:
+              rbac:
+                parent: admin
+                title: RBAC
+                titleKey: menuItem.rbac
+                icon: admin
+  - package: veecode-platform-plugin-veecode-homepage-dynamic
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          veecode-platform.plugin-veecode-homepage:
+            translationResources:
+              - importName: homepageTranslations
+                ref: homepageTranslationRef
+            dynamicRoutes:
+              - path: /
+                importName: VeecodeHomepagePage
+                config:
+                  props:
+                    width: 1500
+                    height: 800
+  - package: veecode-platform-plugin-veecode-global-header-dynamic
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          veecode-platform.plugin-veecode-global-header:
+            translationResources:
+              - importName: globalHeaderTranslations
+                ref: globalHeaderTranslationRef
+            mountPoints:
+              - mountPoint: application/header
+                importName: GlobalHeader
+                config:
+                  position: above-main-content
+              - mountPoint: global.header/component
+                importName: SearchComponent
+                config:
+                  priority: 100
+              - mountPoint: global.header/component
+                importName: Spacer
+                config:
+                  priority: 99
+                  props:
+                    growFactor: 0
+              - mountPoint: global.header/component
+                importName: Divider
+                config:
+                  priority: 90
+              - mountPoint: global.header/component
+                importName: NotificationButton
+                config:
+                  priority: 60
+              - mountPoint: global.header/component
+                importName: StarredDropdown
+                config:
+                  priority: 70
+                  props:
+                    growFactor: 0
+              - mountPoint: global.header/component
+                importName: ToggleThemeButton
+                config:
+                  priority: 75
+                  props:
+                    growFactor: 0
+              - mountPoint: global.header/component
+                importName: ProfileDropdown
+                config:
+                  priority: 10
+              - mountPoint: global.header/profile
+                importName: MenuItemLink
+                config:
+                  priority: 100
+                  props:
+                    title: Settings
+                    link: /settings
+                    icon: manageAccounts
+              - mountPoint: global.header/profile
+                importName: MenuItemLink
+                config:
+                  priority: 90
+                  props:
+                    title: My profile
+                    titleKey: profile.myProfile
+                    type: user
+              - mountPoint: global.header/profile
+                importName: LogoutButton
+                config:
+                  priority: 10
+  - package: backstage-community-plugin-tech-radar-dynamic
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          backstage-community.plugin-tech-radar:
+            appIcons:
+              - name: techRadar
+                importName: TechRadarIcon
+            dynamicRoutes:
+              - path: /tech-radar
+                importName: TechRadarPage
+                menuItem:
+                  icon: techRadar
+                  text: Tech Radar
+                  textKey: menuItem.techRadar
+                config:
+                  props:
+                    width: 1500
+                    height: 800
+  - package: backstage-community-plugin-tech-radar-backend-dynamic
+    preInstalled: true
+
   # ABOUT plugin
   - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-backend-dynamic
     disabled: false
