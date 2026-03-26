@@ -36,7 +36,7 @@ FROM veecode/devportal-base:${TAG}
 # Create the entrypoint script
 COPY --chown=node:node --chmod=755 entrypoint.sh /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["node", "packages/backend", "--config", "app-config.yaml", "--config", "app-config.production.yaml", "--config", "app-config.dynamic-plugins.yaml", "--config", "/app/dynamic-plugins-root/app-config.dynamic-plugins.yaml"]
+CMD ["node", "packages/backend", "--config", "app-config.yaml", "--config", "app-config.production.yaml", "--config", "/app/dynamic-plugins-root/app-config.dynamic-plugins.yaml"]
 
 COPY --from=base --chown=default:default /app/dynamic-plugins-store /app/dynamic-plugins/dist
 
