@@ -80,15 +80,9 @@ if [ ! -f "$EXTENSIONS_INSTALL" ]; then
     echo 'plugins: []' > "$EXTENSIONS_INSTALL"
 fi
 
-# ENTRYPOINT INSTALL PLUGINS
-/app/install-dynamic-plugins.sh /app/dynamic-plugins-root
-
-# Remove RHDH extensions backend AFTER install — it ships in the base image
-# and gets re-installed by install-dynamic-plugins.sh from defaults.
-# Our devportal-marketplace-backend replaces it (same pluginId "extensions").
-rm -rf /app/dynamic-plugins-root/red-hat-developer-hub-backstage-plugin-extensions-backend 2>/dev/null
-
 # SAAS: expands VEECODE_APP_CONFIG and VEECODE_DYNAMIC_PLUGINS into files
+# Must happen BEFORE install-dynamic-plugins.sh so the install script
+# reads the SaaS overrides instead of the baked-in defaults.
 if [ ! -z "$VEECODE_APP_CONFIG" ]; then
     echo "VEECODE_APP_CONFIG detected (this is expected in VeeCode SaaS deployments), decoding into /app/app-config.local.yaml"
     echo "$VEECODE_APP_CONFIG" | base64 -d > /app/app-config.local.yaml
@@ -96,7 +90,6 @@ if [ ! -z "$VEECODE_APP_CONFIG" ]; then
 else
     echo "VEECODE_APP_CONFIG variable not found (this is expected in non-SaaS deployments)"
 fi
-# Decode VEECODE_DYNAMIC_PLUGINS and convert to YAML
 if [ ! -z "$VEECODE_DYNAMIC_PLUGINS" ]; then
     echo "VEECODE_DYNAMIC_PLUGINS detected (this is expected in VeeCode SaaS deployments), decoding into /app/dynamic-plugins.yaml"
     echo "$VEECODE_DYNAMIC_PLUGINS" | base64 -d > /app/dynamic-plugins.yaml
@@ -104,6 +97,14 @@ if [ ! -z "$VEECODE_DYNAMIC_PLUGINS" ]; then
 else
     echo "VEECODE_DYNAMIC_PLUGINS variable not found (this is expected in non-SaaS deployments)"
 fi
+
+# ENTRYPOINT INSTALL PLUGINS
+/app/install-dynamic-plugins.sh /app/dynamic-plugins-root
+
+# Remove RHDH extensions backend AFTER install — it ships in the base image
+# and gets re-installed by install-dynamic-plugins.sh from defaults.
+# Our devportal-marketplace-backend replaces it (same pluginId "extensions").
+rm -rf /app/dynamic-plugins-root/red-hat-developer-hub-backstage-plugin-extensions-backend 2>/dev/null
 if [ ! -z "$VEECODE_DOMAIN" ]; then
     echo "VEECODE_DOMAIN detected (this is expected in VeeCode SaaS deployments): $VEECODE_DOMAIN"
 else
