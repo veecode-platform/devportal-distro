@@ -77,7 +77,7 @@ fi
 # not exist yet, so create an empty one.
 EXTENSIONS_INSTALL="/app/extensions-install.yaml"
 if [ ! -f "$EXTENSIONS_INSTALL" ]; then
-    echo 'plugins: []' > "$EXTENSIONS_INSTALL"
+    echo 'plugins: []' > "$EXTENSIONS_INSTALL" 2>/dev/null || (echo 'plugins: []' > /tmp/extensions-install.yaml && cp /tmp/extensions-install.yaml "$EXTENSIONS_INSTALL")
 fi
 
 # SAAS: expands VEECODE_APP_CONFIG and VEECODE_DYNAMIC_PLUGINS into files
@@ -85,14 +85,16 @@ fi
 # reads the SaaS overrides instead of the baked-in defaults.
 if [ ! -z "$VEECODE_APP_CONFIG" ]; then
     echo "VEECODE_APP_CONFIG detected (this is expected in VeeCode SaaS deployments), decoding into /app/app-config.local.yaml"
-    echo "$VEECODE_APP_CONFIG" | base64 -d > /app/app-config.local.yaml
+    echo "$VEECODE_APP_CONFIG" | base64 -d > /tmp/app-config.local.yaml
+    cp /tmp/app-config.local.yaml /app/app-config.local.yaml 2>/dev/null || cat /tmp/app-config.local.yaml > /app/app-config.local.yaml
     echo "VEECODE_APP_CONFIG expanded into /app/app-config.local.yaml successfully"
 else
     echo "VEECODE_APP_CONFIG variable not found (this is expected in non-SaaS deployments)"
 fi
 if [ ! -z "$VEECODE_DYNAMIC_PLUGINS" ]; then
     echo "VEECODE_DYNAMIC_PLUGINS detected (this is expected in VeeCode SaaS deployments), decoding into /app/dynamic-plugins.yaml"
-    echo "$VEECODE_DYNAMIC_PLUGINS" | base64 -d > /app/dynamic-plugins.yaml
+    echo "$VEECODE_DYNAMIC_PLUGINS" | base64 -d > /tmp/dynamic-plugins.yaml
+    cp /tmp/dynamic-plugins.yaml /app/dynamic-plugins.yaml 2>/dev/null || cat /tmp/dynamic-plugins.yaml > /app/dynamic-plugins.yaml
     echo "VEECODE_DYNAMIC_PLUGINS expanded into /app/dynamic-plugins.yaml successfully"
 else
     echo "VEECODE_DYNAMIC_PLUGINS variable not found (this is expected in non-SaaS deployments)"
