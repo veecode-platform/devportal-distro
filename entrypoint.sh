@@ -102,12 +102,14 @@ else
 fi
 
 # ENTRYPOINT INSTALL PLUGINS
-# The install script reads dynamic-plugins.yaml from CWD (hardcoded).
-# If SaaS override exists, run from a temp dir with the override + symlinked defaults.
+# The install script reads dynamic-plugins.yaml from CWD (hardcoded) and uses
+# relative paths (./dynamic-plugins/dist/...). If a SaaS override exists,
+# run from a temp dir with symlinks back to /app for all relative resources.
 if [ -f "/app/dynamic-plugins.saas.yaml" ]; then
     mkdir -p /tmp/dp-workdir
     cp /app/dynamic-plugins.saas.yaml /tmp/dp-workdir/dynamic-plugins.yaml
     ln -sf /app/dynamic-plugins.default.yaml /tmp/dp-workdir/dynamic-plugins.default.yaml 2>/dev/null
+    ln -sf /app/dynamic-plugins /tmp/dp-workdir/dynamic-plugins
     (cd /tmp/dp-workdir && python /app/install-dynamic-plugins.py /app/dynamic-plugins-root)
 else
     /app/install-dynamic-plugins.sh /app/dynamic-plugins-root
