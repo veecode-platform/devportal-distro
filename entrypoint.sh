@@ -80,12 +80,12 @@ if [ ! -f "$EXTENSIONS_INSTALL" ]; then
     echo 'plugins: []' > "$EXTENSIONS_INSTALL" 2>/dev/null || (echo 'plugins: []' > /tmp/extensions-install.yaml && cp /tmp/extensions-install.yaml "$EXTENSIONS_INSTALL")
 fi
 
-# SAAS: expands VEECODE_APP_CONFIG and VEECODE_DYNAMIC_PLUGINS into files
-# Must happen BEFORE install-dynamic-plugins.sh so the install script
-# reads the SaaS overrides instead of the baked-in defaults.
-# SaaS overrides are written to NEW files (not the ConfigMap-mounted originals)
-# so they coexist with the chart's base config. Backstage merges --config files
-# in order; app-config.saas.yaml loads last and wins for overlapping keys.
+# SAAS: expand VEECODE_APP_CONFIG into a separate config file.
+# Written to a NEW file (not the ConfigMap-mounted app-config.local.yaml)
+# so it coexists with the chart's base config. Backstage merges --config
+# files in order; app-config.saas.yaml loads last and wins for overlapping keys.
+# Dynamic plugins are injected via Helm values (global.dynamic) into the
+# ConfigMap, so no entrypoint override is needed for dynamic-plugins.yaml.
 if [ ! -z "$VEECODE_APP_CONFIG" ]; then
     echo "VEECODE_APP_CONFIG detected, decoding into /app/app-config.saas.yaml"
     echo "$VEECODE_APP_CONFIG" | base64 -d > /app/app-config.saas.yaml
@@ -93,27 +93,9 @@ if [ ! -z "$VEECODE_APP_CONFIG" ]; then
 else
     echo "VEECODE_APP_CONFIG variable not found (this is expected in non-SaaS deployments)"
 fi
-if [ ! -z "$VEECODE_DYNAMIC_PLUGINS" ]; then
-    echo "VEECODE_DYNAMIC_PLUGINS detected, decoding into /app/dynamic-plugins.saas.yaml"
-    echo "$VEECODE_DYNAMIC_PLUGINS" | base64 -d > /app/dynamic-plugins.saas.yaml
-    echo "VEECODE_DYNAMIC_PLUGINS expanded successfully"
-else
-    echo "VEECODE_DYNAMIC_PLUGINS variable not found (this is expected in non-SaaS deployments)"
-fi
 
 # ENTRYPOINT INSTALL PLUGINS
-# The install script reads dynamic-plugins.yaml from CWD (hardcoded) and uses
-# relative paths (./dynamic-plugins/dist/...). If a SaaS override exists,
-# run from a temp dir with symlinks back to /app for all relative resources.
-if [ -f "/app/dynamic-plugins.saas.yaml" ]; then
-    mkdir -p /tmp/dp-workdir
-    cp /app/dynamic-plugins.saas.yaml /tmp/dp-workdir/dynamic-plugins.yaml
-    ln -sf /app/dynamic-plugins.default.yaml /tmp/dp-workdir/dynamic-plugins.default.yaml 2>/dev/null
-    ln -sf /app/dynamic-plugins /tmp/dp-workdir/dynamic-plugins
-    (cd /tmp/dp-workdir && python /app/install-dynamic-plugins.py /app/dynamic-plugins-root)
-else
-    /app/install-dynamic-plugins.sh /app/dynamic-plugins-root
-fi
+/app/install-dynamic-plugins.sh /app/dynamic-plugins-root
 
 # Remove RHDH extensions backend AFTER install — it ships in the base image
 # and gets re-installed by install-dynamic-plugins.sh from defaults.
