@@ -83,25 +83,35 @@ fi
 # SAAS: expands VEECODE_APP_CONFIG and VEECODE_DYNAMIC_PLUGINS into files
 # Must happen BEFORE install-dynamic-plugins.sh so the install script
 # reads the SaaS overrides instead of the baked-in defaults.
+# SaaS overrides are written to NEW files (not the ConfigMap-mounted originals)
+# so they coexist with the chart's base config. Backstage merges --config files
+# in order; app-config.saas.yaml loads last and wins for overlapping keys.
 if [ ! -z "$VEECODE_APP_CONFIG" ]; then
-    echo "VEECODE_APP_CONFIG detected (this is expected in VeeCode SaaS deployments), decoding into /app/app-config.local.yaml"
-    echo "$VEECODE_APP_CONFIG" | base64 -d > /tmp/app-config.local.yaml
-    cp /tmp/app-config.local.yaml /app/app-config.local.yaml 2>/dev/null || cat /tmp/app-config.local.yaml > /app/app-config.local.yaml
-    echo "VEECODE_APP_CONFIG expanded into /app/app-config.local.yaml successfully"
+    echo "VEECODE_APP_CONFIG detected, decoding into /app/app-config.saas.yaml"
+    echo "$VEECODE_APP_CONFIG" | base64 -d > /app/app-config.saas.yaml
+    echo "VEECODE_APP_CONFIG expanded successfully"
 else
     echo "VEECODE_APP_CONFIG variable not found (this is expected in non-SaaS deployments)"
 fi
 if [ ! -z "$VEECODE_DYNAMIC_PLUGINS" ]; then
-    echo "VEECODE_DYNAMIC_PLUGINS detected (this is expected in VeeCode SaaS deployments), decoding into /app/dynamic-plugins.yaml"
-    echo "$VEECODE_DYNAMIC_PLUGINS" | base64 -d > /tmp/dynamic-plugins.yaml
-    cp /tmp/dynamic-plugins.yaml /app/dynamic-plugins.yaml 2>/dev/null || cat /tmp/dynamic-plugins.yaml > /app/dynamic-plugins.yaml
-    echo "VEECODE_DYNAMIC_PLUGINS expanded into /app/dynamic-plugins.yaml successfully"
+    echo "VEECODE_DYNAMIC_PLUGINS detected, decoding into /app/dynamic-plugins.saas.yaml"
+    echo "$VEECODE_DYNAMIC_PLUGINS" | base64 -d > /app/dynamic-plugins.saas.yaml
+    echo "VEECODE_DYNAMIC_PLUGINS expanded successfully"
 else
     echo "VEECODE_DYNAMIC_PLUGINS variable not found (this is expected in non-SaaS deployments)"
 fi
 
 # ENTRYPOINT INSTALL PLUGINS
-/app/install-dynamic-plugins.sh /app/dynamic-plugins-root
+# The install script reads dynamic-plugins.yaml from CWD (hardcoded).
+# If SaaS override exists, run from a temp dir with the override + symlinked defaults.
+if [ -f "/app/dynamic-plugins.saas.yaml" ]; then
+    mkdir -p /tmp/dp-workdir
+    cp /app/dynamic-plugins.saas.yaml /tmp/dp-workdir/dynamic-plugins.yaml
+    ln -sf /app/dynamic-plugins.default.yaml /tmp/dp-workdir/dynamic-plugins.default.yaml 2>/dev/null
+    (cd /tmp/dp-workdir && python /app/install-dynamic-plugins.py /app/dynamic-plugins-root)
+else
+    /app/install-dynamic-plugins.sh /app/dynamic-plugins-root
+fi
 
 # Remove RHDH extensions backend AFTER install — it ships in the base image
 # and gets re-installed by install-dynamic-plugins.sh from defaults.
@@ -115,12 +125,18 @@ fi
 
 DYNAMIC_PLUGINS_CONFIG="/app/dynamic-plugins-root/app-config.dynamic-plugins.yaml"
 LOCAL_CONFIG="/app/app-config.local.yaml"
+SAAS_CONFIG="/app/app-config.saas.yaml"
 EXTRA_ARGS=""
 if [ -f "$LOCAL_CONFIG" ]; then
     EXTRA_ARGS="--config $LOCAL_CONFIG"
 fi
 if [ -f "$DYNAMIC_PLUGINS_CONFIG" ]; then
     EXTRA_ARGS="$EXTRA_ARGS --config $DYNAMIC_PLUGINS_CONFIG"
+fi
+# SaaS config loads LAST — overrides chart defaults for database, URLs, etc.
+# while preserving branding, CSP, catalog rules from the ConfigMap
+if [ -f "$SAAS_CONFIG" ]; then
+    EXTRA_ARGS="$EXTRA_ARGS --config $SAAS_CONFIG"
 fi
 
 # Conditionally add app-config.PROFILE.yaml
