@@ -701,9 +701,7 @@ export async function createRouter(
   router.get(
     '/pending-changes',
     requireInitializedInstallationDataService,
-    async (req, response) => {
-      await httpAuth.credentials(req, { allow: ['user', 'service'] });
-
+    async (_req, response) => {
       const loadedNames = new Set(dynamicPlugins.map(p => p.name));
       const installedPackages =
         await installationDataService.getAllInstalledPackages();
