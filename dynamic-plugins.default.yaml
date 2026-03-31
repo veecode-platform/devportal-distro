@@ -290,11 +290,11 @@ plugins:
   - package: ./dynamic-plugins/dist/backstage-community-plugin-sonarqube-backend-dynamic
     disabled: true
 
-  # ── Base image plugins (pre-installed, config only) ─────────────────
-  # These plugins come from devportal-base. They are already installed
-  # in dynamic-plugins-root/ by the base image build. The preInstalled
-  # flag tells the install script to skip installation and only merge
-  # the pluginConfig into the generated app-config.
+  # ── Pre-installed plugins (config only) ──────────────────────────────
+  # These plugins are already present in dynamic-plugins-root/ at image
+  # build time (from devportal-base or copied/extracted in the Dockerfile).
+  # The preInstalled flag tells the install script to skip installation
+  # and only merge the pluginConfig into the generated app-config.
   - package: backstage-community-plugin-rbac
     preInstalled: true
     pluginConfig:
@@ -429,10 +429,10 @@ plugins:
     preInstalled: true
 
   # ABOUT plugin
-  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-backend-dynamic
-    disabled: false
-  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-dynamic
-    disabled: false
+  - package: veecode-platform-backstage-plugin-about-backend-dynamic
+    preInstalled: true
+  - package: veecode-platform-backstage-plugin-about-dynamic
+    preInstalled: true
     pluginConfig:
       dynamicPlugins:
         frontend:
@@ -455,8 +455,8 @@ plugins:
 
   # ── Extensions Marketplace ──────────────────────────────────────────
   # Frontend (RHDH) — provides the /marketplace UI
-  - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-extensions
-    disabled: false
+  - package: red-hat-developer-hub-backstage-plugin-extensions
+    preInstalled: true
     pluginConfig:
       dynamicPlugins:
         frontend:
@@ -480,11 +480,11 @@ plugins:
   - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-extensions-backend
     disabled: true
   # DevPortal custom marketplace backend
-  - package: ./dynamic-plugins/dist/devportal-marketplace-backend-dynamic-dynamic
-    disabled: false
+  - package: devportal-marketplace-backend-dynamic-dynamic
+    preInstalled: true
   # Pending changes indicator (header badge next to notifications bell)
-  - package: ./dynamic-plugins/dist/devportal-pending-changes-dynamic
-    disabled: false
+  - package: devportal-pending-changes-dynamic
+    preInstalled: true
     pluginConfig:
       dynamicPlugins:
         frontend:
@@ -497,8 +497,8 @@ plugins:
                   props:
                     pollingIntervalMs: 30000
   # Catalog backend module — entity providers for Extension/Package/Collection kinds
-  - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-catalog-backend-module-extensions
-    disabled: false
+  - package: red-hat-developer-hub-backstage-plugin-catalog-backend-module-extensions
+    preInstalled: true
     pluginConfig:
       extensions:
         directory: /app/catalog-entities/extensions

@@ -40,6 +40,30 @@ CMD ["node", "packages/backend", "--config", "app-config.yaml", "--config", "app
 
 COPY --from=base --chown=default:default /app/dynamic-plugins-store /app/dynamic-plugins/dist
 
+# ── Pre-install dynamic plugins into dynamic-plugins-root/ ────────────
+# Copies local plugins from the build stage and downloads OCI plugins at
+# build time. Matching entries in dynamic-plugins.default.yaml carry
+# preInstalled: true so the install script skips installation at startup.
+
+# 4 local plugins (already built in the base stage)
+RUN cp -a /app/dynamic-plugins/dist/veecode-platform-backstage-plugin-about-backend-dynamic  /app/dynamic-plugins-root/ && \
+    cp -a /app/dynamic-plugins/dist/veecode-platform-backstage-plugin-about-dynamic           /app/dynamic-plugins-root/ && \
+    cp -a /app/dynamic-plugins/dist/devportal-marketplace-backend-dynamic-dynamic              /app/dynamic-plugins-root/ && \
+    cp -a /app/dynamic-plugins/dist/devportal-pending-changes-dynamic                          /app/dynamic-plugins-root/
+
+# 2 OCI plugins from quay.io/veecode/extensions
+ARG EXTENSIONS_TAG=bs_1.48.4
+RUN set -e && \
+    OCI_IMAGE="docker://quay.io/veecode/extensions:$EXTENSIONS_TAG" && \
+    TMP_OCI="$(mktemp -d)" && \
+    skopeo copy "$OCI_IMAGE" "dir:$TMP_OCI" && \
+    LAYER=$(jq -r '.layers[0].digest' "$TMP_OCI/manifest.json" | sed 's/sha256://') && \
+    TMP_EXTRACT="$(mktemp -d)" && \
+    tar -xzf "$TMP_OCI/$LAYER" -C "$TMP_EXTRACT" && \
+    cp -a "$TMP_EXTRACT/red-hat-developer-hub-backstage-plugin-extensions"                        /app/dynamic-plugins-root/ && \
+    cp -a "$TMP_EXTRACT/red-hat-developer-hub-backstage-plugin-catalog-backend-module-extensions"  /app/dynamic-plugins-root/ && \
+    rm -rf "$TMP_OCI" "$TMP_EXTRACT"
+
 # Generate devportal.json with version info (consumed by about plugin)
 ARG DEVPORTAL_VERSION=dev
 RUN echo "{\"version\":\"${DEVPORTAL_VERSION}\"}" > /app/devportal.json
