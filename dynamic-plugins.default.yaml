@@ -453,6 +453,21 @@ plugins:
                 title: About
                 icon: aboutIcon
 
+  # ── Internal plugins-info (legacy extensions table) ─────────────────
+  # Override base image defaults: remove /extensions route and sidebar item.
+  # The admin group is preserved (inherited from base config).
+  - package: internal-plugin-dynamic-plugins-info
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          internal.plugin-dynamic-plugins-info:
+            dynamicRoutes: []
+            mountPoints: []
+            menuItems:
+              extensions:
+                enabled: false
+
   # ── Extensions Marketplace ──────────────────────────────────────────
   # Frontend (RHDH) — provides the /marketplace UI
   - package: red-hat-developer-hub-backstage-plugin-extensions
