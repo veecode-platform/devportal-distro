@@ -11587,9 +11587,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@roadiehq/backstage-plugin-github-insights@npm:3.4.1":
-  version: 3.4.1
-  resolution: "@roadiehq/backstage-plugin-github-insights@npm:3.4.1"
+"@roadiehq/backstage-plugin-github-insights@npm:3.5.0":
+  version: 3.5.0
+  resolution: "@roadiehq/backstage-plugin-github-insights@npm:3.5.0"
   dependencies:
     "@backstage/catalog-model": "npm:^1.7.5"
     "@backstage/core-compat-api": "npm:^0.5.3"
@@ -11614,7 +11614,7 @@ __metadata:
     react: ^16.13.1 || ^17.0.0 || ^18.0.0
     react-dom: ^16.13.1 || ^17.0.0 || ^18.0.0
     react-router: 6.0.0-beta.0 || ^6.3.0
-  checksum: 10c0/a3a98766e525bf6ef30585a16d864079fab9564072ff1032cad91c48d084a2063d0ab36e5b7d7c2d9ad1faf53896d8b8adc9442955d0499845292d9963d18c5b
+  checksum: 10c0/6609b33783ffa95642f179fca0ff6490ee7edfdcf8955cc79aa2efdde55468466a236752d5c6334b58f3ef100fc7ba9c80ae7531e9829e51f6a4657995f184b1
   languageName: node
   linkType: hard
 
@@ -29317,7 +29317,7 @@ __metadata:
   dependencies:
     "@backstage/cli": "npm:^0.34.1"
     "@red-hat-developer-hub/cli": "npm:latest"
-    "@roadiehq/backstage-plugin-github-insights": "npm:3.4.1"
+    "@roadiehq/backstage-plugin-github-insights": "npm:3.5.0"
     typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
