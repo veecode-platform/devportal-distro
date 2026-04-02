@@ -469,13 +469,17 @@ plugins:
                 enabled: false
 
   # ── Extensions Marketplace ──────────────────────────────────────────
-  # Frontend (RHDH) — provides the /marketplace UI
+  # RHDH frontend — DISABLED (replaced by devportal fork)
   - package: red-hat-developer-hub-backstage-plugin-extensions
+    preInstalled: true
+    disabled: true
+  # DevPortal marketplace frontend (fork of RHDH extensions frontend)
+  - package: devportal-marketplace-frontend-dynamic
     preInstalled: true
     pluginConfig:
       dynamicPlugins:
         frontend:
-          red-hat-developer-hub.backstage-plugin-extensions:
+          devportal.marketplace-frontend:
             appIcons:
               - name: pluginsIcon
                 importName: PluginsIcon
