@@ -53,11 +53,9 @@ export type InstalledPackageRow = {
 
 export const DownloadPackageYaml = ({
   pkg,
-  isProductionEnv,
   onError,
 }: {
   pkg: InstalledPackageRow;
-  isProductionEnv: boolean;
   onError?: (error: string) => void;
 }) => {
   const { t } = useTranslation();
@@ -80,15 +78,6 @@ export const DownloadPackageYaml = ({
     </Box>
   );
 
-  if (isProductionEnv) {
-    return (
-      <Tooltip
-        title={t('installedPackages.table.tooltips.packageProductionDisabled')}
-      >
-        {disabledIcon}
-      </Tooltip>
-    );
-  }
   const disabled =
     !pkg.hasEntity || packageConfigPermission.data?.read !== 'ALLOW';
 
@@ -147,12 +136,8 @@ export const DownloadPackageYaml = ({
 
 export const EditPackage = ({
   pkg,
-  isProductionEnv,
-  isInstallationEnabled,
 }: {
   pkg: InstalledPackageRow;
-  isProductionEnv: boolean;
-  isInstallationEnabled: boolean;
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -221,26 +206,6 @@ export const EditPackage = ({
     );
   }
 
-  if (isProductionEnv) {
-    return (
-      <Tooltip
-        title={t('installedPackages.table.tooltips.packageProductionDisabled')}
-      >
-        {viewIcon}
-      </Tooltip>
-    );
-  }
-
-  if (!isInstallationEnabled) {
-    return (
-      <Tooltip
-        title={t('installedPackages.table.tooltips.installationDisabled')}
-      >
-        {viewIcon}
-      </Tooltip>
-    );
-  }
-
   return (
     <Tooltip title={t('installedPackages.table.tooltips.editPackage')}>
       <IconButton
@@ -258,13 +223,9 @@ export const EditPackage = ({
 
 export const TogglePackage = ({
   pkg,
-  isProductionEnv,
-  isInstallationEnabled,
   onError,
 }: {
   pkg: InstalledPackageRow;
-  isProductionEnv: boolean;
-  isInstallationEnabled: boolean;
   onError?: (error: string) => void;
 }) => {
   const { t } = useTranslation();
@@ -285,26 +246,6 @@ export const TogglePackage = ({
       </IconButton>
     </Box>
   );
-
-  if (isProductionEnv) {
-    return (
-      <Tooltip
-        title={t('installedPackages.table.tooltips.packageProductionDisabled')}
-      >
-        {disabledIcon}
-      </Tooltip>
-    );
-  }
-
-  if (!isInstallationEnabled) {
-    return (
-      <Tooltip
-        title={t('installedPackages.table.tooltips.installationDisabled')}
-      >
-        {disabledIcon}
-      </Tooltip>
-    );
-  }
 
   if (!pkg.hasEntity || packageConfigPermission.data?.write !== 'ALLOW') {
     return (

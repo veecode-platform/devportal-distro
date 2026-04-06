@@ -191,19 +191,11 @@ export const getErrorMessage = (
 };
 
 export const getPluginActionTooltipMessage = (
-  isProductionEnvironment: boolean,
   permissions: PluginPermissions | null,
   t: TranslationFunction<typeof extensionsTranslationRef.T>,
-  extensionsDisabled?: boolean,
   missingDynamicArtifact?: boolean,
   isPlugin: boolean = true,
 ): string | null => {
-  if (isProductionEnvironment) {
-    return t('tooltips.productionDisabled');
-  }
-  if (extensionsDisabled) {
-    return t('tooltips.extensionsDisabled');
-  }
   if (
     permissions &&
     permissions.read !== Permission.ALLOW &&

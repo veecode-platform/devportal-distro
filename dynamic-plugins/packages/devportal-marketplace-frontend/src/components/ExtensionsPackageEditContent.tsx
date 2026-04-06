@@ -280,7 +280,7 @@ export const ExtensionsPackageEditContent = ({
   };
 
   return (
-    <Flex direction="column" gap="4" style={{ height: '100% ' }}>
+    <Flex direction="column" gap="4" style={{ height: '100%', minHeight: 0, overflow: 'hidden' }}>
       {/* Content above the two sided "editor area" */}
       {showEditWarning && <InstallationWarning configData={pkgConfig.data} />}
       {saveError && (
@@ -301,7 +301,7 @@ export const ExtensionsPackageEditContent = ({
       )}
 
       {/* "two sided content area" */}
-      <Flex direction="row" style={{ flexGrow: 1 }}>
+      <Flex direction="row" style={{ flex: '1 1 0', minHeight: 0, overflow: 'auto' }}>
         <Flex style={{ flex: 65 }}>
           <CodeEditorCard onLoad={onLoaded} />
         </Flex>
@@ -340,72 +340,71 @@ export const ExtensionsPackageEditContent = ({
         )}
       </Flex>
 
-      <Box
-        sx={{
-          mx: '-24px',
-          my: 2,
-          borderBottom: `1px solid ${dividerColor}`,
-        }}
-      />
-
-      {/* Button bar */}
-      <Flex gap="4">
-        <Tooltip
-          title={getPluginActionTooltipMessage(
-            configError ===
-              ExtensionsStatus.INSTALLATION_DISABLED_IN_PRODUCTION,
-            null,
-            t,
-            configError === ExtensionsStatus.INSTALLATION_DISABLED,
-            !pkg.spec?.dynamicArtifact,
-            false,
-          )}
-        >
-          <Typography component="span">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSave}
-              disabled={isSubmitting || disableSave}
-              startIcon={
-                isSubmitting ? (
-                  <CircularProgress size="20px" color="inherit" />
-                ) : undefined
-              }
-            >
-              {t('button.save')}
-            </Button>
-          </Typography>
-        </Tooltip>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => {
-            const ns = pkg.metadata.namespace ?? params.namespace;
-            const name = pkg.metadata.name;
-            const preserved = new URLSearchParams(location.search);
-            if (location?.state?.editAction) {
-              navigate(
-                `/marketplace/installed-packages?${preserved.toString()}`,
-              );
-            } else {
-              navigate(
-                `/marketplace/installed-packages/${ns}/${name}?${preserved.toString()}`,
-              );
-            }
+      <Box sx={{ flexShrink: 0 }}>
+        <Box
+          sx={{
+            mx: '-24px',
+            my: 2,
+            borderBottom: `1px solid ${dividerColor}`,
           }}
-        >
-          {t('install.cancel')}
-        </Button>
-        <Button
-          variant="text"
-          color="primary"
-          onClick={onLoaded}
-          sx={{ ml: 2 }}
-        >
-          {t('install.reset')}
-        </Button>
-      </Flex>
+        />
+
+        {/* Button bar */}
+        <Flex gap="4">
+          <Tooltip
+            title={getPluginActionTooltipMessage(
+              null,
+              t,
+              !pkg.spec?.dynamicArtifact,
+              false,
+            )}
+          >
+            <Typography component="span">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSave}
+                disabled={isSubmitting || disableSave}
+                startIcon={
+                  isSubmitting ? (
+                    <CircularProgress size="20px" color="inherit" />
+                  ) : undefined
+                }
+              >
+                {t('button.save')}
+              </Button>
+            </Typography>
+          </Tooltip>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              const ns = pkg.metadata.namespace ?? params.namespace;
+              const name = pkg.metadata.name;
+              const preserved = new URLSearchParams(location.search);
+              if (location?.state?.editAction) {
+                navigate(
+                  `/marketplace/installed-packages?${preserved.toString()}`,
+                );
+              } else {
+                navigate(
+                  `/marketplace/installed-packages/${ns}/${name}?${preserved.toString()}`,
+                );
+              }
+            }}
+          >
+            {t('install.cancel')}
+          </Button>
+          <Button
+            variant="text"
+            color="primary"
+            onClick={onLoaded}
+            sx={{ ml: 2 }}
+          >
+            {t('install.reset')}
+          </Button>
+        </Flex>
+      </Box>
     </Flex>
   );
 };

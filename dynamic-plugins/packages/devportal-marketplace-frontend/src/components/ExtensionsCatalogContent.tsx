@@ -31,20 +31,14 @@ import Launch from '@mui/icons-material/Launch';
 import { SearchTextField } from '../shared-components/SearchTextField';
 
 import { useCollections } from '../hooks/useCollections';
-import { useExtensionsConfiguration } from '../hooks/useExtensionsConfiguration';
 import { useFilteredPlugins } from '../hooks/useFilteredPlugins';
-import { useNodeEnvironment } from '../hooks/useNodeEnvironment';
 import { ExtensionsCatalogGrid } from './ExtensionsCatalogGrid';
 import { ExtensionsPluginFilter } from './ExtensionsPluginFilter';
 import { CollectionHorizontalScrollRow } from './CollectionHorizontalScrollRow';
 import { useInstallationContext } from './InstallationContext';
 import { InstalledPluginsDialog } from './InstalledPluginsDialog';
 import notFoundImag from '../assets/notfound.png';
-import {
-  ProductionEnvironmentAlert,
-  ExtensionsConfigurationAlert,
-  BackendRestartAlert,
-} from './SharedAlerts';
+import { BackendRestartAlert } from './SharedAlerts';
 import { useTranslation } from '../hooks/useTranslation';
 
 const EmptyState = ({ isError }: { isError?: boolean }) => {
@@ -107,9 +101,7 @@ export const ExtensionsCatalogContent = () => {
   const { t } = useTranslation();
   const [openInstalledPluginsDialog, setOpenInstalledPluginsDialog] =
     useState(false);
-  const extensionsConfig = useExtensionsConfiguration();
   const { installedPlugins } = useInstallationContext();
-  const nodeEnvironment = useNodeEnvironment();
   const featuredCollections = useCollections({
     filter: {
       'metadata.name': 'featured',
@@ -135,12 +127,6 @@ export const ExtensionsCatalogContent = () => {
   if (filteredPlugins.data?.totalItems === 0) {
     return <EmptyState />;
   }
-
-  const isProductionEnvironment =
-    nodeEnvironment?.data?.nodeEnv === 'production';
-
-  const showExtensionsConfigurationAlert =
-    !isProductionEnvironment && !extensionsConfig.data?.enabled;
 
   const installedPluginsCount = Object.entries(installedPlugins)?.length ?? 0;
 
@@ -171,12 +157,6 @@ export const ExtensionsCatalogContent = () => {
 
   return (
     <>
-      {!filteredPlugins.isLoading && (
-        <>
-          {isProductionEnvironment && <ProductionEnvironmentAlert />}
-          {showExtensionsConfigurationAlert && <ExtensionsConfigurationAlert />}
-        </>
-      )}
       <BackendRestartAlert
         count={installedPluginsCount}
         itemInfo={pluginInfo()}

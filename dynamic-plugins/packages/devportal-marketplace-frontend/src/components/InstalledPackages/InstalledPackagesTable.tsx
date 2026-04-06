@@ -49,22 +49,14 @@ import {
   UninstallPackage,
 } from './RowActions';
 import { useInstallationContext } from '../InstallationContext';
-import { useNodeEnvironment } from '../../hooks/useNodeEnvironment';
 import { InstalledPluginsDialog } from '../InstalledPluginsDialog';
-import { useExtensionsConfiguration } from '../../hooks/useExtensionsConfiguration';
-import {
-  ProductionEnvironmentAlert,
-  ExtensionsConfigurationAlert,
-  BackendRestartAlert,
-} from '../SharedAlerts';
+import { BackendRestartAlert } from '../SharedAlerts';
 
 export const InstalledPackagesTable = () => {
   const { t } = useTranslation();
   const [rowActionError, setRowActionError] = useState<string | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const extensionsConfig = useExtensionsConfiguration();
   const { installedPackages } = useInstallationContext();
-  const nodeEnvironment = useNodeEnvironment();
   const [error, setError] = useState<Error | undefined>(undefined);
   const [openInstalledPackagesDialog, setOpenInstalledPackagesDialog] =
     useState(false);
@@ -74,8 +66,6 @@ export const InstalledPackagesTable = () => {
   const fullTextSearch = useQueryFullTextSearch();
 
   const showUninstall = false;
-  const isProductionEnvironment =
-    nodeEnvironment?.data?.nodeEnv === 'production';
   const installedPackagesCount = Object.entries(installedPackages)?.length ?? 0;
 
   const getPackageAlertMessage = (count: number, packageName?: string) => {
@@ -181,16 +171,11 @@ export const InstalledPackagesTable = () => {
       render: (row: InstalledPackageRow) => {
         return (
           <Box display="flex" gap={1}>
-            <EditPackage
-              pkg={row}
-              isProductionEnv={isProductionEnvironment}
-              isInstallationEnabled={extensionsConfig.data?.enabled ?? false}
-            />
+            <EditPackage pkg={row} />
             {/* Show it when uninstall functionality is implemented */}
             {showUninstall && <UninstallPackage pkg={row} />}
             <DownloadPackageYaml
               pkg={row}
-              isProductionEnv={isProductionEnvironment}
               onError={(err: string) => {
                 setRowActionError(err);
                 setSnackbarOpen(true);
@@ -198,8 +183,6 @@ export const InstalledPackagesTable = () => {
             />
             <TogglePackage
               pkg={row}
-              isProductionEnv={isProductionEnvironment}
-              isInstallationEnabled={extensionsConfig.data?.enabled ?? false}
               onError={(err: string) => {
                 setRowActionError(err);
                 setSnackbarOpen(true);
@@ -319,13 +302,8 @@ export const InstalledPackagesTable = () => {
     ? t('installedPackages.table.emptyMessages.noResults')
     : t('installedPackages.table.emptyMessages.noRecords');
 
-  const showExtensionsConfigurationAlert =
-    !isProductionEnvironment && !extensionsConfig.data?.enabled;
-
   return (
     <>
-      {isProductionEnvironment && <ProductionEnvironmentAlert />}
-      {showExtensionsConfigurationAlert && <ExtensionsConfigurationAlert />}
       <BackendRestartAlert
         count={installedPackagesCount}
         itemInfo={packageInfo()}

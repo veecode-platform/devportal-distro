@@ -66,9 +66,7 @@ import {
 } from '../routes';
 import { usePlugin } from '../hooks/usePlugin';
 import { usePluginPackages } from '../hooks/usePluginPackages';
-import { useExtensionsConfiguration } from '../hooks/useExtensionsConfiguration';
 import { usePluginConfigurationPermissions } from '../hooks/usePluginConfigurationPermissions';
-import { useNodeEnvironment } from '../hooks/useNodeEnvironment';
 import { getPluginActionTooltipMessage } from '../utils';
 import { Permission } from '../types';
 
@@ -274,8 +272,6 @@ export const ExtensionsPluginContent = ({
   plugin: ExtensionsPlugin | ExtensionsPackage;
 }) => {
   const { t } = useTranslation();
-  const extensionsConfig = useExtensionsConfiguration();
-  const nodeEnvironment = useNodeEnvironment();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isPluginEnabled, setIsPluginEnabled] = useState<boolean>(false);
   const open = Boolean(anchorEl);
@@ -391,8 +387,6 @@ export const ExtensionsPluginContent = ({
     : (plugin.spec?.description ?? plugin.metadata.description ?? '');
 
   const highlights = isPackage ? [] : (plugin.spec?.highlights ?? []);
-  const isProductionEnvironment =
-    nodeEnvironment?.data?.nodeEnv === 'production';
 
   const missingDynamicArtifact = isExtensionsPackage(plugin)
     ? !plugin.spec?.dynamicArtifact
@@ -400,13 +394,9 @@ export const ExtensionsPluginContent = ({
 
   const pluginActionButton = () => {
     const disablePluginActions =
-      !extensionsConfig.data?.enabled ||
-      (pluginConfigPerm.data?.read !== 'ALLOW' &&
-        pluginConfigPerm.data?.write !== 'ALLOW');
+      pluginConfigPerm.data?.write !== Permission.ALLOW;
     const viewOnly =
-      isProductionEnvironment ||
-      pluginConfigPerm.data?.write !== 'ALLOW' ||
-      !extensionsConfig.data?.enabled ||
+      pluginConfigPerm.data?.write !== Permission.ALLOW ||
       missingDynamicArtifact;
 
     const icon = isPluginEnabled ? (
@@ -436,13 +426,11 @@ export const ExtensionsPluginContent = ({
     const testId = isPluginEnabled ? 'disable-plugin' : 'enable-plugin';
 
     const tooltipMessage = getPluginActionTooltipMessage(
-      isProductionEnvironment,
       {
         read: pluginConfigPerm.data?.read ?? Permission.DENY,
         write: pluginConfigPerm.data?.write ?? Permission.DENY,
       },
       t,
-      !extensionsConfig.data?.enabled,
       missingDynamicArtifact,
       !isPackage,
     );

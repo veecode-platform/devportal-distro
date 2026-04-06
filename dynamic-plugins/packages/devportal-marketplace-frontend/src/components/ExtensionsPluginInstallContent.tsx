@@ -69,8 +69,6 @@ import {
 import { usePluginConfigurationPermissions } from '../hooks/usePluginConfigurationPermissions';
 import { usePluginConfig } from '../hooks/usePluginConfig';
 import { useInstallPlugin } from '../hooks/useInstallPlugin';
-import { useNodeEnvironment } from '../hooks/useNodeEnvironment';
-import { useExtensionsConfiguration } from '../hooks/useExtensionsConfiguration';
 import { mapExtensionsPluginInstallStatusToInstallPageButton } from '../labels';
 import { useTranslation } from '../hooks/useTranslation';
 import { CodeEditorCard } from './CodeEditorCard';
@@ -105,10 +103,6 @@ export const ExtensionsPluginInstallContent = ({
     params.namespace,
     params.name,
   );
-  const extensionsConfig = useExtensionsConfiguration();
-  const nodeEnvironment = useNodeEnvironment();
-  const isProductionEnvironment =
-    nodeEnvironment?.data?.nodeEnv === 'production';
 
   const theme = useTheme();
   // TODO: add divider color in theme plugin
@@ -242,23 +236,19 @@ export const ExtensionsPluginInstallContent = ({
   const missingDynamicArtifact = packages.some(p => !p.spec?.dynamicArtifact);
 
   const isInstallDisabled =
-    isProductionEnvironment ||
     installationError ||
     pluginConfigPermissions.data?.write !== Permission.ALLOW ||
     (pluginConfig.data as any)?.error ||
-    !extensionsConfig?.data?.enabled ||
     isSubmitting ||
     packages.length === 0 ||
     missingDynamicArtifact;
 
   const installTooltip = getPluginActionTooltipMessage(
-    isProductionEnvironment,
     {
       read: pluginConfigPermissions.data?.read ?? Permission.DENY,
       write: pluginConfigPermissions.data?.write ?? Permission.DENY,
     },
     t,
-    !extensionsConfig?.data?.enabled,
     missingDynamicArtifact,
   );
 
@@ -271,8 +261,7 @@ export const ExtensionsPluginInstallContent = ({
 
   const getInstallButtonDatatestid = () => {
     if (isInstallDisabled) {
-      return isPluginInstalled(plugin?.spec?.installStatus) &&
-        !isProductionEnvironment
+      return isPluginInstalled(plugin?.spec?.installStatus)
         ? 'edit-disabled'
         : 'install-disabled';
     }
@@ -280,7 +269,7 @@ export const ExtensionsPluginInstallContent = ({
   };
 
   const getCardHeaderTitle = () => {
-    if (isProductionEnvironment || isInstallDisabled) {
+    if (isInstallDisabled) {
       return t('install.instructions');
     }
     if (isPluginInstalled(plugin.spec?.installStatus)) {
@@ -290,7 +279,7 @@ export const ExtensionsPluginInstallContent = ({
   };
 
   return (
-    <Flex direction="column" gap="4" style={{ height: '100% ' }}>
+    <Flex direction="column" gap="4" style={{ height: '100%', minHeight: 0, overflow: 'hidden' }}>
       {/* Content above the two sided "editor area" */}
       {showInstallationWarning && (
         <InstallationWarning configData={pluginConfig.data} />
@@ -308,7 +297,7 @@ export const ExtensionsPluginInstallContent = ({
       )}
 
       {/* "two sided content area" */}
-      <Flex direction="row" style={{ flexGrow: 1 }}>
+      <Flex direction="row" style={{ flex: '1 1 0', minHeight: 0, overflow: 'auto' }}>
         <Flex style={{ flex: 65 }}>
           {packages.length > 0 && <CodeEditorCard onLoad={onLoaded} />}
         </Flex>
@@ -367,72 +356,74 @@ export const ExtensionsPluginInstallContent = ({
         )}
       </Flex>
 
-      <Box
-        sx={{
-          mx: '-24px',
-          my: 2,
-          borderBottom: `1px solid ${dividerColor}`,
-        }}
-      />
+      <Box sx={{ flexShrink: 0 }}>
+        <Box
+          sx={{
+            mx: '-24px',
+            my: 2,
+            borderBottom: `1px solid ${dividerColor}`,
+          }}
+        />
 
-      {/* Button bar */}
-      <Flex gap="4">
-        <Tooltip
-          title={
-            installTooltip ? (
-              <div
-                style={{
-                  whiteSpace: 'normal',
-                  maxWidth: 250,
-                  overflowWrap: 'break-word',
-                }}
-              >
-                {installTooltip}
-              </div>
-            ) : (
-              ''
-            )
-          }
-        >
-          <Typography component="span">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleInstall}
-              disabled={isInstallDisabled}
-              data-testid={getInstallButtonDatatestid()}
-              startIcon={
-                isSubmitting && <CircularProgress size="20px" color="inherit" />
-              }
-            >
-              {mapExtensionsPluginInstallStatusToInstallPageButton(
-                plugin.spec?.installStatus ??
-                  ExtensionsPluginInstallStatus.NotInstalled,
-                t,
-              )}
-            </Button>
-          </Typography>
-        </Tooltip>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => navigate(pluginLink)}
-          data-testId={isInstallDisabled ? 'back-button' : 'cancel-button'}
-        >
-          {isInstallDisabled ? t('install.back') : t('install.cancel')}
-        </Button>
-        {(pluginConfigPermissions.data?.write === Permission.ALLOW ||
-          pluginConfigPermissions.data?.read === Permission.ALLOW) && (
-          <Button
-            variant="text"
-            color="primary"
-            onClick={onReset}
-            sx={{ ml: 2 }}
+        {/* Button bar */}
+        <Flex gap="4">
+          <Tooltip
+            title={
+              installTooltip ? (
+                <div
+                  style={{
+                    whiteSpace: 'normal',
+                    maxWidth: 250,
+                    overflowWrap: 'break-word',
+                  }}
+                >
+                  {installTooltip}
+                </div>
+              ) : (
+                ''
+              )
+            }
           >
-            {t('install.reset')}
+            <Typography component="span">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleInstall}
+                disabled={isInstallDisabled}
+                data-testid={getInstallButtonDatatestid()}
+                startIcon={
+                  isSubmitting && <CircularProgress size="20px" color="inherit" />
+                }
+              >
+                {mapExtensionsPluginInstallStatusToInstallPageButton(
+                  plugin.spec?.installStatus ??
+                    ExtensionsPluginInstallStatus.NotInstalled,
+                  t,
+                )}
+              </Button>
+            </Typography>
+          </Tooltip>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => navigate(pluginLink)}
+            data-testId={isInstallDisabled ? 'back-button' : 'cancel-button'}
+          >
+            {isInstallDisabled ? t('install.back') : t('install.cancel')}
           </Button>
-        )}
-      </Flex>
+          {(pluginConfigPermissions.data?.write === Permission.ALLOW ||
+            pluginConfigPermissions.data?.read === Permission.ALLOW) && (
+            <Button
+              variant="text"
+              color="primary"
+              onClick={onReset}
+              sx={{ ml: 2 }}
+            >
+              {t('install.reset')}
+            </Button>
+          )}
+        </Flex>
+      </Box>
     </Flex>
   );
 };

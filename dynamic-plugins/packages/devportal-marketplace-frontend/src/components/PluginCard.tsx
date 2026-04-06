@@ -32,6 +32,8 @@ import Button from '@mui/material/Button';
 import { ExtensionsPlugin } from '@red-hat-developer-hub/backstage-plugin-extensions-common';
 
 import { usePluginStatus, MarketplaceStatus } from '../hooks/usePluginStatus';
+import { usePluginConfigurationPermissions } from '../hooks/usePluginConfigurationPermissions';
+import { Permission } from '../types';
 import { ConfirmActionDialog } from './ConfirmActionDialog';
 import { useEnablePlugin } from '../hooks/useEnablePlugin';
 import { useQueryClient } from '@tanstack/react-query';
@@ -131,6 +133,11 @@ export const PluginCard = ({ plugin }: { plugin: ExtensionsPlugin }) => {
     )}`;
 
   const status = usePluginStatus(plugin);
+  const permissions = usePluginConfigurationPermissions(
+    plugin.metadata.namespace!,
+    plugin.metadata.name,
+  );
+  const canWrite = permissions.data?.write === Permission.ALLOW;
   const queryClient = useQueryClient();
   const enableMutation = useEnablePlugin(false);
   const [confirmAction, setConfirmAction] = useState<{
@@ -286,22 +293,22 @@ export const PluginCard = ({ plugin }: { plugin: ExtensionsPlugin }) => {
         </Link>
         <Stack direction="row" alignItems="center" spacing={1}>
           <PluginStatusBadge status={status} />
-          {status === 'available' && (
+          {canWrite && status === 'available' && (
             <Button size="small" variant="outlined" onClick={handleInstall}>
               Install
             </Button>
           )}
-          {status === 'installed' && (
+          {canWrite && status === 'installed' && (
             <Button size="small" color="error" onClick={handleUninstall}>
               Uninstall
             </Button>
           )}
-          {status === 'disabled' && (
+          {canWrite && status === 'disabled' && (
             <Button size="small" color="primary" onClick={handleToggle}>
               Enable
             </Button>
           )}
-          {status === 'built-in' && (
+          {canWrite && status === 'built-in' && (
             <Button size="small" color="error" onClick={handleToggle}>
               Disable
             </Button>
