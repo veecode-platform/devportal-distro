@@ -3,7 +3,9 @@
   "include": ["src"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src"
+    "outDir": "../../dist-types/wrappers/devportal-marketplace-frontend-dynamic",
+    "rootDir": ".",
+    "jsx": "react-jsx",
+    "skipLibCheck": true
   }
 }
