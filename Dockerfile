@@ -18,6 +18,9 @@ RUN echo "Using NPM Registry: $NPM_REGISTRY" && \
 # dynamic plugin processing
 COPY --chown=default:default dynamic-plugins /app/dynamic-plugins
 
+# Limit turbo parallelism to reduce peak memory usage (avoids OOM on constrained hosts)
+ENV TURBO_CONCURRENCY=2
+
 RUN mkdir -p /app/dynamic-plugins-store && \
     cd /app/dynamic-plugins && \
     yarn install --immutable && \

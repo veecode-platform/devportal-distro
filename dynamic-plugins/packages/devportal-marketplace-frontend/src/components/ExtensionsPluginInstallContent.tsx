@@ -279,7 +279,7 @@ export const ExtensionsPluginInstallContent = ({
   };
 
   return (
-    <Flex direction="column" gap="4" style={{ height: '100%', minHeight: 0, overflow: 'hidden' }}>
+    <Flex direction="column" gap="4">
       {/* Content above the two sided "editor area" */}
       {showInstallationWarning && (
         <InstallationWarning configData={pluginConfig.data} />
@@ -297,7 +297,7 @@ export const ExtensionsPluginInstallContent = ({
       )}
 
       {/* "two sided content area" */}
-      <Flex direction="row" style={{ flex: '1 1 0', minHeight: 0, overflow: 'auto' }}>
+      <Flex direction="row" style={{ maxHeight: '65dvh' }}>
         <Flex style={{ flex: 65 }}>
           {packages.length > 0 && <CodeEditorCard onLoad={onLoaded} />}
         </Flex>
@@ -305,7 +305,7 @@ export const ExtensionsPluginInstallContent = ({
         {showRightCard && (
           <Flex style={{ flex: 55 }}>
             <Card style={{ width: '100%' }}>
-              <div style={{ flex: '1 1 0', overflow: 'scroll' }}>
+              <div style={{ overflow: 'scroll' }}>
                 <CardHeader
                   title={
                     <Typography variant="h3">{getCardHeaderTitle()}</Typography>
@@ -356,14 +356,15 @@ export const ExtensionsPluginInstallContent = ({
         )}
       </Flex>
 
-      <Box sx={{ flexShrink: 0 }}>
+      <Box sx={{ p: '1rem' }}>
         <Box
           sx={{
             mx: '-24px',
-            my: 2,
+            mb: 2,
             borderBottom: `1px solid ${dividerColor}`,
           }}
         />
+
 
         {/* Button bar */}
         <Flex gap="4">
