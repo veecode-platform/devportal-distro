@@ -18,6 +18,9 @@ RUN echo "Using NPM Registry: $NPM_REGISTRY" && \
 # dynamic plugin processing
 COPY --chown=default:default dynamic-plugins /app/dynamic-plugins
 
+# Limit turbo parallelism to reduce peak memory usage (avoids OOM on constrained hosts)
+ENV TURBO_CONCURRENCY=2
+
 RUN mkdir -p /app/dynamic-plugins-store && \
     cd /app/dynamic-plugins && \
     yarn install --immutable && \
@@ -27,6 +30,9 @@ RUN mkdir -p /app/dynamic-plugins-store && \
     yarn workspace devportal-pending-changes run tsc && \
     yarn workspace devportal-pending-changes run build && \
     yarn workspace devportal-pending-changes-dynamic run tsc && \
+    yarn workspace devportal-marketplace-frontend run tsc && \
+    yarn workspace devportal-marketplace-frontend run build && \
+    yarn workspace devportal-marketplace-frontend-dynamic run tsc && \
     yarn build && \
     yarn export-dynamic && \
     yarn copy-dynamic-plugins $(pwd)/../dynamic-plugins-store
@@ -49,7 +55,8 @@ COPY --from=base --chown=default:default /app/dynamic-plugins-store /app/dynamic
 RUN cp -a /app/dynamic-plugins/dist/veecode-platform-backstage-plugin-about-backend-dynamic  /app/dynamic-plugins-root/ && \
     cp -a /app/dynamic-plugins/dist/veecode-platform-backstage-plugin-about-dynamic           /app/dynamic-plugins-root/ && \
     cp -a /app/dynamic-plugins/dist/devportal-marketplace-backend-dynamic-dynamic              /app/dynamic-plugins-root/ && \
-    cp -a /app/dynamic-plugins/dist/devportal-pending-changes-dynamic                          /app/dynamic-plugins-root/
+    cp -a /app/dynamic-plugins/dist/devportal-pending-changes-dynamic                          /app/dynamic-plugins-root/ && \
+    cp -a /app/dynamic-plugins/dist/devportal-marketplace-frontend-dynamic              /app/dynamic-plugins-root/
 
 # 2 OCI plugins from quay.io/veecode/extensions
 ARG EXTENSIONS_TAG=bs_1.48.4
