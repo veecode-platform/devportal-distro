@@ -18,7 +18,13 @@
 #       target: /app/examples/clusters.yaml
 
 permission:
-  enabled: false
+  enabled: true
+  rbac:
+    pluginsWithPermission:
+      - catalog
+      - scaffolder
+      - permission
+      - extensions
 
 kubernetes:
   serviceLocatorMethod:

@@ -90,3 +90,10 @@ RUN mkdir -p /app/catalog-entities/extensions/plugins \
             /app/catalog-entities/extensions/packages \
             /app/catalog-entities/extensions/collections
 
+# Append distro-specific RBAC policies (extensions marketplace) to the base image's CSV
+COPY rbac-policy-extensions.csv /tmp/rbac-policy-extensions.csv
+RUN cat /tmp/rbac-policy-extensions.csv >> /app/rbac-policy.csv
+
+# Distro-specific config overrides (loaded by entrypoint between production and local configs)
+COPY --chown=default:default app-config.distro.yaml /app/app-config.distro.yaml
+

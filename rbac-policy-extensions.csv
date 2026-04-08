@@ -1,0 +1,9 @@
+
+# Extensions marketplace (distro-only)
+# Appended to base image's rbac-policy.csv at Docker build time.
+# admin: full access (install, uninstall, enable, disable plugins)
+# developer/viewer: read-only (browse marketplace, no install)
+p, role:default/admin, extensions.plugin.configuration.read, read, allow
+p, role:default/admin, extensions.plugin.configuration.write, create, allow
+p, role:default/developer, extensions.plugin.configuration.read, read, allow
+p, role:default/viewer, extensions.plugin.configuration.read, read, allow

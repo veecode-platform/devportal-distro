@@ -1,0 +1,10 @@
+# Distro-specific overrides (loaded by entrypoint.sh between production and local configs)
+# This file extends the base image's app-config without replacing it.
+
+permission:
+  rbac:
+    pluginsWithPermission:
+      - catalog
+      - scaffolder
+      - permission
+      - extensions

@@ -108,11 +108,16 @@ else
 fi
 
 DYNAMIC_PLUGINS_CONFIG="/app/dynamic-plugins-root/app-config.dynamic-plugins.yaml"
+DISTRO_CONFIG="/app/app-config.distro.yaml"
 LOCAL_CONFIG="/app/app-config.local.yaml"
 SAAS_CONFIG="/app/app-config.saas.yaml"
 EXTRA_ARGS=""
+# Distro overrides load first (after base+production, before local/saas)
+if [ -f "$DISTRO_CONFIG" ]; then
+    EXTRA_ARGS="--config $DISTRO_CONFIG"
+fi
 if [ -f "$LOCAL_CONFIG" ]; then
-    EXTRA_ARGS="--config $LOCAL_CONFIG"
+    EXTRA_ARGS="$EXTRA_ARGS --config $LOCAL_CONFIG"
 fi
 if [ -f "$DYNAMIC_PLUGINS_CONFIG" ]; then
     EXTRA_ARGS="$EXTRA_ARGS --config $DYNAMIC_PLUGINS_CONFIG"
