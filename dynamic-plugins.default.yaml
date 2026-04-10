@@ -528,24 +528,22 @@ plugins:
 
   # ── MCP (Model Context Protocol) ───────────────────────────────────
   # MCP Actions Backend — exposes Backstage actions as MCP tools for AI clients
+  # NOTE: pluginSources consolidated here to avoid install-dynamic-plugins.py crash
+  # when multiple plugins define the same config key (shallow merge, not array merge)
   - package: oci://quay.io/veecode/backstage:bs_1.48.4!backstage-plugin-mcp-actions-backend
-    disabled: true
-
-  # MCP Tool Plugins — register tools on the MCP actions server
-  - package: oci://quay.io/veecode/mcp-integrations:bs_1.48.4!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool
     disabled: true
     pluginConfig:
       backend:
         actions:
           pluginSources:
             - software-catalog-mcp-extras
+            - techdocs-mcp-extras
+
+  # MCP Tool Plugins — register tools on the MCP actions server
+  - package: oci://quay.io/veecode/mcp-integrations:bs_1.48.4!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool
+    disabled: true
   - package: oci://quay.io/veecode/mcp-integrations:bs_1.48.4!red-hat-developer-hub-backstage-plugin-techdocs-mcp-tool
     disabled: true
-    pluginConfig:
-      backend:
-        actions:
-          pluginSources:
-            - techdocs-mcp-extras
   # MCP Chat — AI chat interface inside Backstage
   - package: oci://quay.io/veecode/mcp-chat:bs_1.48.4!backstage-community-plugin-mcp-chat-backend
     disabled: true
