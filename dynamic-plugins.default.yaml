@@ -496,7 +496,7 @@ plugins:
   # RHDH backend DISABLED — replaced by devportal-marketplace-backend.
   # DO NOT enable both simultaneously — they share pluginId "extensions"
   # and would conflict on /api/extensions/* routes.
-  - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-extensions-backend
+  - package: oci://quay.io/veecode/extensions:bs_1.49.4!red-hat-developer-hub-backstage-plugin-extensions-backend
     disabled: true
   # DevPortal custom marketplace backend
   - package: devportal-marketplace-backend-dynamic-dynamic
@@ -530,7 +530,7 @@ plugins:
   # MCP Actions Backend — exposes Backstage actions as MCP tools for AI clients
   # NOTE: pluginSources consolidated here to avoid install-dynamic-plugins.py crash
   # when multiple plugins define the same config key (shallow merge, not array merge)
-  - package: oci://quay.io/veecode/backstage:bs_1.48.4!backstage-plugin-mcp-actions-backend
+  - package: oci://quay.io/veecode/backstage:bs_1.49.4!backstage-plugin-mcp-actions-backend
     disabled: true
     pluginConfig:
       backend:
@@ -540,14 +540,14 @@ plugins:
             - techdocs-mcp-extras
 
   # MCP Tool Plugins — register tools on the MCP actions server
-  - package: oci://quay.io/veecode/mcp-integrations:bs_1.48.4!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool
+  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool
     disabled: true
-  - package: oci://quay.io/veecode/mcp-integrations:bs_1.48.4!red-hat-developer-hub-backstage-plugin-techdocs-mcp-tool
+  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-techdocs-mcp-tool
     disabled: true
   # MCP Chat — AI chat interface inside Backstage
-  - package: oci://quay.io/veecode/mcp-chat:bs_1.48.4!backstage-community-plugin-mcp-chat-backend
+  - package: oci://quay.io/veecode/mcp-chat:bs_1.49.4!backstage-community-plugin-mcp-chat-backend
     disabled: true
-  - package: oci://quay.io/veecode/mcp-chat:bs_1.48.4!backstage-community-plugin-mcp-chat
+  - package: oci://quay.io/veecode/mcp-chat:bs_1.49.4!backstage-community-plugin-mcp-chat
     disabled: true
     pluginConfig:
       dynamicPlugins:
@@ -556,6 +556,9 @@ plugins:
             dynamicRoutes:
               - path: /mcp-chat
                 importName: McpChatPage
+                menuItem:
+                  icon: chat
+                  text: MCP Chat
             menuItems:
               mcp-chat:
                 title: MCP Chat

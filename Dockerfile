@@ -1,4 +1,4 @@
-ARG TAG=1.3.0
+ARG TAG=1.3.1
 FROM veecode/devportal-base:${TAG} AS base
 
 # allows setting NPM registry from build arg
@@ -59,7 +59,7 @@ RUN cp -a /app/dynamic-plugins/dist/veecode-platform-backstage-plugin-about-back
     cp -a /app/dynamic-plugins/dist/devportal-marketplace-frontend-dynamic              /app/dynamic-plugins-root/
 
 # 2 OCI plugins from quay.io/veecode/extensions
-ARG EXTENSIONS_TAG=bs_1.48.4
+ARG EXTENSIONS_TAG=bs_1.49.4
 RUN set -e && \
     OCI_IMAGE="docker://quay.io/veecode/extensions:$EXTENSIONS_TAG" && \
     TMP_OCI="$(mktemp -d)" && \
