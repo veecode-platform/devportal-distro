@@ -29,6 +29,39 @@ includes:
   - extensions-install.yaml
 
 plugins:
+  # ── MCP Actions Backend ─────────────────────────────────────────────
+  - package: oci://quay.io/veecode/backstage:bs_1.49.4!backstage-plugin-mcp-actions-backend
+    disabled: false
+
+  # ── MCP Alpha Services (required for actions registry) ───────────────
+  - package: ./dynamic-plugins/dist/mcp-actions-services
+    disabled: false
+
+  # ── MCP Tool Plugins (built from rhdh-plugins source) ───────────────
+  - package: ./dynamic-plugins/dist/software-catalog-mcp-extras
+    disabled: false
+  - package: ./dynamic-plugins/dist/scaffolder-mcp-extras
+    disabled: false
+  - package: ./dynamic-plugins/dist/techdocs-mcp-extras
+    disabled: false
+
+  # ── MCP Chat (frontend + backend) ──────────────────────────────────
+  - package: ./dynamic-plugins/dist/mcp-chat-backend
+    disabled: false
+  - package: ./dynamic-plugins/dist/mcp-chat
+    disabled: false
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          backstage-community.plugin-mcp-chat:
+            dynamicRoutes:
+              - path: /mcp-chat
+                importName: McpChatPage
+            menuItems:
+              mcp-chat:
+                title: MCP Chat
+                icon: chat
+
   #- package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
   #  disabled: true
   - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-dynamic

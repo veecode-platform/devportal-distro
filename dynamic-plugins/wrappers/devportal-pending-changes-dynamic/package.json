@@ -11,7 +11,8 @@
     "pluginPackages": [
       "devportal-pending-changes",
       "devportal-pending-changes-dynamic"
-    ]
+    ],
+    "supported-versions": "1.43.3"
   },
   "sideEffects": false,
   "exports": {
