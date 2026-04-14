@@ -538,11 +538,14 @@ plugins:
           pluginSources:
             - software-catalog-mcp-extras
             - techdocs-mcp-extras
+            - scaffolder-mcp-extras
 
   # MCP Tool Plugins — register tools on the MCP actions server
-  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-tool
+  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-extras
     disabled: true
-  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-techdocs-mcp-tool
+  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-techdocs-mcp-extras
+    disabled: true
+  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-scaffolder-mcp-extras
     disabled: true
   # MCP Chat — AI chat interface inside Backstage
   - package: oci://quay.io/veecode/mcp-chat:bs_1.49.4!backstage-community-plugin-mcp-chat-backend
