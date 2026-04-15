@@ -13,10 +13,14 @@ const mcpWellKnownModule = backendPluginApi.createBackendModule({
         config: backendPluginApi.coreServices.rootConfig,
       },
       async init({ httpRouter, config }) {
-        const baseUrl = config.getString('backend.baseUrl');
-        const endpoint = `${baseUrl}/api/mcp-actions/v1`;
+        httpRouter.addAuthPolicy({
+          path: '/.well-known/mcp-config',
+          allow: 'unauthenticated',
+        });
 
         httpRouter.use('/.well-known/mcp-config', (_req, res) => {
+          const baseUrl = config.getString('backend.baseUrl');
+          const endpoint = `${baseUrl}/api/mcp-actions/v1`;
           res.status(200).json({
             endpoint,
             auth: {
