@@ -15,7 +15,6 @@ const mcpWellKnownModule = backendPluginApi.createBackendModule({
       async init({ httpRouter, config }) {
         const baseUrl = config.getString('backend.baseUrl');
         const endpoint = `${baseUrl}/api/mcp-actions/v1`;
-        const token = process.env.MCP_TOKEN ?? '';
 
         httpRouter.use('/.well-known/mcp-config', (_req, res) => {
           res.status(200).json({
@@ -23,6 +22,7 @@ const mcpWellKnownModule = backendPluginApi.createBackendModule({
             auth: {
               type: 'bearer',
               token_env_var: 'DEVPORTAL_MCP_TOKEN',
+              note: 'Obtain the token value from your platform team.',
             },
             snippets: {
               claude_code: {
@@ -39,13 +39,11 @@ const mcpWellKnownModule = backendPluginApi.createBackendModule({
                     },
                   },
                 },
-                token,
               },
               codex_cli: {
                 description:
                   'Add to ~/.codex/config.toml, then: export DEVPORTAL_MCP_TOKEN=<token>',
                 config: `[mcp_servers.devportal]\nurl = "${endpoint}"\nbearer_token_env_var = "DEVPORTAL_MCP_TOKEN"`,
-                token,
               },
             },
           });
