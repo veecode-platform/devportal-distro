@@ -356,22 +356,6 @@ export async function createRouter(
     res.json(facets);
   });
 
-  // ─── MODIFIED: always report installation as enabled ────────────────
-  // INTENTIONAL BYPASS: The RHDH extensions frontend checks this endpoint
-  // to decide whether to show the Install button. The upstream backend
-  // returns { enabled: false } when NODE_ENV !== 'development' or when
-  // config `extensions.installation.enabled` is not set.
-  //
-  // We unconditionally return { enabled: true } because our distribution
-  // is designed for self-service plugin management in production.
-  //
-  // When we fork the RHDH frontend (roadmap), replace this with a proper
-  // config flag (e.g. `extensions.installation.enabled: true` in app-config)
-  // and let the frontend check that instead.
-  router.get('/plugins/configure', async (_req, res) => {
-    res.json({ enabled: true });
-  });
-
   router.get('/plugin/:namespace/:name', async (req, res) => {
     const plugin = await extensionsApi.getPluginByName(
       req.params.namespace,
@@ -567,24 +551,6 @@ export async function createRouter(
     res.json(packages);
   });
 
-  // ─── MODIFIED: always report development environment ────────────────
-  // INTENTIONAL BYPASS: The RHDH extensions frontend gates the Install
-  // button behind `nodeEnv === 'development'`. In production this endpoint
-  // would return 'production', disabling installs entirely.
-  //
-  // This is a *scoped lie* — it only affects the extensions frontend;
-  // it does NOT change process.env.NODE_ENV or affect any other plugin.
-  //
-  // Risk: if RHDH upstream adds security checks gated on nodeEnv in this
-  // endpoint, they will be silently bypassed. Monitor RHDH changelogs on
-  // the extensions plugin when upgrading.
-  //
-  // TODO: Replace with a custom `installEnabled` config flag when the
-  // RHDH frontend is forked. See: project_marketplace_north_star.md
-  router.get('/environment', async (_req, res) => {
-    res.status(200).json({ nodeEnv: 'development' });
-  });
-
   // ─── Loaded plugins (dynamic plugin provider) ──────────────────────
 
   let dynamicPlugins: BaseDynamicPlugin[] = [];
@@ -701,9 +667,7 @@ export async function createRouter(
   router.get(
     '/pending-changes',
     requireInitializedInstallationDataService,
-    async (req, response) => {
-      await httpAuth.credentials(req, { allow: ['user', 'service'] });
-
+    async (_req, response) => {
       const loadedNames = new Set(dynamicPlugins.map(p => p.name));
       const installedPackages =
         await installationDataService.getAllInstalledPackages();

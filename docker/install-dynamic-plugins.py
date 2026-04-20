@@ -50,6 +50,7 @@ Configuration:
         - `integrity`: a string containing the integrity hash of the package (required for remote NPM packages unless SKIP_INTEGRITY_CHECK is set, optional for local packages, not used for OCI packages)
         - `pluginConfig`: an optional plugin-specific configuration fragment
         - `disabled`: an optional boolean to disable the plugin (`false` by default)
+        - `preInstalled`: an optional boolean for plugins already present in the image (e.g., from the base image). Skips installation but still merges `pluginConfig` into the generated config. (`false` by default)
         - `pullPolicy`: download behavior control - 'IfNotPresent' (default) or 'Always' (OCI packages with ':latest!' default to 'Always')
         - `forceDownload`: an optional boolean to force download for NPM packages even if already installed (`false` by default)
     - an optional `includes` list of yaml files to include, each file containing a list of plugins
@@ -359,7 +360,12 @@ def install_plugin(plugin: dict, plugin_path_by_hash: dict, destination: str, sk
     if plugin.get('disabled', False):
         print(f'\n======= Skipping disabled dynamic plugin {package}', flush=True)
         return None, {}
-    
+
+    # Pre-installed plugins: skip installation, merge config only
+    if plugin.get('preInstalled', False):
+        print(f'\n======= Using pre-installed dynamic plugin {package} (config only)', flush=True)
+        return None, plugin.get('pluginConfig', {})
+
     # Create appropriate installer
     installer = create_plugin_installer(package, destination, skip_integrity_check)
     

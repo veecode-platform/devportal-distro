@@ -1,0 +1,11 @@
+{
+  "name": "@internal/mcp-actions-services-dynamic",
+  "version": "0.1.0",
+  "main": "dist/index.cjs.js",
+  "backstage": {
+    "role": "backend-plugin-module",
+    "pluginId": "mcp-actions",
+    "pluginPackages": []
+  },
+  "dependencies": {}
+}

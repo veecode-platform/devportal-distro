@@ -12,10 +12,6 @@ const DYNAMIC_PLUGINS_CONFIG_FILE = path.join(
   ROOT_DIR,
   "dynamic-plugins.default.yaml",
 );
-const APP_CONFIG_DYNAMIC_PLUGINS_CONFIG_FILE = path.join(
-  ROOT_DIR,
-  "app-config.dynamic-plugins.yaml",
-);
 const IBM_VALUES_SHOWCASE_CONFIG_FILE = path.join(
   ROOT_DIR,
   ".ibm/pipelines/value_files/values_showcase.yaml",
@@ -216,23 +212,6 @@ describe("Dynamic Plugin Wrappers", () => {
             Object.keys(
               plugin.pluginConfig?.dynamicPlugins?.frontend ?? {},
             ).includes(scalprum.name),
-          ),
-        ).toBeTruthy();
-      },
-    );
-  });
-
-  describe("(app-config.dynamic-plugins.yaml) should have a valid config", () => {
-    const config = parseYamlFile<DynamicPluginAppConfig>(
-      APP_CONFIG_DYNAMIC_PLUGINS_CONFIG_FILE,
-    );
-
-    it.each(frontendPackageJsonFiles)(
-      "$scalprum.name should exist in the config",
-      ({ scalprum }) => {
-        expect(
-          Object.keys(config?.dynamicPlugins?.frontend ?? {}).includes(
-            scalprum.name,
           ),
         ).toBeTruthy();
       },

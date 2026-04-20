@@ -290,11 +290,149 @@ plugins:
   - package: ./dynamic-plugins/dist/backstage-community-plugin-sonarqube-backend-dynamic
     disabled: true
 
+  # ── Pre-installed plugins (config only) ──────────────────────────────
+  # These plugins are already present in dynamic-plugins-root/ at image
+  # build time (from devportal-base or copied/extracted in the Dockerfile).
+  # The preInstalled flag tells the install script to skip installation
+  # and only merge the pluginConfig into the generated app-config.
+  - package: backstage-community-plugin-rbac
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          backstage-community.plugin-rbac:
+            dynamicRoutes:
+              - path: /rbac
+                importName: RbacPage
+                menuItem:
+                  text: RBAC
+                  textKey: menuItem.rbac
+                  icon: admin
+                config:
+                  props:
+                    width: 1500
+                    height: 800
+            appIcons:
+              - name: admin
+                importName: RbacIcon
+            menuItems:
+              rbac:
+                parent: admin
+                title: RBAC
+                titleKey: menuItem.rbac
+                icon: admin
+  - package: veecode-platform-plugin-veecode-homepage-dynamic
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          veecode-platform.plugin-veecode-homepage:
+            translationResources:
+              - importName: homepageTranslations
+                ref: homepageTranslationRef
+            dynamicRoutes:
+              - path: /
+                importName: VeecodeHomepagePage
+                config:
+                  props:
+                    width: 1500
+                    height: 800
+  - package: veecode-platform-plugin-veecode-global-header-dynamic
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          veecode-platform.plugin-veecode-global-header:
+            translationResources:
+              - importName: globalHeaderTranslations
+                ref: globalHeaderTranslationRef
+            mountPoints:
+              - mountPoint: application/header
+                importName: GlobalHeader
+                config:
+                  position: above-main-content
+              - mountPoint: global.header/component
+                importName: SearchComponent
+                config:
+                  priority: 100
+              - mountPoint: global.header/component
+                importName: Spacer
+                config:
+                  priority: 99
+                  props:
+                    growFactor: 0
+              - mountPoint: global.header/component
+                importName: Divider
+                config:
+                  priority: 90
+              - mountPoint: global.header/component
+                importName: NotificationButton
+                config:
+                  priority: 60
+              - mountPoint: global.header/component
+                importName: StarredDropdown
+                config:
+                  priority: 70
+                  props:
+                    growFactor: 0
+              - mountPoint: global.header/component
+                importName: ToggleThemeButton
+                config:
+                  priority: 75
+                  props:
+                    growFactor: 0
+              - mountPoint: global.header/component
+                importName: ProfileDropdown
+                config:
+                  priority: 10
+              - mountPoint: global.header/profile
+                importName: MenuItemLink
+                config:
+                  priority: 100
+                  props:
+                    title: Settings
+                    link: /settings
+                    icon: manageAccounts
+              - mountPoint: global.header/profile
+                importName: MenuItemLink
+                config:
+                  priority: 90
+                  props:
+                    title: My profile
+                    titleKey: profile.myProfile
+                    type: user
+              - mountPoint: global.header/profile
+                importName: LogoutButton
+                config:
+                  priority: 10
+  - package: backstage-community-plugin-tech-radar-dynamic
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          backstage-community.plugin-tech-radar:
+            appIcons:
+              - name: techRadar
+                importName: TechRadarIcon
+            dynamicRoutes:
+              - path: /tech-radar
+                importName: TechRadarPage
+                menuItem:
+                  icon: techRadar
+                  text: Tech Radar
+                  textKey: menuItem.techRadar
+                config:
+                  props:
+                    width: 1500
+                    height: 800
+  - package: backstage-community-plugin-tech-radar-backend-dynamic
+    preInstalled: true
+
   # ABOUT plugin
-  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-backend-dynamic
-    disabled: false
-  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-dynamic
-    disabled: false
+  - package: veecode-platform-backstage-plugin-about-backend-dynamic
+    preInstalled: true
+  - package: veecode-platform-backstage-plugin-about-dynamic
+    preInstalled: true
     pluginConfig:
       dynamicPlugins:
         frontend:
@@ -314,3 +452,117 @@ plugins:
                 parent: admin
                 title: About
                 icon: aboutIcon
+
+  # ── Internal plugins-info (legacy extensions table) ─────────────────
+  # Override base image defaults: remove /extensions route and sidebar item.
+  # The admin group is preserved (inherited from base config).
+  - package: internal-plugin-dynamic-plugins-info
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          internal.plugin-dynamic-plugins-info:
+            dynamicRoutes: []
+            mountPoints: []
+            menuItems:
+              extensions:
+                enabled: false
+
+  # ── Extensions Marketplace ──────────────────────────────────────────
+  # RHDH frontend — DISABLED (replaced by devportal fork)
+  - package: red-hat-developer-hub-backstage-plugin-extensions
+    preInstalled: true
+    disabled: true
+  # DevPortal marketplace frontend (fork of RHDH extensions frontend)
+  - package: devportal-marketplace-frontend-dynamic
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          devportal.marketplace-frontend:
+            appIcons:
+              - name: pluginsIcon
+                importName: PluginsIcon
+            dynamicRoutes:
+              - path: /marketplace
+                importName: DynamicExtensionsPluginRouter
+                menuItem:
+                  icon: pluginsIcon
+                  text: Marketplace
+            menuItems:
+              marketplace:
+                title: Marketplace
+                icon: pluginsIcon
+  # RHDH backend DISABLED — replaced by devportal-marketplace-backend.
+  # DO NOT enable both simultaneously — they share pluginId "extensions"
+  # and would conflict on /api/extensions/* routes.
+  - package: oci://quay.io/veecode/extensions:bs_1.49.4!red-hat-developer-hub-backstage-plugin-extensions-backend
+    disabled: true
+  # DevPortal custom marketplace backend
+  - package: devportal-marketplace-backend-dynamic-dynamic
+    preInstalled: true
+  # Pending changes indicator (header badge next to notifications bell)
+  - package: devportal-pending-changes-dynamic
+    preInstalled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          devportal.pending-changes:
+            mountPoints:
+              - mountPoint: global.header/component
+                importName: PendingChangesButton
+                config:
+                  priority: 55
+                  props:
+                    pollingIntervalMs: 30000
+  # Catalog backend module — entity providers for Extension/Package/Collection kinds
+  - package: red-hat-developer-hub-backstage-plugin-catalog-backend-module-extensions
+    preInstalled: true
+    pluginConfig:
+      extensions:
+        directory: /app/catalog-entities/extensions
+        installation:
+          enabled: true
+          saveToSingleFile:
+            file: /app/extensions-install.yaml
+
+  # ── MCP (Model Context Protocol) ───────────────────────────────────
+  # MCP Actions Backend — exposes Backstage actions as MCP tools for AI clients
+  # NOTE: pluginSources consolidated here to avoid install-dynamic-plugins.py crash
+  # when multiple plugins define the same config key (shallow merge, not array merge)
+  - package: oci://quay.io/veecode/backstage:bs_1.49.4!backstage-plugin-mcp-actions-backend
+    disabled: true
+    pluginConfig:
+      backend:
+        actions:
+          pluginSources:
+            - software-catalog-mcp-extras
+            - techdocs-mcp-extras
+            - scaffolder-mcp-extras
+
+  # MCP Tool Plugins — register tools on the MCP actions server
+  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-extras
+    disabled: true
+  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-techdocs-mcp-extras
+    disabled: true
+  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-scaffolder-mcp-extras
+    disabled: true
+  # MCP Chat — AI chat interface inside Backstage
+  - package: oci://quay.io/veecode/mcp-chat:bs_1.49.4!backstage-community-plugin-mcp-chat-backend
+    disabled: true
+  - package: oci://quay.io/veecode/mcp-chat:bs_1.49.4!backstage-community-plugin-mcp-chat
+    disabled: true
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          backstage-community.plugin-mcp-chat:
+            dynamicRoutes:
+              - path: /mcp-chat
+                importName: McpChatPage
+                menuItem:
+                  icon: chat
+                  text: MCP Chat
+            menuItems:
+              mcp-chat:
+                title: MCP Chat
+                icon: chat

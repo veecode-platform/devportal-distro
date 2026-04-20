@@ -29,6 +29,39 @@ includes:
   - extensions-install.yaml
 
 plugins:
+  # ── MCP Actions Backend ─────────────────────────────────────────────
+  - package: oci://quay.io/veecode/backstage:bs_1.49.4!backstage-plugin-mcp-actions-backend
+    disabled: false
+
+  # ── MCP Alpha Services (required for actions registry) ───────────────
+  - package: ./dynamic-plugins/dist/mcp-actions-services
+    disabled: false
+
+  # ── MCP Tool Plugins (built from rhdh-plugins source) ───────────────
+  - package: ./dynamic-plugins/dist/software-catalog-mcp-extras
+    disabled: false
+  - package: ./dynamic-plugins/dist/scaffolder-mcp-extras
+    disabled: false
+  - package: ./dynamic-plugins/dist/techdocs-mcp-extras
+    disabled: false
+
+  # ── MCP Chat (frontend + backend) ──────────────────────────────────
+  - package: ./dynamic-plugins/dist/mcp-chat-backend
+    disabled: false
+  - package: ./dynamic-plugins/dist/mcp-chat
+    disabled: false
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          backstage-community.plugin-mcp-chat:
+            dynamicRoutes:
+              - path: /mcp-chat
+                importName: McpChatPage
+            menuItems:
+              mcp-chat:
+                title: MCP Chat
+                icon: chat
+
   #- package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
   #  disabled: true
   - package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-dynamic
@@ -50,53 +83,23 @@ plugins:
     disabled: true
   - package: ./dynamic-plugins/dist/backstage-community-plugin-jenkins
     disabled: true
-  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-backend-dynamic
-    disabled: false
-  - package: ./dynamic-plugins/dist/veecode-platform-backstage-plugin-about-dynamic
-    disabled: false
-  # ── Extensions Marketplace ──────────────────────────────────────────
-  # Frontend (RHDH) — provides the /marketplace UI
-  - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-extensions
-    disabled: false
+  # ── Pre-installed plugins ────────────────────────────────────────────
+  # About, Marketplace, Pending Changes, and Catalog Extensions module
+  # are pre-installed in the image and configured via dynamic-plugins.default.yaml.
+  # Do NOT re-list them here with local/OCI paths — different package names
+  # cause the install script to create duplicate copies, crashing the backend
+  # with "Plugin is already registered".
+
+  # ── Internal plugins-info (legacy extensions table) ─────────────────
+  # Override base image defaults: remove /extensions route and sidebar item.
+  - package: internal-plugin-dynamic-plugins-info
+    preInstalled: true
     pluginConfig:
       dynamicPlugins:
         frontend:
-          red-hat-developer-hub.backstage-plugin-extensions:
-            appIcons:
-              - name: pluginsIcon
-                importName: PluginsIcon
-            dynamicRoutes:
-              - path: /marketplace
-                importName: DynamicExtensionsPluginRouter
-                menuItem:
-                  icon: pluginsIcon
-                  text: Marketplace
+          internal.plugin-dynamic-plugins-info:
+            dynamicRoutes: []
+            mountPoints: []
             menuItems:
-              marketplace:
-                title: Marketplace
-                icon: pluginsIcon
-  # ⚠️ RHDH backend DISABLED — replaced by devportal-marketplace-backend.
-  # DO NOT enable both simultaneously — they share pluginId "extensions"
-  # and would conflict on /api/extensions/* routes.
-  - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-extensions-backend
-    disabled: true
-  # DevPortal custom marketplace backend (no production block)
-  - package: ./dynamic-plugins/dist/devportal-marketplace-backend-dynamic-dynamic
-    disabled: false
-  # Pending changes indicator (header badge next to notifications bell)
-  - package: ./dynamic-plugins/dist/devportal-pending-changes-dynamic
-    disabled: false
-    pluginConfig:
-      dynamicPlugins:
-        frontend:
-          devportal.pending-changes:
-            mountPoints:
-              - mountPoint: global.header/component
-                importName: PendingChangesButton
-                config:
-                  priority: 55
-                  props:
-                    pollingIntervalMs: 30000
-  # Catalog backend module — entity providers for Extension/Package/Collection kinds
-  - package: oci://quay.io/veecode/extensions:bs_1.48.4!red-hat-developer-hub-backstage-plugin-catalog-backend-module-extensions
-    disabled: false
+              extensions:
+                enabled: false

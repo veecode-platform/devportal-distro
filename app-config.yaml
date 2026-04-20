@@ -18,14 +18,13 @@
 #       target: /app/examples/clusters.yaml
 
 permission:
-  enabled: false
-
-extensions:
-  directory: /app/catalog-entities/extensions
-  installation:
-    enabled: true
-    saveToSingleFile:
-      file: /app/extensions-install.yaml
+  enabled: true
+  rbac:
+    pluginsWithPermission:
+      - catalog
+      - scaffolder
+      - permission
+      - extensions
 
 kubernetes:
   serviceLocatorMethod:
