@@ -73,6 +73,7 @@ jobs:
           https://github.com/veecode-platform/devportal-plugin-export-overlays.git /tmp/export-overlays
         cd /tmp/export-overlays
         git sparse-checkout set catalog-entities
+        rm -rf $GITHUB_WORKSPACE/catalog-entities
         cp -r catalog-entities $GITHUB_WORKSPACE/catalog-entities
 
     - name: Set up Docker Buildx

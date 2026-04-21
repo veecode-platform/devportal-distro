@@ -33,23 +33,18 @@ plugins:
   - package: oci://quay.io/veecode/backstage:bs_1.49.4!backstage-plugin-mcp-actions-backend
     disabled: false
 
-  # ── MCP Alpha Services (required for actions registry) ───────────────
-  - package: ./dynamic-plugins/dist/mcp-actions-services
-    disabled: false
-
   # ── MCP Tool Plugins (built from rhdh-plugins source) ───────────────
-  - package: ./dynamic-plugins/dist/software-catalog-mcp-extras
+  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-extras
     disabled: false
-  - package: ./dynamic-plugins/dist/scaffolder-mcp-extras
+  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-scaffolder-mcp-extras
     disabled: false
-  - package: ./dynamic-plugins/dist/techdocs-mcp-extras
+  - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-techdocs-mcp-extras
     disabled: false
 
   # ── MCP Chat (frontend + backend) ──────────────────────────────────
-  - package: ./dynamic-plugins/dist/mcp-chat-backend
+  - package: oci://quay.io/veecode/mcp-chat:bs_1.49.4!backstage-community-plugin-mcp-chat-backend
     disabled: false
-  - package: ./dynamic-plugins/dist/mcp-chat
-    disabled: false
+  - package: oci://quay.io/veecode/mcp-chat:bs_1.49.4!backstage-community-plugin-mcp-chat
     pluginConfig:
       dynamicPlugins:
         frontend:
