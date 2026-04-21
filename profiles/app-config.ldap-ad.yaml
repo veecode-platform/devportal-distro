@@ -1,0 +1,60 @@
+# VeeCode "ldap-ad" profile — LDAP authentication and org sync tuned for
+# Active Directory (Samba AD, Windows AD). Uses sAMAccountName and AD-style
+# object classes so users/groups ingest correctly out of the box.
+
+signInPage: ldap
+
+auth:
+  environment: development
+  providers:
+    ldap:
+      development:
+        cookies:
+          secure: false
+          field: "backstage-token"
+
+        ldapAuthenticationOptions:
+          userSearchBase: "${LDAP_USERS_BASE_DN}"
+          usernameAttribute: sAMAccountName
+          adminDn: "${LDAP_DN}"
+          adminPassword: "${LDAP_SECRET}"
+          ldapOpts:
+            url: "${LDAP_URL}"
+            tlsOptions:
+              rejectUnauthorized: ${LDAP_TLS_REJECT_UNAUTHORIZED}
+
+catalog:
+  providers:
+    ldapOrg:
+      default:
+        target: "${LDAP_URL}"
+        bind:
+          dn: "${LDAP_DN}"
+          secret: "${LDAP_SECRET}"
+        users:
+          - dn: "${LDAP_USERS_BASE_DN}"
+            options:
+              filter: "${LDAP_USERS_FILTER}"
+              scope: sub
+            map:
+              rdn: cn
+              name: sAMAccountName
+              description: description
+              displayName: displayName
+              email: mail
+              memberOf: memberOf
+        groups:
+          - dn: "${LDAP_GROUPS_BASE_DN}"
+            options:
+              filter: "${LDAP_GROUPS_FILTER}"
+              scope: sub
+            map:
+              rdn: cn
+              name: cn
+              description: description
+              displayName: cn
+              memberOf: memberOf
+              members: member
+        schedule:
+          frequency: ${LDAP_SYNC_FREQUENCY}
+          timeout: PT15M

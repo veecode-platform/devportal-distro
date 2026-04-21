@@ -167,12 +167,23 @@ case "$VEECODE_PROFILE" in
     echo "VEECODE: Loading LDAP configuration..."
     EXTRA_ARGS="$EXTRA_ARGS --config app-config.ldap.yaml"
     ;;
+  ldap-ad)
+    echo "VEECODE: Loading LDAP (Active Directory) configuration..."
+    if [ -z "$LDAP_TLS_REJECT_UNAUTHORIZED" ]; then
+      export LDAP_TLS_REJECT_UNAUTHORIZED=true
+    fi
+    if [ -z "$LDAP_SYNC_FREQUENCY" ]; then
+      export LDAP_SYNC_FREQUENCY=PT1H
+    fi
+    EXTRA_ARGS="$EXTRA_ARGS --config app-config.ldap-ad.yaml"
+    ;;
 esac
 
-# Distro overrides load first (after base+production, before local/saas)
+# Distro overrides
 if [ -f "$DISTRO_CONFIG" ]; then
     EXTRA_ARGS="$EXTRA_ARGS --config $DISTRO_CONFIG"
 fi
+# Local overrides
 if [ -f "$LOCAL_CONFIG" ]; then
     EXTRA_ARGS="$EXTRA_ARGS --config $LOCAL_CONFIG"
 fi

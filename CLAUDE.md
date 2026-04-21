@@ -38,7 +38,8 @@ Set `VEECODE_PROFILE` environment variable to load profile-specific configs:
 - `gitlab` - GitLab authentication, integration and org sync
 - `azure` - Azure DevOps authentication, integration and org sync
 - `keycloak` - Keycloak SSO authentication and org sync
-- `ldap` - LDAP authentication and org sync
+- `ldap` - LDAP authentication and org sync (OpenLDAP defaults: `uid`, `inetOrgPerson`)
+- `ldap-ad` - LDAP authentication and org sync tuned for Active Directory (`sAMAccountName`, `objectClass=user`/`group`)
 
 ## Key Files
 
