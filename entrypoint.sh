@@ -171,7 +171,7 @@ esac
 
 # Distro overrides load first (after base+production, before local/saas)
 if [ -f "$DISTRO_CONFIG" ]; then
-    EXTRA_ARGS="--config $DISTRO_CONFIG"
+    EXTRA_ARGS="$EXTRA_ARGS --config $DISTRO_CONFIG"
 fi
 if [ -f "$LOCAL_CONFIG" ]; then
     EXTRA_ARGS="$EXTRA_ARGS --config $LOCAL_CONFIG"
