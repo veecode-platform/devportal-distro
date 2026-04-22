@@ -536,9 +536,12 @@ plugins:
       backend:
         actions:
           pluginSources:
+            - mcp-actions
             - software-catalog-mcp-extras
             - techdocs-mcp-extras
             - scaffolder-mcp-extras
+            - catalog
+            - scaffolder
 
   # MCP Tool Plugins — register tools on the MCP actions server
   - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-extras

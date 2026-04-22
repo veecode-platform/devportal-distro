@@ -31,31 +31,21 @@ includes:
 plugins:
   # ── MCP Actions Backend ─────────────────────────────────────────────
   - package: oci://quay.io/veecode/backstage:bs_1.49.4!backstage-plugin-mcp-actions-backend
-    disabled: false
+    disabled: true
 
   # ── MCP Tool Plugins (built from rhdh-plugins source) ───────────────
   - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-software-catalog-mcp-extras
-    disabled: false
+    disabled: true
   - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-scaffolder-mcp-extras
-    disabled: false
+    disabled: true
   - package: oci://quay.io/veecode/mcp-integrations:bs_1.49.4!red-hat-developer-hub-backstage-plugin-techdocs-mcp-extras
-    disabled: false
+    disabled: true
 
   # ── MCP Chat (frontend + backend) ──────────────────────────────────
   - package: oci://quay.io/veecode/mcp-chat:bs_1.49.4!backstage-community-plugin-mcp-chat-backend
-    disabled: false
+    disabled: true
   - package: oci://quay.io/veecode/mcp-chat:bs_1.49.4!backstage-community-plugin-mcp-chat
-    pluginConfig:
-      dynamicPlugins:
-        frontend:
-          backstage-community.plugin-mcp-chat:
-            dynamicRoutes:
-              - path: /mcp-chat
-                importName: McpChatPage
-            menuItems:
-              mcp-chat:
-                title: MCP Chat
-                icon: chat
+    disabled: true
 
   #- package: ./dynamic-plugins/dist/backstage-plugin-kubernetes-backend-dynamic
   #  disabled: true
