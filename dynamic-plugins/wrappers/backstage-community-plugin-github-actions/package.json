@@ -31,8 +31,8 @@
     "@backstage-community/plugin-github-actions": "0.23.0"
   },
   "devDependencies": {
-    "@backstage/cli": "^0.34.1",
-    "@red-hat-developer-hub/cli": "latest",
+    "@backstage/cli": "^0.34.6",
+    "@red-hat-developer-hub/cli": "^1.10.6",
     "typescript": "5.9.3"
   },
   "files": [
