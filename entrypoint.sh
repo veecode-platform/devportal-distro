@@ -20,7 +20,7 @@ if [ -n "$THEME_DOWNLOAD_URL" ]; then
 elif [ -n "$THEME_CUSTOM_JSON" ]; then
     if [ "false" = "$THEME_MERGE_JSON" ]; then
         echo "Using custom theme JSON from THEME_CUSTOM_JSON"
-        echo "$THEME_CUSTOM_JSON" > /app/packages/app/dist/dist/theme.json
+        echo "$THEME_CUSTOM_JSON" > /app/packages/app/dist/theme.json
     else
         echo "Merging custom theme JSON from THEME_CUSTOM_JSON"
         TARGET_JSON="/app/packages/app/dist/theme.json"
