@@ -15196,9 +15196,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@red-hat-developer-hub/cli@npm:^1.10.4":
-  version: 1.10.4
-  resolution: "@red-hat-developer-hub/cli@npm:1.10.4"
+"@red-hat-developer-hub/cli@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@red-hat-developer-hub/cli@npm:1.11.0"
   dependencies:
     "@backstage/cli": "npm:0.36.0"
     "@backstage/cli-common": "npm:^0.2.0"
@@ -15207,6 +15207,7 @@ __metadata:
     "@backstage/config": "npm:^1.3.6"
     "@backstage/config-loader": "npm:^1.10.9"
     "@backstage/errors": "npm:^1.2.7"
+    "@backstage/release-manifests": "npm:^0.0.13"
     "@backstage/types": "npm:^1.2.1"
     "@changesets/cli": "npm:^2.29.4"
     "@manypkg/get-packages": "npm:^1.1.3"
@@ -15258,7 +15259,7 @@ __metadata:
       optional: true
   bin:
     rhdh-cli: bin/rhdh-cli
-  checksum: 10c0/42ed293e4200197f75b7f214082c09a0f39b67469232a385208933a8a344557ac5b66b1f68f8294562b0741dc478092fefeeb1ebf55f15c6fbfa5a438edb2559
+  checksum: 10c0/84c22c910212112d199b3a2f7670fd08de3adec7bf6a58162528c07d160deaa54669aec85adfed2a87638cc000727696ca050328dd50b6539ce57a8abfb691a7
   languageName: node
   linkType: hard
 
@@ -22486,7 +22487,7 @@ __metadata:
   resolution: "dynamic-plugins-root@workspace:."
   dependencies:
     "@backstage/cli": "npm:^0.34.3"
-    "@red-hat-developer-hub/cli": "npm:^1.10.4"
+    "@red-hat-developer-hub/cli": "npm:^1.11.0"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     react-router: "npm:6.30.1"
