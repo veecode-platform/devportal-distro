@@ -6100,7 +6100,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/plugin-bitbucket-cloud-common@npm:^0.3.10":
+"@backstage/plugin-bitbucket-cloud-common@npm:^0.3.10, @backstage/plugin-bitbucket-cloud-common@npm:^0.3.8":
   version: 0.3.10
   resolution: "@backstage/plugin-bitbucket-cloud-common@npm:0.3.10"
   dependencies:
@@ -7013,21 +7013,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/plugin-scaffolder-backend-module-bitbucket-cloud@npm:0.3.6":
-  version: 0.3.6
-  resolution: "@backstage/plugin-scaffolder-backend-module-bitbucket-cloud@npm:0.3.6"
+"@backstage/plugin-scaffolder-backend-module-bitbucket-cloud@npm:0.3.4":
+  version: 0.3.4
+  resolution: "@backstage/plugin-scaffolder-backend-module-bitbucket-cloud@npm:0.3.4"
   dependencies:
-    "@backstage/backend-plugin-api": "npm:^1.9.1"
-    "@backstage/config": "npm:^1.3.8"
-    "@backstage/errors": "npm:^1.3.1"
-    "@backstage/integration": "npm:^2.0.2"
-    "@backstage/plugin-bitbucket-cloud-common": "npm:^0.3.10"
-    "@backstage/plugin-scaffolder-node": "npm:^0.13.3"
+    "@backstage/backend-plugin-api": "npm:^1.8.0"
+    "@backstage/config": "npm:^1.3.6"
+    "@backstage/errors": "npm:^1.2.7"
+    "@backstage/integration": "npm:^2.0.0"
+    "@backstage/plugin-bitbucket-cloud-common": "npm:^0.3.8"
+    "@backstage/plugin-scaffolder-node": "npm:^0.13.0"
     bitbucket: "npm:^2.12.0"
     fs-extra: "npm:^11.2.0"
     yaml: "npm:^2.0.0"
     zod: "npm:^3.25.76 || ^4.0.0"
-  checksum: 10c0/78e62537934d093ee0308b6f0766193d0b99183ebbe892e16ee0096425b9736856312ec7169e6d3851383eb17f4b2bdcc8f6ec0259c899858fa19fd5610e2558
+  checksum: 10c0/e51b8a3eb801e9340bf59e5d272a8d7acaf868503524b16042bd7a66acbe41a604e9bf14dde5a1a3c3ae13a2c2d84a44d782ac2d8c44a4f202123d6fcbc7452c
   languageName: node
   linkType: hard
 
@@ -19467,7 +19467,7 @@ __metadata:
   resolution: "backstage-plugin-scaffolder-backend-module-bitbucket-cloud@workspace:wrappers/backstage-plugin-scaffolder-backend-module-bitbucket-cloud-dynamic"
   dependencies:
     "@backstage/cli": "npm:^0.34.1"
-    "@backstage/plugin-scaffolder-backend-module-bitbucket-cloud": "npm:0.3.6"
+    "@backstage/plugin-scaffolder-backend-module-bitbucket-cloud": "npm:0.3.4"
     "@janus-idp/cli": "npm:3.6.1"
     typescript: "npm:5.9.3"
   languageName: unknown
