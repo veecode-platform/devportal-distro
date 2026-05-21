@@ -29,8 +29,8 @@
     "export-dynamic:clean": "run export-dynamic --clean"
   },
   "dependencies": {
-    "@backstage/core-plugin-api": "1.12.5",
-    "@backstage/plugin-kubernetes": "0.12.18"
+    "@backstage/core-plugin-api": "1.12.6",
+    "@backstage/plugin-kubernetes": "0.12.19"
   },
   "devDependencies": {
     "@backstage/cli": "^0.34.1",
